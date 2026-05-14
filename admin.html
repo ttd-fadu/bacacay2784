@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — Bacacay 2784</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: #f4f4f2;
+  color: #0a0a0a;
+  min-height: 100vh;
+}
+
+/* ── LOGIN ── */
+#login-screen {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: #0a0a0a;
+}
+.login-box {
+  width: 100%; max-width: 380px;
+  padding: 3rem;
+  background: #111;
+  border-top: 3px solid #F5C000;
+}
+.login-logo {
+  font-size: 1.5rem; font-weight: 700;
+  color: #fff; letter-spacing: -.01em;
+  margin-bottom: .25rem;
+}
+.login-logo span { color: #F5C000; }
+.login-sub {
+  font-size: .62rem; letter-spacing: .18em;
+  color: rgba(255,255,255,.3); text-transform: uppercase;
+  margin-bottom: 2.5rem;
+}
+.login-field { margin-bottom: 1.25rem; }
+.login-label {
+  display: block;
+  font-size: .6rem; letter-spacing: .15em;
+  text-transform: uppercase; color: rgba(255,255,255,.4);
+  font-weight: 700; margin-bottom: .4rem;
+}
+.login-input {
+  width: 100%; padding: .8rem 1rem;
+  background: #1a1a1a; border: 1px solid #333;
+  color: #fff; font-size: .9rem;
+  font-family: inherit; outline: none;
+  transition: border-color .2s;
+}
+.login-input:focus { border-color: #F5C000; }
+.login-btn {
+  width: 100%; padding: .9rem;
+  background: #F5C000; color: #0a0a0a;
+  font-size: .75rem; letter-spacing: .15em;
+  font-weight: 700; text-transform: uppercase;
+  border: none; cursor: pointer;
+  transition: opacity .2s;
+}
+.login-btn:hover { opacity: .85; }
+.login-err {
+  font-size: .7rem; color: #ff6b6b;
+  margin-top: 1rem; display: none;
+}
+
+/* ── ADMIN UI ── */
+#admin-ui { display: none; }
+
+.topbar {
+  background: #0a0a0a;
+  padding: 0 2rem;
+  height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 2px solid #F5C000;
+  position: sticky; top: 0; z-index: 100;
+}
+.topbar-logo {
+  font-size: 1rem; font-weight: 700; color: #fff; letter-spacing: -.01em;
+}
+.topbar-logo span { color: #F5C000; }
+.topbar-right { display: flex; align-items: center; gap: 1rem; }
+.topbar-user {
+  font-size: .62rem; color: rgba(255,255,255,.4); letter-spacing: .1em;
+}
+.btn-sm {
+  padding: .4rem .9rem;
+  font-size: .62rem; letter-spacing: .1em;
+  font-weight: 700; text-transform: uppercase;
+  border: none; cursor: pointer; transition: all .2s;
+}
+.btn-black { background: #fff; color: #0a0a0a; }
+.btn-black:hover { background: #F5C000; }
+.btn-yellow { background: #F5C000; color: #0a0a0a; }
+.btn-yellow:hover { opacity: .85; }
+.btn-danger { background: #ff6b6b; color: #fff; }
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 52px);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: #fff;
+  border-right: 1px solid #e0e0dc;
+  padding: 2rem 0;
+  position: sticky; top: 52px;
+  height: calc(100vh - 52px);
+  overflow-y: auto;
+}
+.sidebar-section {
+  padding: 0 1.5rem;
+  margin-bottom: 2rem;
+}
+.sidebar-title {
+  font-size: .55rem; letter-spacing: .2em;
+  text-transform: uppercase; color: #aaa;
+  font-weight: 700; margin-bottom: 1rem;
+  padding-bottom: .5rem; border-bottom: 1px solid #eee;
+}
+.report-list { list-style: none; }
+.report-list-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .6rem .8rem; cursor: pointer;
+  border-radius: 4px; transition: background .15s;
+  margin-bottom: .2rem;
+}
+.report-list-item:hover { background: #f4f4f2; }
+.report-list-item.active { background: #0a0a0a; color: #fff; }
+.report-list-item.active .ril-num { color: #F5C000; }
+.ril-num {
+  font-size: .65rem; font-weight: 700; letter-spacing: .1em; color: #F5C000;
+}
+.ril-title { font-size: .82rem; font-weight: 700; }
+.ril-date { font-size: .6rem; color: #888; }
+
+.btn-new-report {
+  display: block; width: calc(100% - 3rem); margin: 0 1.5rem;
+  padding: .75rem; text-align: center;
+  background: #0a0a0a; color: #fff;
+  font-size: .65rem; letter-spacing: .12em;
+  font-weight: 700; text-transform: uppercase;
+  border: none; cursor: pointer;
+  transition: background .2s;
+}
+.btn-new-report:hover { background: #F5C000; color: #0a0a0a; }
+
+/* ── CONTENT ── */
+.content { padding: 2.5rem 3rem; max-width: 960px; }
+
+.content-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #d0d0cc;
+}
+.content-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -.01em; }
+.content-actions { display: flex; gap: .75rem; }
+
+/* Campos */
+.field-group { margin-bottom: 2rem; }
+.field-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.field-label {
+  display: block; font-size: .58rem;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: #888; font-weight: 700; margin-bottom: .4rem;
+}
+.field-input, .field-select, .field-textarea {
+  width: 100%; padding: .7rem .9rem;
+  background: #fff; border: 1px solid #d0d0cc;
+  color: #0a0a0a; font-size: .9rem;
+  font-family: inherit; outline: none;
+  transition: border-color .2s;
+}
+.field-input:focus, .field-select:focus, .field-textarea:focus {
+  border-color: #F5C000;
+}
+.field-textarea { resize: vertical; min-height: 80px; }
+
+/* Secciones del form */
+.form-section {
+  background: #fff; padding: 1.75rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e0e0dc;
+}
+.form-section-title {
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: .15em; text-transform: uppercase;
+  margin-bottom: 1.5rem; color: #0a0a0a;
+  display: flex; align-items: center; gap: .75rem;
+}
+.form-section-title::after {
+  content: ''; flex: 1; height: 1px; background: #eee;
+}
+
+/* Progreso sliders */
+.progress-admin-item {
+  display: grid; grid-template-columns: 1fr 80px 60px;
+  gap: 1rem; align-items: center;
+  margin-bottom: 1.2rem;
+}
+.progress-admin-name {
+  font-size: .82rem; font-weight: 700;
+  letter-spacing: .04em;
+}
+.progress-admin-track {
+  -webkit-appearance: none;
+  width: 100%; height: 4px;
+  background: #d0d0cc; outline: none; cursor: pointer;
+}
+.progress-admin-track::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  background: #F5C000; border-radius: 50%;
+  cursor: pointer;
+}
+.progress-admin-num {
+  font-size: 1.1rem; font-weight: 700;
+  text-align: center;
+}
+.progress-admin-nota {
+  grid-column: 1 / -1;
+  margin-top: -.5rem;
+}
+
+/* Novedades */
+.novedad-item {
+  display: grid; grid-template-columns: 130px 1fr 36px;
+  gap: .75rem; align-items: start;
+  margin-bottom: .75rem;
+}
+.btn-icon {
+  width: 36px; height: 36px;
+  background: #f4f4f2; border: 1px solid #d0d0cc;
+  cursor: pointer; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.btn-icon:hover { background: #ff6b6b; color: #fff; border-color: #ff6b6b; }
+.btn-add-novedad {
+  padding: .5rem 1rem;
+  background: transparent; border: 1px solid #d0d0cc;
+  font-size: .65rem; letter-spacing: .1em;
+  font-weight: 700; text-transform: uppercase;
+  cursor: pointer; transition: all .2s;
+}
+.btn-add-novedad:hover { border-color: #0a0a0a; background: #0a0a0a; color: #fff; }
+
+/* Fotos */
+.foto-drop-zone {
+  border: 2px dashed #d0d0cc;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  margin-bottom: 1rem;
+}
+.foto-drop-zone:hover, .foto-drop-zone.dragover {
+  border-color: #F5C000; background: #fffdf0;
+}
+.foto-drop-label {
+  font-size: .75rem; color: #888; letter-spacing: .05em;
+}
+.foto-drop-label strong { color: #0a0a0a; font-weight: 700; }
+#foto-file-input { display: none; }
+
+.fotos-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: .75rem; margin-bottom: 1rem;
+}
+.foto-thumb-wrap { position: relative; }
+.foto-thumb {
+  width: 100%; aspect-ratio: 4/3;
+  object-fit: cover; display: block;
+}
+.foto-thumb-actions {
+  position: absolute; inset: 0;
+  background: rgba(10,10,10,.6);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: .5rem; opacity: 0;
+  transition: opacity .2s;
+}
+.foto-thumb-wrap:hover .foto-thumb-actions { opacity: 1; }
+.foto-caption-input {
+  width: 100%;
+  padding: .4rem .5rem;
+  font-size: .65rem; background: #fff;
+  border: 1px solid #d0d0cc; margin-top: .3rem;
+  font-family: inherit;
+}
+.btn-foto-del {
+  background: #ff6b6b; color: #fff;
+  border: none; padding: .3rem .6rem;
+  font-size: .6rem; font-weight: 700;
+  cursor: pointer; letter-spacing: .08em;
+}
+
+/* Axonometría */
+.axo-preview {
+  width: 100%; max-width: 300px;
+  border: 1px solid #d0d0cc;
+  display: block; margin-bottom: .75rem;
+}
+
+/* Financiero */
+.fin-item-row {
+  display: grid; grid-template-columns: 1fr 140px 100px 36px;
+  gap: .75rem; align-items: center;
+  margin-bottom: .6rem;
+}
+.checkbox-label {
+  display: flex; align-items: center; gap: .4rem;
+  font-size: .75rem; cursor: pointer;
+}
+.checkbox-label input { accent-color: #F5C000; width: 14px; height: 14px; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: #0a0a0a; color: #fff;
+  padding: 1rem 1.5rem;
+  font-size: .75rem; letter-spacing: .08em;
+  font-weight: 700; text-transform: uppercase;
+  border-left: 3px solid #F5C000;
+  opacity: 0; transform: translateY(10px);
+  transition: all .3s; z-index: 9999;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* Hero img preview */
+.hero-preview {
+  width: 100%; max-height: 160px;
+  object-fit: cover; display: block;
+  margin-bottom: .75rem; border: 1px solid #d0d0cc;
+}
+
+/* Upload progress */
+.upload-progress {
+  height: 3px; background: #d0d0cc;
+  margin-top: .5rem; overflow: hidden;
+  display: none;
+}
+.upload-progress-fill {
+  height: 100%; background: #F5C000;
+  width: 0; transition: width .3s;
+}
+
+/* Whatsapp btn */
+.wa-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: #25d366; color: #fff;
+  padding: .6rem 1.2rem;
+  font-size: .68rem; letter-spacing: .1em;
+  font-weight: 700; text-transform: uppercase;
+  border: none; cursor: pointer; text-decoration: none;
+  transition: opacity .2s;
+}
+.wa-btn:hover { opacity: .85; }
+
+@media (max-width: 900px) {
+  .main-layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; }
+  .content { padding: 1.5rem; }
+  .field-row { grid-template-columns: 1fr; }
+  .fotos-grid { grid-template-columns: repeat(2, 1fr); }
+  .fin-item-row { grid-template-columns: 1fr 120px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Bacacay <span>2784</span></div>
+    <div class="login-sub">Panel de administración</div>
+    <div class="login-field">
+      <label class="login-label">Email</label>
+      <input class="login-input" type="email" id="login-email" placeholder="tu@email.com"/>
+    </div>
+    <div class="login-field">
+      <label class="login-label">Contraseña</label>
+      <input class="login-input" type="password" id="login-pass" placeholder="••••••••"
+             onkeydown="if(event.key==='Enter') doLogin()"/>
+    </div>
+    <button class="login-btn" onclick="doLogin()">Ingresar</button>
+    <div class="login-err" id="login-err">Email o contraseña incorrectos.</div>
+  </div>
+</div>
+
+<!-- ══ ADMIN UI ══ -->
+<div id="admin-ui">
+  <div class="topbar">
+    <div class="topbar-logo">Bacacay <span>2784</span> — Admin</div>
+    <div class="topbar-right">
+      <span class="topbar-user" id="topbar-user"></span>
+      <a href="index.html" class="btn-sm btn-black" target="_blank">Ver landing ↗</a>
+      <button class="btn-sm btn-black" onclick="doLogout()">Salir</button>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">Informes</div>
+        <ul class="report-list" id="report-list"></ul>
+      </div>
+      <button class="btn-new-report" onclick="newReport()">+ Nuevo informe</button>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="content" id="content">
+      <div style="text-align:center;padding:4rem 0;color:#aaa">
+        <div style="font-size:2rem;margin-bottom:1rem">📋</div>
+        <div style="font-size:.9rem">Seleccioná un informe o creá uno nuevo</div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+const db = firebase.firestore();
+const storage = firebase.storage();
+const auth = firebase.auth();
+
+let allReports = [];
+let currentReportId = null;
+let currentFotos = [];
+let currentAxoUrl = null;
+let currentHeroUrl = null;
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(u => {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-ui').style.display = 'block';
+      document.getElementById('topbar-user').textContent = u.user.email;
+      loadReports();
+    })
+    .catch(e => {
+      document.getElementById('login-err').style.display = 'block';
+    });
+}
+
+function doLogout() {
+  auth.signOut().then(() => location.reload());
+}
+
+// ── LOAD REPORTS ──────────────────────────────────────────────────────────────
+async function loadReports() {
+  const snap = await db.collection('reports').orderBy('createdAt','asc').get();
+  allReports = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderSidebar();
+  if (allReports.length) selectReport(allReports[allReports.length - 1].id);
+}
+
+function renderSidebar() {
+  const list = document.getElementById('report-list');
+  list.innerHTML = allReports.map(r => `
+    <li class="report-list-item ${r.id === currentReportId ? 'active' : ''}"
+        onclick="selectReport('${r.id}')">
+      <div>
+        <div class="ril-num">#${String(r.numero).padStart(3,'0')}</div>
+        <div class="ril-title">${r.titulo}</div>
+        <div class="ril-date">${r.fecha}</div>
+      </div>
+    </li>
+  `).join('');
+}
+
+// ── SELECT REPORT ─────────────────────────────────────────────────────────────
+function selectReport(id) {
+  currentReportId = id;
+  const r = allReports.find(x => x.id === id);
+  currentFotos = r.fotos ? [...r.fotos] : [];
+  currentAxoUrl = r.axoUrl || null;
+  currentHeroUrl = r.heroUrl || null;
+  renderSidebar();
+  renderForm(r);
+}
+
+// ── NEW REPORT ────────────────────────────────────────────────────────────────
+async function newReport() {
+  const lastNum = allReports.length ? Math.max(...allReports.map(r => r.numero)) : -1;
+  const newNum  = lastNum + 1;
+  const last    = allReports.length ? allReports[allReports.length - 1] : null;
+
+  const newR = {
+    numero: newNum,
+    titulo: `Informe Nº ${newNum}`,
+    fecha: '',
+    etapa: last?.etapa || '',
+    pctGlobal: last?.pctGlobal || 0,
+    clima: { texto: 'Días lluvia: 0', sub: 'Sin impacto' },
+    progreso: last?.progreso
+      ? last.progreso.map(p => ({ ...p }))
+      : [
+          { nombre: 'Tareas Preliminares', val: 0, nota: '' },
+          { nombre: 'Estructura',          val: 0, nota: '' },
+          { nombre: 'Albañilería',         val: 0, nota: '' },
+          { nombre: 'Instalaciones',       val: 0, nota: '' },
+        ],
+    galeriaTitle: 'Lo que está sucediendo en obra',
+    fotos: [],
+    novedades: [{ fecha: '', texto: '' }],
+    financiero: last?.financiero
+      ? JSON.parse(JSON.stringify(last.financiero))
+      : { pagadoPct: 0, pagado: '$0', pendiente: '$0', total: '$0', items: [], hito: '' },
+    proximoInforme: '',
+    axoUrl: null,
+    heroUrl: null,
+    superficieTotal: last?.superficieTotal || 750,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  };
+
+  const ref = await db.collection('reports').add(newR);
+  newR.id = ref.id;
+  allReports.push(newR);
+  selectReport(ref.id);
+  toast('Nuevo informe creado');
+}
+
+// ── RENDER FORM ───────────────────────────────────────────────────────────────
+function renderForm(r) {
+  const content = document.getElementById('content');
+  const fin = r.financiero || {};
+
+  content.innerHTML = `
+    <div class="content-header">
+      <div class="content-title">${r.titulo} — ${r.fecha || 'sin fecha'}</div>
+      <div class="content-actions">
+        <a id="wa-btn-el" class="wa-btn" href="#" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.098.543 4.067 1.491 5.779L.057 23.854a.5.5 0 00.609.601l6.198-1.413A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.937 0-3.748-.524-5.303-1.433l-.38-.22-3.939.897.93-3.802-.243-.392A10 10 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+          </svg>
+          Enviar por WhatsApp
+        </a>
+        <button class="btn-sm btn-yellow" onclick="publishReport()">✓ Publicar informe</button>
+      </div>
+    </div>
+
+    <!-- DATOS GENERALES -->
+    <div class="form-section">
+      <div class="form-section-title">Datos generales</div>
+      <div class="field-row">
+        <div>
+          <label class="field-label">Título del informe</label>
+          <input class="field-input" id="f-titulo" value="${r.titulo}" placeholder="Informe Nº 2"/>
+        </div>
+        <div>
+          <label class="field-label">Fecha</label>
+          <input class="field-input" id="f-fecha" value="${r.fecha}" placeholder="Junio 2026"/>
+        </div>
+      </div>
+      <div class="field-row">
+        <div>
+          <label class="field-label">Etapa actual</label>
+          <input class="field-input" id="f-etapa" value="${r.etapa}" placeholder="Etapa 2: Estructura"/>
+        </div>
+        <div>
+          <label class="field-label">Avance global (%)</label>
+          <input class="field-input" type="number" id="f-pct" value="${r.pctGlobal}" min="0" max="100"/>
+        </div>
+      </div>
+      <div class="field-row">
+        <div>
+          <label class="field-label">Clima (texto)</label>
+          <input class="field-input" id="f-clima-txt" value="${r.clima?.texto || ''}" placeholder="Días lluvia: 3"/>
+        </div>
+        <div>
+          <label class="field-label">Clima (subtexto)</label>
+          <input class="field-input" id="f-clima-sub" value="${r.clima?.sub || ''}" placeholder="Progreso sin impacto"/>
+        </div>
+      </div>
+      <div class="field-row">
+        <div>
+          <label class="field-label">Superficie total (m²)</label>
+          <input class="field-input" type="number" id="f-superficie" value="${r.superficieTotal || 750}"/>
+        </div>
+        <div>
+          <label class="field-label">Fecha próximo informe</label>
+          <input class="field-input" type="date" id="f-proximo" value="${r.proximoInforme || ''}"/>
+        </div>
+      </div>
+      <div>
+        <label class="field-label">Título de galería</label>
+        <input class="field-input" id="f-gal-title" value="${r.galeriaTitle || ''}" placeholder="Lo que está sucediendo en obra"/>
+      </div>
+    </div>
+
+    <!-- IMAGEN HERO -->
+    <div class="form-section">
+      <div class="form-section-title">Imagen principal (hero)</div>
+      <img class="hero-preview" id="hero-preview-img"
+           src="${currentHeroUrl || ''}"
+           style="${currentHeroUrl ? '' : 'display:none'}"/>
+      <div style="font-size:.72rem;color:#888;margin-bottom:.75rem">
+        Por defecto se usa el render exterior de BYCLIZA. Podés reemplazarlo con otra imagen.
+      </div>
+      <input type="file" id="hero-file" accept="image/*" style="display:none" onchange="uploadHero(this)"/>
+      <div style="display:flex;gap:.75rem">
+        <button class="btn-sm btn-black" onclick="document.getElementById('hero-file').click()">
+          ${currentHeroUrl ? 'Cambiar imagen hero' : 'Subir imagen hero'}
+        </button>
+        ${currentHeroUrl ? '<button class="btn-sm btn-danger" onclick="removeHero()">Volver al render por defecto</button>' : ''}
+      </div>
+      <div class="upload-progress" id="hero-upload-bar">
+        <div class="upload-progress-fill" id="hero-upload-fill"></div>
+      </div>
+    </div>
+
+    <!-- AXONOMETRÍA -->
+    <div class="form-section">
+      <div class="form-section-title">Axonometría / Diagrama</div>
+      ${currentAxoUrl
+        ? `<img class="axo-preview" id="axo-preview-img" src="${currentAxoUrl}"/>`
+        : `<div style="font-size:.72rem;color:#888;margin-bottom:.75rem">
+             Actualmente se muestra el diagrama SVG por defecto.<br>
+             Podés reemplazarlo con una imagen (render, plano, Illustrator, etc.)
+           </div>`
+      }
+      <input type="file" id="axo-file" accept="image/*" style="display:none" onchange="uploadAxo(this)"/>
+      <div style="display:flex;gap:.75rem">
+        <button class="btn-sm btn-black" onclick="document.getElementById('axo-file').click()">
+          ${currentAxoUrl ? 'Cambiar imagen axonometría' : 'Subir imagen axonometría'}
+        </button>
+        ${currentAxoUrl ? '<button class="btn-sm btn-danger" onclick="removeAxo()">Volver al SVG por defecto</button>' : ''}
+      </div>
+      <div class="upload-progress" id="axo-upload-bar">
+        <div class="upload-progress-fill" id="axo-upload-fill"></div>
+      </div>
+    </div>
+
+    <!-- PROGRESO -->
+    <div class="form-section">
+      <div class="form-section-title">Avance por etapa</div>
+      <div id="progreso-items">
+        ${(r.progreso || []).map((p, i) => `
+          <div style="margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid #f0f0ec">
+            <div style="display:grid;grid-template-columns:1fr 60px;gap:1rem;align-items:center;margin-bottom:.5rem">
+              <input class="field-input" id="p-nom-${i}" value="${p.nombre}" placeholder="Nombre etapa"/>
+              <div class="progress-admin-num" id="p-val-disp-${i}">${p.val}%</div>
+            </div>
+            <input type="range" class="progress-admin-track" id="p-val-${i}"
+                   min="0" max="100" value="${p.val}"
+                   oninput="document.getElementById('p-val-disp-${i}').textContent=this.value+'%'"/>
+            <div style="margin-top:.5rem">
+              <input class="field-input" id="p-nota-${i}" value="${p.nota}" placeholder="Nota / observación"/>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- NOVEDADES -->
+    <div class="form-section">
+      <div class="form-section-title">Últimas novedades</div>
+      <div id="novedades-list">
+        ${(r.novedades || []).map((n, i) => `
+          <div class="novedad-item" id="nov-${i}">
+            <input class="field-input" id="nov-fecha-${i}" value="${n.fecha}" placeholder="15/06/2026"/>
+            <input class="field-input" id="nov-txt-${i}" value="${n.texto}" placeholder="Descripción de la novedad"/>
+            <button class="btn-icon" onclick="removeNovedad(${i})">✕</button>
+          </div>
+        `).join('')}
+      </div>
+      <button class="btn-add-novedad" onclick="addNovedad()">+ Agregar novedad</button>
+    </div>
+
+    <!-- FOTOS -->
+    <div class="form-section">
+      <div class="form-section-title">Fotos de obra</div>
+      <div class="foto-drop-zone" id="drop-zone"
+           onclick="document.getElementById('foto-file-input').click()"
+           ondragover="event.preventDefault();this.classList.add('dragover')"
+           ondragleave="this.classList.remove('dragover')"
+           ondrop="handleDrop(event)">
+        <div class="foto-drop-label">
+          <strong>Hacé clic o arrastrá</strong> las fotos acá<br/>
+          <span style="font-size:.62rem">JPG, PNG — múltiple selección</span>
+        </div>
+      </div>
+      <input type="file" id="foto-file-input" accept="image/*" multiple onchange="handleFotoFiles(this.files)"/>
+      <div class="upload-progress" id="foto-upload-bar">
+        <div class="upload-progress-fill" id="foto-upload-fill"></div>
+      </div>
+      <div class="fotos-grid" id="fotos-grid"></div>
+    </div>
+
+    <!-- FINANCIERO -->
+    <div class="form-section">
+      <div class="form-section-title">Panel financiero</div>
+      <div class="field-row">
+        <div>
+          <label class="field-label">% Pagado</label>
+          <input class="field-input" type="number" id="fin-pct" value="${fin.pagadoPct || 0}" min="0" max="100"/>
+        </div>
+        <div>
+          <label class="field-label">Total del proyecto</label>
+          <input class="field-input" id="fin-total" value="${fin.total || ''}" placeholder="$6.000.000"/>
+        </div>
+      </div>
+      <div class="field-row">
+        <div>
+          <label class="field-label">Monto pagado</label>
+          <input class="field-input" id="fin-pagado" value="${fin.pagado || ''}" placeholder="$3.600.000"/>
+        </div>
+        <div>
+          <label class="field-label">Monto pendiente</label>
+          <input class="field-input" id="fin-pendiente" value="${fin.pendiente || ''}" placeholder="$2.400.000"/>
+        </div>
+      </div>
+      <div style="margin-bottom:1rem">
+        <label class="field-label">Próximo hito</label>
+        <input class="field-input" id="fin-hito" value="${fin.hito || ''}" placeholder="Colado de losa — Agosto 2026"/>
+      </div>
+      <div class="field-label" style="margin-bottom:.75rem">Ítems del detalle</div>
+      <div id="fin-items-list">
+        ${(fin.items || []).map((it, i) => `
+          <div class="fin-item-row" id="fin-item-${i}">
+            <input class="field-input" id="fi-label-${i}" value="${it.label}" placeholder="Concepto"/>
+            <input class="field-input" id="fi-valor-${i}" value="${it.valor}" placeholder="$0"/>
+            <label class="checkbox-label">
+              <input type="checkbox" id="fi-paid-${i}" ${it.pagado ? 'checked' : ''}/>
+              Pagado
+            </label>
+            <button class="btn-icon" onclick="removeFinItem(${i})">✕</button>
+          </div>
+        `).join('')}
+      </div>
+      <button class="btn-add-novedad" onclick="addFinItem()">+ Agregar ítem</button>
+    </div>
+  `;
+
+  renderFotosGrid();
+  updateWaBtn(r);
+}
+
+// ── FOTOS ─────────────────────────────────────────────────────────────────────
+function renderFotosGrid() {
+  const grid = document.getElementById('fotos-grid');
+  if (!grid) return;
+  grid.innerHTML = currentFotos.map((f, i) => `
+    <div class="foto-thumb-wrap">
+      <img class="foto-thumb" src="${f.src}" alt="${f.caption}"/>
+      <div class="foto-thumb-actions">
+        <button class="btn-foto-del" onclick="removeFoto(${i})">Eliminar</button>
+      </div>
+      <input class="foto-caption-input" id="foto-cap-${i}"
+             value="${f.caption}" placeholder="Caption de la foto"/>
+    </div>
+  `).join('');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('dragover');
+  handleFotoFiles(e.dataTransfer.files);
+}
+
+async function handleFotoFiles(files) {
+  const bar = document.getElementById('foto-upload-bar');
+  const fill = document.getElementById('foto-upload-fill');
+  bar.style.display = 'block';
+  const arr = Array.from(files);
+  for (let i = 0; i < arr.length; i++) {
+    fill.style.width = ((i / arr.length) * 100) + '%';
+    const url = await uploadToStorage(arr[i], `reports/${currentReportId}/fotos/${Date.now()}_${arr[i].name}`);
+    currentFotos.push({ src: url, caption: arr[i].name.replace(/\.[^.]+$/, '') });
+  }
+  fill.style.width = '100%';
+  setTimeout(() => { bar.style.display = 'none'; fill.style.width = '0'; }, 600);
+  renderFotosGrid();
+  toast(`${arr.length} foto${arr.length > 1 ? 's' : ''} subida${arr.length > 1 ? 's' : ''}`);
+}
+
+function removeFoto(i) {
+  currentFotos.splice(i, 1);
+  renderFotosGrid();
+}
+
+// ── AXO & HERO UPLOAD ─────────────────────────────────────────────────────────
+async function uploadAxo(input) {
+  const file = input.files[0]; if (!file) return;
+  const bar = document.getElementById('axo-upload-bar');
+  const fill = document.getElementById('axo-upload-fill');
+  bar.style.display = 'block'; fill.style.width = '50%';
+  currentAxoUrl = await uploadToStorage(file, `reports/${currentReportId}/axo_${Date.now()}`);
+  fill.style.width = '100%';
+  setTimeout(() => { bar.style.display = 'none'; }, 500);
+  toast('Axonometría actualizada');
+  selectReport(currentReportId); // re-render
+}
+
+function removeAxo() {
+  currentAxoUrl = null;
+  selectReport(currentReportId);
+}
+
+async function uploadHero(input) {
+  const file = input.files[0]; if (!file) return;
+  const bar = document.getElementById('hero-upload-bar');
+  const fill = document.getElementById('hero-upload-fill');
+  bar.style.display = 'block'; fill.style.width = '50%';
+  currentHeroUrl = await uploadToStorage(file, `reports/${currentReportId}/hero_${Date.now()}`);
+  fill.style.width = '100%';
+  setTimeout(() => { bar.style.display = 'none'; }, 500);
+  document.getElementById('hero-preview-img').src = currentHeroUrl;
+  document.getElementById('hero-preview-img').style.display = 'block';
+  toast('Imagen hero actualizada');
+}
+
+function removeHero() {
+  currentHeroUrl = null;
+  selectReport(currentReportId);
+}
+
+// ── STORAGE UPLOAD ────────────────────────────────────────────────────────────
+function uploadToStorage(file, path) {
+  return new Promise((resolve, reject) => {
+    const ref = storage.ref(path);
+    const task = ref.put(file);
+    task.on('state_changed',
+      null,
+      reject,
+      () => task.snapshot.ref.getDownloadURL().then(resolve)
+    );
+  });
+}
+
+// ── NOVEDADES ─────────────────────────────────────────────────────────────────
+let novedadCount = 0;
+function addNovedad() {
+  const list = document.getElementById('novedades-list');
+  const i = list.querySelectorAll('.novedad-item').length;
+  const div = document.createElement('div');
+  div.className = 'novedad-item'; div.id = `nov-${i}`;
+  div.innerHTML = `
+    <input class="field-input" id="nov-fecha-${i}" placeholder="15/06/2026"/>
+    <input class="field-input" id="nov-txt-${i}" placeholder="Descripción"/>
+    <button class="btn-icon" onclick="this.closest('.novedad-item').remove()">✕</button>
+  `;
+  list.appendChild(div);
+}
+function removeNovedad(i) {
+  document.getElementById(`nov-${i}`)?.remove();
+}
+
+// ── FINANCIERO ITEMS ──────────────────────────────────────────────────────────
+function addFinItem() {
+  const list = document.getElementById('fin-items-list');
+  const i = list.querySelectorAll('.fin-item-row').length;
+  const div = document.createElement('div');
+  div.className = 'fin-item-row'; div.id = `fin-item-${i}`;
+  div.innerHTML = `
+    <input class="field-input" id="fi-label-${i}" placeholder="Concepto"/>
+    <input class="field-input" id="fi-valor-${i}" placeholder="$0"/>
+    <label class="checkbox-label"><input type="checkbox" id="fi-paid-${i}"/> Pagado</label>
+    <button class="btn-icon" onclick="this.closest('.fin-item-row').remove()">✕</button>
+  `;
+  list.appendChild(div);
+}
+function removeFinItem(i) {
+  document.getElementById(`fin-item-${i}`)?.remove();
+}
+
+// ── COLLECT FORM DATA ─────────────────────────────────────────────────────────
+function collectFormData() {
+  // Captions actualizados
+  document.querySelectorAll('[id^="foto-cap-"]').forEach((el, i) => {
+    if (currentFotos[i]) currentFotos[i].caption = el.value;
+  });
+
+  // Progreso
+  const progItems = document.querySelectorAll('[id^="p-nom-"]');
+  const progreso = Array.from(progItems).map((el, i) => ({
+    nombre: el.value,
+    val: parseInt(document.getElementById(`p-val-${i}`)?.value || 0),
+    nota: document.getElementById(`p-nota-${i}`)?.value || '',
+  }));
+
+  // Novedades
+  const novItems = document.querySelectorAll('.novedad-item');
+  const novedades = Array.from(novItems).map((row, i) => {
+    const idx = row.id.replace('nov-','');
+    return {
+      fecha: document.getElementById(`nov-fecha-${idx}`)?.value || '',
+      texto: document.getElementById(`nov-txt-${idx}`)?.value || '',
+    };
+  }).filter(n => n.texto);
+
+  // Fin items
+  const finRows = document.querySelectorAll('.fin-item-row');
+  const finItems = Array.from(finRows).map((row, i) => {
+    const idx = row.id.replace('fin-item-','');
+    return {
+      label: document.getElementById(`fi-label-${idx}`)?.value || '',
+      valor: document.getElementById(`fi-valor-${idx}`)?.value || '',
+      pagado: document.getElementById(`fi-paid-${idx}`)?.checked || false,
+    };
+  });
+
+  return {
+    titulo: document.getElementById('f-titulo')?.value || '',
+    fecha: document.getElementById('f-fecha')?.value || '',
+    etapa: document.getElementById('f-etapa')?.value || '',
+    pctGlobal: parseInt(document.getElementById('f-pct')?.value || 0),
+    clima: {
+      texto: document.getElementById('f-clima-txt')?.value || '',
+      sub: document.getElementById('f-clima-sub')?.value || '',
+    },
+    superficieTotal: parseInt(document.getElementById('f-superficie')?.value || 750),
+    proximoInforme: document.getElementById('f-proximo')?.value || '',
+    galeriaTitle: document.getElementById('f-gal-title')?.value || '',
+    progreso,
+    novedades,
+    fotos: currentFotos,
+    axoUrl: currentAxoUrl,
+    heroUrl: currentHeroUrl,
+    financiero: {
+      pagadoPct: parseInt(document.getElementById('fin-pct')?.value || 0),
+      total: document.getElementById('fin-total')?.value || '',
+      pagado: document.getElementById('fin-pagado')?.value || '',
+      pendiente: document.getElementById('fin-pendiente')?.value || '',
+      hito: document.getElementById('fin-hito')?.value || '',
+      items: finItems,
+    },
+  };
+}
+
+// ── PUBLISH ───────────────────────────────────────────────────────────────────
+async function publishReport() {
+  if (!currentReportId) return;
+  const data = collectFormData();
+  data.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+  await db.collection('reports').doc(currentReportId).update(data);
+  // Update local
+  const idx = allReports.findIndex(r => r.id === currentReportId);
+  if (idx >= 0) allReports[idx] = { ...allReports[idx], ...data };
+  renderSidebar();
+  toast('✓ Informe publicado');
+  updateWaBtn(allReports[idx]);
+}
+
+// ── WHATSAPP ──────────────────────────────────────────────────────────────────
+function updateWaBtn(r) {
+  const btn = document.getElementById('wa-btn-el');
+  if (!btn) return;
+  const landingUrl = window.location.origin + window.location.pathname.replace('admin.html','index.html');
+  const msg = encodeURIComponent(
+    `🏗 Nuevo informe de avance disponible — Bacacay 2784\n${r.titulo || ''} · ${r.fecha || ''}\nAvance global: ${r.pctGlobal || 0}%\n\nVerlo acá: ${landingUrl}`
+  );
+  btn.href = `https://wa.me/?text=${msg}`;
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
