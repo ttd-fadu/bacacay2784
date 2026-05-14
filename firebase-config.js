@@ -1,9 +1,3 @@
-// ══════════════════════════════════════════════
-//  BACACAY 2784 — Firebase Configuration
-//  Reemplazá estos valores con los de tu proyecto
-//  Firebase Console → Project Settings → Your apps
-// ══════════════════════════════════════════════
-
 const FIREBASE_CONFIG = {
   apiKey:            "AIzaSyBWkrGK26Puv6e0ECJRO0BFjLMGsPJ6CvM",
   authDomain:        "bacacay2784.firebaseapp.com",
