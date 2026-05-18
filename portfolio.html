@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>espacio humo — Proyectos</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet"/>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Poppins',sans-serif;color:#0a0a0a;background:#fff;display:flex}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:280px;flex-shrink:0;
+  height:100vh;
+  padding:3rem 2.5rem;
+  display:flex;flex-direction:column;
+  justify-content:space-between;
+  border-right:1px solid #e8e8e8;
+  position:relative;z-index:10;
+  background:#fff;
+}
+
+.sidebar-brand{
+  font-size:1.1rem;font-weight:700;
+  letter-spacing:-.01em;
+  color:#0a0a0a;
+  margin-bottom:3rem;
+  line-height:1;
+}
+.sidebar-brand span{color:#002FA7}
+
+nav{display:flex;flex-direction:column;gap:.1rem;}
+
+.nav-link{
+  font-size:1.45rem;font-weight:700;
+  letter-spacing:-.02em;
+  color:#0a0a0a;text-decoration:none;
+  padding:.15rem 0;
+  transition:opacity .2s;
+  line-height:1.3;
+}
+.nav-link:hover{opacity:.4}
+.nav-link.active{color:#002FA7}
+.nav-link.portal{color:#0a0a0a}
+
+.sidebar-contact{
+  font-size:.7rem;
+  line-height:2;
+  color:#0a0a0a;
+}
+.sidebar-contact a{
+  color:#002FA7;text-decoration:none;
+  transition:opacity .2s;
+}
+.sidebar-contact a:hover{opacity:.6}
+
+/* ── GRID ── */
+.grid-wrap{
+  flex:1;
+  height:100vh;
+  overflow-y:auto;
+  padding:2rem 2rem 4rem;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:.75rem;
+}
+
+.proj-card{
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+}
+.proj-card-img{
+  width:100%;
+  aspect-ratio:4/3;
+  object-fit:cover;
+  display:block;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+  background:#e8e8e4;
+}
+.proj-card:hover .proj-card-img{transform:scale(1.04)}
+
+.proj-card-info{
+  padding:.6rem 0 1rem;
+}
+.proj-tipo{
+  font-size:.78rem;font-weight:300;
+  font-style:italic;
+  color:#0a0a0a;
+  line-height:1.3;
+}
+.proj-nombre{
+  font-size:.78rem;font-weight:300;
+  font-style:italic;
+  color:#0a0a0a;
+}
+.proj-year{
+  font-size:.78rem;font-weight:700;
+  color:#0a0a0a;
+}
+
+/* Lightbox */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1000;align-items:center;justify-content:center;flex-direction:column}
+#lightbox.open{display:flex}
+#lightbox img{max-width:90vw;max-height:85vh;object-fit:contain}
+#lb-caption{color:rgba(255,255,255,.6);font-size:.7rem;letter-spacing:.1em;margin-top:1rem;text-transform:uppercase}
+#lb-close{position:absolute;top:1.5rem;right:1.5rem;background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;opacity:.5;transition:opacity .2s}
+#lb-close:hover{opacity:1}
+
+@media(max-width:900px){
+  html,body{overflow:auto}
+  .sidebar{width:100%;height:auto;border-right:none;border-bottom:1px solid #e8e8e8;padding:2rem}
+  body{flex-direction:column}
+  .grid-wrap{height:auto;overflow:visible;padding:1.5rem}
+  .grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div>
+    <div class="sidebar-brand">espacio <span>humo</span></div>
+    <nav>
+      <a class="nav-link active" href="portfolio.html">proyectos</a>
+      <a class="nav-link" href="#">nosotros</a>
+      <a class="nav-link" href="mailto:espaciohumo@gmail.com">contacto</a>
+      <a class="nav-link portal" href="login.html">portal clientes</a>
+    </nav>
+  </div>
+  <div class="sidebar-contact">
+    <a href="mailto:espaciohumo@gmail.com">espaciohumo@gmail.com</a><br/>
+    <a href="https://wa.me/5491169796742">+54 9 11 6979 6742</a><br/>
+    <a href="https://www.instagram.com/espaciohumo/" target="_blank">ig: espaciohumo</a>
+  </div>
+</aside>
+
+<div class="grid-wrap">
+  <div class="grid" id="portfolio-grid">
+    <!-- Se carga dinámicamente -->
+  </div>
+</div>
+
+<div id="lightbox" onclick="closeLb()">
+  <button id="lb-close" onclick="closeLb()">×</button>
+  <img id="lb-img" src="" alt=""/>
+  <div id="lb-caption"></div>
+</div>
+
+<script src="firebase-config.js"></script>
+<script>
+// Datos de ejemplo — se reemplazarán con datos reales de Firestore
+const EJEMPLO = [
+  { img:'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800', tipo:'interiorismo', nombre:'Palermo', year:'2024' },
+  { img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800', tipo:'arquitectura', nombre:'San Telmo', year:'2023' },
+  { img:'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=800', tipo:'diseño comercial', nombre:'Villa Crespo', year:'2024' },
+  { img:'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800', tipo:'vivienda', nombre:'Belgrano', year:'2022' },
+  { img:'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=800', tipo:'interiorismo', nombre:'Núñez', year:'2023' },
+  { img:'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800', tipo:'reforma', nombre:'Recoleta', year:'2024' },
+  { img:'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800', tipo:'arquitectura', nombre:'Caballito', year:'2022' },
+  { img:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800', tipo:'diseño comercial', nombre:'Colegiales', year:'2023' },
+  { img:'https://images.unsplash.com/photo-1565182999561-18d7dc61c393?w=800', tipo:'vivienda', nombre:'Almagro', year:'2024' },
+];
+
+firebase.initializeApp(FIREBASE_CONFIG);
+const db = firebase.firestore();
+
+async function loadPortfolio(){
+  const grid = document.getElementById('portfolio-grid');
+  try{
+    const snap = await db.collection('portfolio').orderBy('order','asc').get();
+    const items = snap.empty ? EJEMPLO : snap.docs.map(d=>d.data());
+    grid.innerHTML = items.map((p,i)=>`
+      <div class="proj-card" onclick="openLb('${p.img||p.coverUrl||''}','${(p.nombre||p.name||'')} · ${p.year||''}')">
+        <img class="proj-card-img" src="${p.img||p.coverUrl||''}" alt="${p.nombre||''}" loading="${i<6?'eager':'lazy'}"/>
+        <div class="proj-card-info">
+          <div class="proj-tipo">${p.tipo||p.categoria||'proyecto'}</div>
+          <div class="proj-nombre">${p.nombre||p.name||''}</div>
+          <div class="proj-year">${p.year||p.año||''}</div>
+        </div>
+      </div>`).join('');
+  }catch(e){
+    grid.innerHTML = EJEMPLO.map((p,i)=>`
+      <div class="proj-card" onclick="openLb('${p.img}','${p.nombre} · ${p.year}')">
+        <img class="proj-card-img" src="${p.img}" alt="${p.nombre}" loading="${i<6?'eager':'lazy'}"/>
+        <div class="proj-card-info">
+          <div class="proj-tipo">${p.tipo}</div>
+          <div class="proj-nombre">${p.nombre}</div>
+          <div class="proj-year">${p.year}</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function openLb(src,caption){
+  document.getElementById('lb-img').src=src;
+  document.getElementById('lb-caption').textContent=caption;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLb(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLb();});
+
+loadPortfolio();
+</script>
+</body>
+</html>
