@@ -150,8 +150,8 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f4f4f2;
     <span class="topbar-project" id="topbar-project">Cargando...</span>
   </div>
   <div class="topbar-right">
-    <a href="admin.html" class="btn-sm btn-ghost">Proyectos</a>
-    <a id="view-link" href="login.html" class="btn-sm btn-ghost" target="_blank">Ver como cliente</a>
+    <button class="btn-sm btn-ghost" onclick="goBack()">Proyectos</button>
+    <a id="view-link" href="#" class="btn-sm btn-ghost" target="_blank" onclick="openClientView(event)">Ver como cliente</a>
     <button class="btn-sm btn-ghost" onclick="doLogout()">Salir</button>
   </div>
 </div>
@@ -238,7 +238,7 @@ auth.onAuthStateChanged(async user => {
   await loadProject();
 });
 
-function doLogout(){ auth.signOut().then(()=>{ window.location.href='admin.html'; }); }
+function doLogout(){ auth.signOut().then(()=>{ window.location.replace('admin.html'); }); }
 
 // ── PROJECT ───────────────────────────────────────────────────────────────────
 async function loadProject(){
