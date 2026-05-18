@@ -14,12 +14,14 @@ body{background:#fafafa;color:#0a0a0a;font-family:'Helvetica Neue',Helvetica,Ari
 :root{--accent:#002FA7;--border:#d0d0cc;--gray:#f4f4f2}
 
 /* LOADING */
-#loading-screen{position:fixed;inset:0;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .6s ease}
+#loading-screen{position:fixed;inset:0;background:#002FA7;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease}
 #loading-screen.hide{opacity:0;pointer-events:none}
-.loading-logo{font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:-.01em;margin-bottom:1rem}
-.loading-bar-track{width:160px;height:2px;background:rgba(255,255,255,.15);overflow:hidden}
-.loading-bar-fill{height:100%;background:var(--accent);animation:loadBar 1.4s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes loadBar{from{width:0}to{width:100%}}
+.loading-logo{font-size:clamp(2rem,6vw,4rem);font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:1.5rem;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
+.loading-dots{display:flex;gap:.5rem}
+.loading-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);animation:dotPulse 1.4s ease-in-out infinite}
+.loading-dot:nth-child(2){animation-delay:.2s}
+.loading-dot:nth-child(3){animation-delay:.4s}
+@keyframes dotPulse{0%,80%,100%{background:rgba(255,255,255,.25);transform:scale(.8)}40%{background:#fff;transform:scale(1)}}
 
 /* TOPBAR */
 .topbar{background:#0a0a0a;padding:0 5vw;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--accent)}
@@ -200,7 +202,11 @@ footer .f-brand{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.6);lett
 
 <div id="loading-screen">
   <div class="loading-logo">espacio humo</div>
-  <div style="margin-top:1rem"><div class="loading-bar-track"><div class="loading-bar-fill"></div></div></div>
+  <div class="loading-dots">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
 </div>
 
 <div id="main-content" style="display:none">
@@ -461,12 +467,12 @@ let planosCache    = {};
 
 // ── AUTH CHECK ────────────────────────────────────────────────────────────────
 auth.onAuthStateChanged(async user => {
-  if(!user){ window.location.href='login.html'; return; }
-  if(!PROJECT_ID){ window.location.href='login.html'; return; }
+  if(!user){ window.location.replace('login.html'); return; }
+  if(!PROJECT_ID){ window.location.replace('login.html'); return; }
   await init();
 });
 
-function doLogout(){ auth.signOut().then(()=>{ window.location.href='login.html'; }); }
+function doLogout(){ auth.signOut().then(()=>{ window.location.replace('login.html'); }); }
 
 async function init(){
   try{
