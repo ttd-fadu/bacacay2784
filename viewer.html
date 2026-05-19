@@ -466,8 +466,25 @@ let rendersCache   = {};
 let planosCache    = {};
 
 // ── AUTH CHECK ────────────────────────────────────────────────────────────────
+// Viewer: no verifica quien es el usuario, solo que el PROJECT_ID exista
+// El acceso queda controlado por la contrasena del login
 auth.onAuthStateChanged(async user => {
-  if(!user){ window.location.replace('login.html'); return; }
+  if(!user){
+    // No hay sesion — verificar si el PROJECT_ID es valido antes de redirigir
+    if(!PROJECT_ID){ window.location.replace('login.html'); return; }
+    // Intentar cargar el proyecto sin auth (lectura publica si las reglas lo permiten)
+    // Si falla, redirigir al login
+    try{
+      const doc = await db.collection('projects').doc(PROJECT_ID).get();
+      if(!doc.exists){ window.location.replace('login.html'); return; }
+      currentProject = {id:doc.id,...doc.data()};
+      // Continuar sin auth — solo lectura
+      await loadContent();
+    }catch(e){
+      window.location.replace('login.html');
+    }
+    return;
+  }
   if(!PROJECT_ID){ window.location.replace('login.html'); return; }
   await init();
 });
