@@ -7,7 +7,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;color:#0a0a0a;min-height:100vh}
@@ -16,8 +15,7 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
 /* LOGIN */
 #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--klein)}
 .login-box{width:100%;max-width:380px;padding:3rem;background:#fff;border-bottom:4px solid var(--terra)}
-.login-logo{text-align:center;margin-bottom:2rem;font-family:'Poppins',sans-serif;font-size:1.4rem;font-weight:700;color:#fff}
-.login-title{font-family:'Poppins',sans-serif;font-size:1.2rem;font-weight:700;color:#0a0a0a;margin-bottom:2rem;text-align:center}
+.login-title{font-size:1.2rem;font-weight:700;color:#0a0a0a;margin-bottom:2rem;text-align:center}
 .fl{display:block;font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:#888;font-weight:700;margin-bottom:.35rem;margin-top:1.2rem}
 .fi,.fsel,.fta{width:100%;padding:.65rem .8rem;border:1px solid var(--border);color:#0a0a0a;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .2s;background:#fff}
 .fi:focus,.fsel:focus,.fta:focus{border-color:var(--klein)}
@@ -29,67 +27,64 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
 /* ADMIN */
 #admin-ui{display:none}
 .topbar{background:var(--klein);padding:0 2.5rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:2px solid var(--terra)}
-.topbar-logo{font-family:'Poppins',sans-serif;font-size:.95rem;font-weight:700;color:#fff;letter-spacing:-.01em}
+.topbar-logo{font-size:.95rem;font-weight:700;color:#fff;letter-spacing:-.01em}
 .topbar-right{display:flex;align-items:center;gap:1rem}
 .topbar-user{font-size:.58rem;color:rgba(255,255,255,.4);letter-spacing:.08em}
 .btn-top{padding:.38rem .85rem;font-size:.6rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2)}
 .btn-top:hover{background:rgba(255,255,255,.2);color:#fff}
 
 .main{max-width:1200px;margin:0 auto;padding:3rem 2.5rem}
-.page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:3rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
 .page-title{font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
-.page-sub{font-size:.68rem;color:#888;margin-top:.2rem;letter-spacing:.04em}
+.page-sub{font-size:.68rem;color:#888;margin-top:.2rem}
 .btn-primary{padding:.7rem 1.5rem;background:var(--klein);color:#fff;font-size:.68rem;letter-spacing:.12em;font-weight:700;text-transform:uppercase;border:none;cursor:pointer;transition:background .2s}
 .btn-primary:hover{background:var(--terra)}
 .btn-secondary{padding:.7rem 1.5rem;background:transparent;color:#0a0a0a;font-size:.68rem;letter-spacing:.12em;font-weight:700;text-transform:uppercase;border:1px solid var(--border);cursor:pointer;transition:all .2s}
 .btn-secondary:hover{border-color:#0a0a0a;background:#0a0a0a;color:#fff}
-.btn-danger-sm{padding:.35rem .7rem;font-size:.58rem;letter-spacing:.08em;font-weight:700;text-transform:uppercase;border:1px solid var(--terra);background:transparent;color:var(--terra);cursor:pointer;transition:all .2s}
-.btn-danger-sm:hover{background:var(--terra);color:#fff}
 
-/* CONFIG SECTION */
-.config-section{background:#fff;border:1px solid var(--border);padding:1.5rem;margin-bottom:2rem}
-.config-title{font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem}
+/* CONFIG */
+.config-card{background:#fff;border:1px solid var(--border);padding:1.5rem;margin-bottom:2rem}
+.config-title{font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;color:#0a0a0a}
 .config-title::after{content:'';flex:1;height:1px;background:#eee}
-.img-drop{border:2px dashed var(--border);padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:.5rem}
+.img-drop{border:2px dashed var(--border);padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:.75rem}
 .img-drop:hover,.img-drop.over{border-color:var(--klein);background:#f0f4ff}
 .img-drop-label{font-size:.75rem;color:#888}
 .img-drop-label strong{color:#0a0a0a}
 .img-prev{width:100%;max-height:200px;object-fit:cover;display:none;border:1px solid var(--border);margin-bottom:.75rem}
+.btn-row{display:flex;gap:.75rem;flex-wrap:wrap}
 
-/* PROJECT CARDS */
+/* PROJECTS */
 .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem}
 .project-card{background:#fff;border:1px solid var(--border);overflow:hidden;transition:box-shadow .2s,transform .2s}
-.project-card:hover{box-shadow:0 8px 32px rgba(0,47,167,.1);transform:translateY(-2px)}
+.project-card:hover{box-shadow:0 6px 24px rgba(0,47,167,.1);transform:translateY(-2px)}
 .project-color-bar{height:4px}
 .project-card-img{width:100%;height:180px;object-fit:cover;display:block;background:#e8e8e4}
 .project-card-img-placeholder{width:100%;height:180px;background:linear-gradient(135deg,var(--klein) 0%,#001a6e 100%);display:flex;align-items:center;justify-content:center}
-.placeholder-label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.3);font-weight:700}
+.placeholder-label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.25);font-weight:700}
 .project-card-body{padding:1.25rem}
 .project-card-tag{font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-bottom:.4rem}
-.tag-active{color:var(--klein)}
-.tag-presentation{color:var(--terra)}
-.tag-completed{color:#888}
-.project-card-title{font-size:1.1rem;font-weight:700;letter-spacing:-.01em;margin-bottom:.2rem}
+.tag-active{color:var(--klein)}.tag-presentation{color:var(--terra)}.tag-completed{color:#888}
+.project-card-title{font-size:1.05rem;font-weight:700;letter-spacing:-.01em;margin-bottom:.2rem}
 .project-card-address{font-size:.72rem;color:#888;margin-bottom:1rem}
 .project-card-footer{display:flex;justify-content:space-between;align-items:center;padding-top:.75rem;border-top:1px solid var(--border)}
 .project-stats{display:flex;gap:1.5rem}
 .pstat{text-align:center}
-.pstat-num{font-size:1.2rem;font-weight:700;display:block;line-height:1}
+.pstat-num{font-size:1.1rem;font-weight:700;display:block;line-height:1}
 .pstat-label{font-size:.52rem;letter-spacing:.1em;color:#888;text-transform:uppercase}
 .card-actions{display:flex;gap:.4rem;flex-wrap:wrap}
 .btn-card{padding:.32rem .65rem;font-size:.56rem;letter-spacing:.08em;font-weight:700;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s}
 .btn-card-blue{background:var(--klein);color:#fff}.btn-card-blue:hover{background:#001a6e}
 .btn-card-edit{background:transparent;color:var(--terra);border:1px solid var(--terra)}.btn-card-edit:hover{background:var(--terra);color:#fff}
-.btn-card-del{background:transparent;color:#aaa;border:1px solid #ddd}.btn-card-del:hover{background:#ff6b6b;color:#fff;border-color:#ff6b6b}
-.empty-state{grid-column:1/-1;text-align:center;padding:5rem 2rem;color:#aaa}
+.btn-card-del{background:transparent;color:#bbb;border:1px solid #ddd}.btn-card-del:hover{background:#ff6b6b;color:#fff;border-color:#ff6b6b}
+.empty-state{grid-column:1/-1;text-align:center;padding:5rem 2rem;color:#aaa;font-size:.88rem}
 
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center;padding:1rem}
 .modal-overlay.open{display:flex}
-.modal{background:#fff;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;border-top:4px solid var(--klein)}
+.modal{background:#fff;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border-top:4px solid var(--klein)}
 .modal-header{padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:10}
-.modal-title{font-size:1.1rem;font-weight:700}
-.btn-close{width:32px;height:32px;background:var(--gray);border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-title{font-size:1.05rem;font-weight:700}
+.btn-close{width:32px;height:32px;background:var(--gray);border:none;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .btn-close:hover{background:var(--terra);color:#fff}
 .modal-body{padding:2rem}
 .modal-footer{padding:1.25rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.75rem;position:sticky;bottom:0;background:#fff}
@@ -107,8 +102,9 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
 .cred-item:last-child{border-bottom:none}
 .cred-val{font-family:monospace;font-size:.85rem;font-weight:700;color:var(--klein)}
 .section-divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0}
+.cover-prev-img{width:100%;max-height:140px;object-fit:cover;display:none;border:1px solid var(--border);margin-bottom:.5rem}
 
-.toast{position:fixed;bottom:2rem;right:2rem;background:var(--black,#0a0a0a);color:#fff;padding:.9rem 1.5rem;font-size:.72rem;letter-spacing:.08em;font-weight:700;text-transform:uppercase;border-left:3px solid var(--klein);opacity:0;transform:translateY(8px);transition:all .3s;z-index:9999;pointer-events:none}
+.toast{position:fixed;bottom:2rem;right:2rem;background:#0a0a0a;color:#fff;padding:.9rem 1.5rem;font-size:.72rem;letter-spacing:.08em;font-weight:700;text-transform:uppercase;border-left:3px solid var(--klein);opacity:0;transform:translateY(8px);transition:all .3s;z-index:9999;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
 
 @media(max-width:700px){.projects-grid{grid-template-columns:1fr}.field-row{grid-template-columns:1fr}}
@@ -125,7 +121,7 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
     <label class="fl">Contrasena</label>
     <input class="fi" type="password" id="l-pass" placeholder="••••••••"
            onkeydown="if(event.key==='Enter')doLogin()"/>
-    <button class="login-btn" onclick="doLogin()">Ingresar al estudio</button>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Ingresar</button>
     <div class="login-err" id="l-err">Email o contrasena incorrectos.</div>
   </div>
 </div>
@@ -140,12 +136,11 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
       <button class="btn-top" onclick="doLogout()">Salir</button>
     </div>
   </div>
-
   <div class="main">
 
-    <!-- CONFIG HOME -->
-    <div class="config-section">
-      <div class="config-title">Imagen de fondo — Inicio</div>
+    <!-- HOME BG -->
+    <div class="config-card">
+      <div class="config-title">Imagen de fondo — Pagina de inicio</div>
       <img id="home-bg-prev" class="img-prev" src="" alt=""/>
       <div class="img-drop" id="home-bg-drop"
            onclick="document.getElementById('home-bg-file').click()"
@@ -155,13 +150,13 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
         <div class="img-drop-label"><strong>Clic o arrastra</strong> la imagen de fondo del inicio</div>
       </div>
       <input type="file" id="home-bg-file" accept="image/*" style="display:none" onchange="handleHomeBgFile(this)"/>
-      <div style="display:flex;gap:.75rem;margin-top:.5rem">
-        <button class="btn-primary" onclick="saveHomeBg()">Guardar imagen de fondo</button>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="saveHomeBg()">Guardar imagen</button>
         <button class="btn-secondary" id="remove-bg-btn" style="display:none" onclick="removeHomeBg()">Quitar imagen</button>
       </div>
     </div>
 
-    <!-- PROYECTOS -->
+    <!-- PROJECTS -->
     <div class="page-header">
       <div>
         <div class="page-title">Proyectos</div>
@@ -169,7 +164,6 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
       </div>
       <button class="btn-primary" onclick="openNewProject()">+ Crear proyecto</button>
     </div>
-
     <div class="projects-grid" id="projects-grid">
       <div class="empty-state">Cargando proyectos...</div>
     </div>
@@ -186,7 +180,7 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
     <div class="modal-body">
       <div class="field-col">
         <label class="fl">Imagen de portada</label>
-        <img id="cover-prev" src="" style="display:none;width:100%;max-height:140px;object-fit:cover;border:1px solid var(--border);margin-bottom:.5rem"/>
+        <img id="cover-prev" class="cover-prev-img" src="" alt=""/>
         <div class="img-drop" id="cover-drop"
              onclick="document.getElementById('cover-file').click()"
              ondragover="event.preventDefault();this.classList.add('over')"
@@ -212,16 +206,16 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
         </div>
       </div>
       <div class="field-col">
-        <label class="fl">Descripcion breve</label>
+        <label class="fl">Descripcion</label>
         <textarea class="fta" id="m-desc" placeholder="Descripcion del proyecto..."></textarea>
       </div>
       <div class="field-col">
         <label class="fl">Color de acento del proyecto</label>
         <div class="color-row">
-          <input type="color" id="m-color" value="#002FA7" style="width:48px;height:36px;border:1px solid var(--border);cursor:pointer;padding:2px"/>
+          <input type="color" id="m-color" value="#002FA7" style="width:44px;height:36px;border:1px solid var(--border);cursor:pointer;padding:2px"/>
           <input class="fi" id="m-color-hex" value="#002FA7" style="width:110px"/>
           <div class="color-swatch" id="color-swatch" style="background:#002FA7"></div>
-          <span style="font-size:.66rem;color:#888;flex:1">Color de barras y acentos en la landing del cliente.</span>
+          <span style="font-size:.64rem;color:#888;flex:1">Color de acentos en la landing del cliente.</span>
         </div>
       </div>
       <hr class="section-divider"/>
@@ -230,17 +224,17 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
         <input class="fi" id="m-client-email" type="email" placeholder="cliente@email.com"/>
       </div>
       <div class="field-col">
-        <label class="fl">Contrasena</label>
+        <label class="fl">Contrasena del cliente</label>
         <div class="pass-row">
-          <input class="fi" id="m-client-pass" type="text" placeholder="Contrasena para el cliente"/>
+          <input class="fi" id="m-client-pass" type="text" placeholder="Contrasena"/>
           <button class="btn-gen" onclick="generatePassword()">Generar</button>
         </div>
       </div>
       <div class="cred-box" id="cred-box" style="display:none">
         <div class="cred-title">Credenciales para entregar al cliente</div>
         <div class="cred-item"><span>URL</span><span class="cred-val" id="cred-url">—</span></div>
-        <div class="cred-item"><span>Usuario</span><span class="cred-val" id="cred-email">—</span></div>
-        <div class="cred-item"><span>Contrasena</span><span class="cred-val" id="cred-pass">—</span></div>
+        <div class="cred-item"><span>Usuario</span><span class="cred-val" id="cred-email-disp">—</span></div>
+        <div class="cred-item"><span>Contrasena</span><span class="cred-val" id="cred-pass-disp">—</span></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -254,7 +248,11 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
 
 <script src="firebase-config.js"></script>
 <script>
-firebase.initializeApp(FIREBASE_CONFIG);
+// ── INIT ──────────────────────────────────────────────────────────────────────
+// Inicializar Firebase solo una vez
+if (!firebase.apps.length) {
+  firebase.initializeApp(FIREBASE_CONFIG);
+}
 const db   = firebase.firestore();
 const auth  = firebase.auth();
 
@@ -264,22 +262,49 @@ let currentCoverB64 = null;
 let currentHomeBgB64 = null;
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
+// No usar onAuthStateChanged para el flujo de login manual
+// Solo verificar si ya hay sesion al cargar la pagina
 auth.onAuthStateChanged(user => {
   if(user){
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('admin-ui').style.display='block';
-    document.getElementById('topbar-user').textContent=user.email;
-    loadAll();
+    showAdmin(user.email);
   }
+  // Si no hay usuario, el login-screen ya esta visible por defecto
 });
 
-function doLogin(){
-  const email=document.getElementById('l-email').value.trim();
-  const pass=document.getElementById('l-pass').value;
-  auth.signInWithEmailAndPassword(email,pass)
-    .catch(()=>{document.getElementById('l-err').style.display='block';});
+function showAdmin(email){
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-ui').style.display = 'block';
+  document.getElementById('topbar-user').textContent = email;
+  loadAll();
 }
-function doLogout(){auth.signOut();}
+
+async function doLogin(){
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  const err   = document.getElementById('l-err');
+  const btn   = document.getElementById('login-btn');
+  err.style.display = 'none';
+  btn.textContent = 'Ingresando...';
+  btn.disabled = true;
+  try{
+    const cred = await auth.signInWithEmailAndPassword(email, pass);
+    showAdmin(cred.user.email);
+  }catch(e){
+    err.style.display = 'block';
+  }finally{
+    btn.textContent = 'Ingresar';
+    btn.disabled = false;
+  }
+}
+
+function doLogout(){
+  auth.signOut().then(()=>{
+    document.getElementById('admin-ui').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('l-email').value = '';
+    document.getElementById('l-pass').value = '';
+  });
+}
 
 // ── LOAD ALL ──────────────────────────────────────────────────────────────────
 async function loadAll(){
@@ -289,62 +314,70 @@ async function loadAll(){
 // ── HOME BG ───────────────────────────────────────────────────────────────────
 async function loadHomeBg(){
   try{
-    const doc=await db.collection('config').doc('home').get();
+    const doc = await db.collection('config').doc('home').get();
     if(doc.exists && doc.data().bgB64){
-      currentHomeBgB64=doc.data().bgB64;
-      const prev=document.getElementById('home-bg-prev');
-      prev.src=currentHomeBgB64; prev.style.display='block';
-      document.getElementById('remove-bg-btn').style.display='inline-block';
+      currentHomeBgB64 = doc.data().bgB64;
+      const prev = document.getElementById('home-bg-prev');
+      prev.src = currentHomeBgB64;
+      prev.style.display = 'block';
+      document.getElementById('remove-bg-btn').style.display = 'inline-block';
     }
   }catch(e){}
 }
 
-function handleHomeBgDrop(e){e.preventDefault();document.getElementById('home-bg-drop').classList.remove('over');handleHomeBgFile({files:e.dataTransfer.files});}
+function handleHomeBgDrop(e){
+  e.preventDefault();
+  document.getElementById('home-bg-drop').classList.remove('over');
+  handleHomeBgFile({files: e.dataTransfer.files});
+}
 async function handleHomeBgFile(input){
-  const file=input.files[0];if(!file)return;
-  currentHomeBgB64=await compressImage(file,1920,88);
-  const prev=document.getElementById('home-bg-prev');
-  prev.src=currentHomeBgB64;prev.style.display='block';
-  document.getElementById('remove-bg-btn').style.display='inline-block';
-  toast('Imagen lista — hace clic en Guardar');
+  const file = input.files[0]; if(!file) return;
+  currentHomeBgB64 = await compressImage(file, 1920, 88);
+  const prev = document.getElementById('home-bg-prev');
+  prev.src = currentHomeBgB64; prev.style.display = 'block';
+  document.getElementById('remove-bg-btn').style.display = 'inline-block';
+  toast('Imagen lista — guarda para aplicar');
 }
 async function saveHomeBg(){
-  if(!currentHomeBgB64){toast('Primero selecciona una imagen');return;}
+  if(!currentHomeBgB64){ toast('Primero selecciona una imagen'); return; }
   try{
-    await db.collection('config').doc('home').set({bgB64:currentHomeBgB64,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    await db.collection('config').doc('home').set({
+      bgB64: currentHomeBgB64,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
     toast('Imagen de fondo guardada');
-  }catch(e){toast('Error: '+e.message);}
+  }catch(e){ toast('Error: '+e.message); }
 }
 async function removeHomeBg(){
   if(!confirm('Quitar la imagen de fondo?')) return;
   try{
-    await db.collection('config').doc('home').set({bgB64:null});
-    currentHomeBgB64=null;
-    const prev=document.getElementById('home-bg-prev');
-    prev.src='';prev.style.display='none';
-    document.getElementById('remove-bg-btn').style.display='none';
+    await db.collection('config').doc('home').set({bgB64: null});
+    currentHomeBgB64 = null;
+    const prev = document.getElementById('home-bg-prev');
+    prev.src = ''; prev.style.display = 'none';
+    document.getElementById('remove-bg-btn').style.display = 'none';
     toast('Imagen de fondo eliminada');
-  }catch(e){toast('Error: '+e.message);}
+  }catch(e){ toast('Error: '+e.message); }
 }
 
 // ── PROJECTS ──────────────────────────────────────────────────────────────────
 async function loadProjects(){
   try{
-    const snap=await db.collection('projects').orderBy('createdAt','desc').get();
-    projects=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const snap = await db.collection('projects').orderBy('createdAt','desc').get();
+    projects = snap.docs.map(d=>({id:d.id,...d.data()}));
     renderGrid();
-  }catch(e){toast('Error: '+e.message);}
+  }catch(e){ toast('Error cargando proyectos: '+e.message); }
 }
 
 function renderGrid(){
-  const grid=document.getElementById('projects-grid');
+  const grid = document.getElementById('projects-grid');
   if(!projects.length){
-    grid.innerHTML='<div class="empty-state">No hay proyectos. Crea el primero.</div>';
+    grid.innerHTML = '<div class="empty-state">No hay proyectos. Crea el primero.</div>';
     return;
   }
-  const tagMap={presentation:'En presentacion',active:'En obra',completed:'Finalizado'};
-  const tagClass={presentation:'tag-presentation',active:'tag-active',completed:'tag-completed'};
-  grid.innerHTML=projects.map(p=>`
+  const tagMap = {presentation:'En presentacion',active:'En obra',completed:'Finalizado'};
+  const tagClass = {presentation:'tag-presentation',active:'tag-active',completed:'tag-completed'};
+  grid.innerHTML = projects.map(p=>`
     <div class="project-card">
       <div class="project-color-bar" style="background:${p.color||'#002FA7'}"></div>
       ${p.coverB64
@@ -362,87 +395,94 @@ function renderGrid(){
           <div class="card-actions">
             <button class="btn-card btn-card-blue" onclick="openProject('${p.id}')">Abrir</button>
             <button class="btn-card btn-card-edit" onclick="event.stopPropagation();openEdit('${p.id}')">Editar</button>
-            <button class="btn-card btn-card-del" onclick="event.stopPropagation();deleteProject('${p.id}','${p.nombre||''}')">Eliminar</button>
+            <button class="btn-card btn-card-del" onclick="event.stopPropagation();deleteProject('${p.id}','${(p.nombre||'').replace(/'/g,"\'")}')">Eliminar</button>
           </div>
         </div>
       </div>
     </div>`).join('');
 }
 
-function openProject(id){window.location.href='project-admin.html?id='+id;}
+function openProject(id){ window.location.href = 'project-admin.html?id='+id; }
 
 function openNewProject(){
-  editingId=null;currentCoverB64=null;
-  document.getElementById('modal-title').textContent='Nuevo proyecto';
+  editingId = null; currentCoverB64 = null;
+  document.getElementById('modal-title').textContent = 'Nuevo proyecto';
   ['m-nombre','m-dir','m-barrio','m-desc','m-client-email','m-client-pass'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('m-estado').value='presentation';
-  document.getElementById('m-color').value='#002FA7';
-  document.getElementById('m-color-hex').value='#002FA7';
-  document.getElementById('color-swatch').style.background='#002FA7';
-  document.getElementById('cred-box').style.display='none';
-  document.getElementById('cover-prev').style.display='none';
+  document.getElementById('m-estado').value = 'presentation';
+  document.getElementById('m-color').value = '#002FA7';
+  document.getElementById('m-color-hex').value = '#002FA7';
+  document.getElementById('color-swatch').style.background = '#002FA7';
+  document.getElementById('cred-box').style.display = 'none';
+  document.getElementById('cover-prev').style.display = 'none';
   document.getElementById('project-modal').classList.add('open');
 }
 
 function openEdit(id){
-  const p=projects.find(x=>x.id===id);if(!p)return;
-  editingId=id;currentCoverB64=p.coverB64||null;
-  document.getElementById('modal-title').textContent='Editar proyecto';
-  document.getElementById('m-nombre').value=p.nombre||'';
-  document.getElementById('m-dir').value=p.direccion||'';
-  document.getElementById('m-barrio').value=p.barrio||'';
-  document.getElementById('m-desc').value=p.descripcion||'';
-  document.getElementById('m-estado').value=p.estado||'presentation';
-  document.getElementById('m-color').value=p.color||'#002FA7';
-  document.getElementById('m-color-hex').value=p.color||'#002FA7';
-  document.getElementById('color-swatch').style.background=p.color||'#002FA7';
-  document.getElementById('m-client-email').value=p.clientEmail||'';
-  document.getElementById('m-client-pass').value=p.clientPass||'';
-  if(p.clientEmail&&p.clientPass)showCreds(p.clientEmail,p.clientPass);
-  if(currentCoverB64){document.getElementById('cover-prev').src=currentCoverB64;document.getElementById('cover-prev').style.display='block';}
-  else document.getElementById('cover-prev').style.display='none';
+  const p = projects.find(x=>x.id===id); if(!p) return;
+  editingId = id; currentCoverB64 = p.coverB64||null;
+  document.getElementById('modal-title').textContent = 'Editar proyecto';
+  document.getElementById('m-nombre').value = p.nombre||'';
+  document.getElementById('m-dir').value = p.direccion||'';
+  document.getElementById('m-barrio').value = p.barrio||'';
+  document.getElementById('m-desc').value = p.descripcion||'';
+  document.getElementById('m-estado').value = p.estado||'presentation';
+  document.getElementById('m-color').value = p.color||'#002FA7';
+  document.getElementById('m-color-hex').value = p.color||'#002FA7';
+  document.getElementById('color-swatch').style.background = p.color||'#002FA7';
+  document.getElementById('m-client-email').value = p.clientEmail||'';
+  document.getElementById('m-client-pass').value = p.clientPass||'';
+  if(p.clientEmail && p.clientPass) showCreds(p.clientEmail, p.clientPass);
+  else document.getElementById('cred-box').style.display = 'none';
+  if(currentCoverB64){
+    document.getElementById('cover-prev').src = currentCoverB64;
+    document.getElementById('cover-prev').style.display = 'block';
+  } else {
+    document.getElementById('cover-prev').style.display = 'none';
+  }
   document.getElementById('project-modal').classList.add('open');
 }
 
-function closeModal(){document.getElementById('project-modal').classList.remove('open');}
+function closeModal(){ document.getElementById('project-modal').classList.remove('open'); }
 
-async function deleteProject(id,nombre){
-  if(!confirm('Eliminar "'+nombre+'"?\n\nSe eliminaran todos los informes, versiones y fotos asociadas. Esta accion no se puede deshacer.')) return;
+async function deleteProject(id, nombre){
+  if(!confirm('Eliminar "'+nombre+'"?\n\nSe eliminaran todos los informes, versiones y fotos. Esta accion no se puede deshacer.')) return;
   try{
-    toast('Eliminando...');
-    // Borrar reports y sus fotos
-    const reports=await db.collection('projects').doc(id).collection('reports').get();
+    toast('Eliminando proyecto...');
+    const reports = await db.collection('projects').doc(id).collection('reports').get();
     for(const r of reports.docs){
-      const fotos=await r.ref.collection('fotos').get();
-      const b=db.batch();fotos.docs.forEach(f=>b.delete(f.ref));
-      await b.commit();await r.ref.delete();
+      const fotos = await r.ref.collection('fotos').get();
+      const b = db.batch();
+      fotos.docs.forEach(f=>b.delete(f.ref));
+      await b.commit();
+      await r.ref.delete();
     }
-    // Borrar versions y sus renders/planos
-    const versions=await db.collection('projects').doc(id).collection('versions').get();
+    const versions = await db.collection('projects').doc(id).collection('versions').get();
     for(const v of versions.docs){
-      const rs=await v.ref.collection('renders').get();
-      const ps=await v.ref.collection('planos').get();
-      const b=db.batch();
+      const rs = await v.ref.collection('renders').get();
+      const ps = await v.ref.collection('planos').get();
+      const b = db.batch();
       rs.docs.forEach(r=>b.delete(r.ref));
       ps.docs.forEach(p=>b.delete(p.ref));
-      await b.commit();await v.ref.delete();
+      await b.commit();
+      await v.ref.delete();
     }
     await db.collection('projects').doc(id).delete();
-    projects=projects.filter(p=>p.id!==id);
+    projects = projects.filter(p=>p.id!==id);
     renderGrid();
     toast('Proyecto eliminado');
-  }catch(e){toast('Error: '+e.message);}
+  }catch(e){ toast('Error: '+e.message); }
 }
 
+// ── COLOR SYNC ────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('m-color').addEventListener('input',function(){
-    document.getElementById('m-color-hex').value=this.value;
-    document.getElementById('color-swatch').style.background=this.value;
+    document.getElementById('m-color-hex').value = this.value;
+    document.getElementById('color-swatch').style.background = this.value;
   });
   document.getElementById('m-color-hex').addEventListener('input',function(){
     if(/^#[0-9A-Fa-f]{6}$/.test(this.value)){
-      document.getElementById('m-color').value=this.value;
-      document.getElementById('color-swatch').style.background=this.value;
+      document.getElementById('m-color').value = this.value;
+      document.getElementById('color-swatch').style.background = this.value;
     }
   });
   document.getElementById('m-client-email').addEventListener('input',updateCreds);
@@ -450,77 +490,92 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 function updateCreds(){
-  const e=document.getElementById('m-client-email').value;
-  const p=document.getElementById('m-client-pass').value;
-  if(e&&p)showCreds(e,p);
+  const e = document.getElementById('m-client-email').value;
+  const p = document.getElementById('m-client-pass').value;
+  if(e && p) showCreds(e,p);
 }
 function showCreds(email,pass){
-  document.getElementById('cred-url').textContent=window.location.origin+'/login.html';
-  document.getElementById('cred-email').textContent=email;
-  document.getElementById('cred-pass').textContent=pass;
-  document.getElementById('cred-box').style.display='block';
+  document.getElementById('cred-url').textContent = window.location.origin+'/login.html';
+  document.getElementById('cred-email-disp').textContent = email;
+  document.getElementById('cred-pass-disp').textContent = pass;
+  document.getElementById('cred-box').style.display = 'block';
 }
 function generatePassword(){
-  const chars='ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-  let p='';for(let i=0;i<10;i++)p+=chars[Math.floor(Math.random()*chars.length)];
-  document.getElementById('m-client-pass').value=p;updateCreds();
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  let p = '';
+  for(let i=0;i<10;i++) p += chars[Math.floor(Math.random()*chars.length)];
+  document.getElementById('m-client-pass').value = p;
+  updateCreds();
 }
 
-function handleCoverDrop(e){e.preventDefault();document.getElementById('cover-drop').classList.remove('over');handleCoverFile({files:e.dataTransfer.files});}
+// ── COVER ─────────────────────────────────────────────────────────────────────
+function handleCoverDrop(e){
+  e.preventDefault();
+  document.getElementById('cover-drop').classList.remove('over');
+  handleCoverFile({files: e.dataTransfer.files});
+}
 async function handleCoverFile(input){
-  const file=input.files[0];if(!file)return;
-  currentCoverB64=await compressImage(file,1200,82);
-  document.getElementById('cover-prev').src=currentCoverB64;
-  document.getElementById('cover-prev').style.display='block';
+  const file = input.files[0]; if(!file) return;
+  currentCoverB64 = await compressImage(file,1200,82);
+  document.getElementById('cover-prev').src = currentCoverB64;
+  document.getElementById('cover-prev').style.display = 'block';
 }
 
+// ── SAVE ──────────────────────────────────────────────────────────────────────
 async function saveProject(){
-  const nombre=document.getElementById('m-nombre').value.trim();
-  if(!nombre){toast('El nombre es obligatorio');return;}
-  const btn=document.getElementById('save-btn');
-  btn.textContent='Guardando...';btn.disabled=true;
-  const data={
+  const nombre = document.getElementById('m-nombre').value.trim();
+  if(!nombre){ toast('El nombre es obligatorio'); return; }
+  const btn = document.getElementById('save-btn');
+  btn.textContent = 'Guardando...'; btn.disabled = true;
+  const data = {
     nombre,
-    direccion:document.getElementById('m-dir').value.trim(),
-    barrio:document.getElementById('m-barrio').value.trim(),
-    descripcion:document.getElementById('m-desc').value.trim(),
-    estado:document.getElementById('m-estado').value,
-    color:document.getElementById('m-color-hex').value||'#002FA7',
-    clientEmail:document.getElementById('m-client-email').value.trim(),
-    clientPass:document.getElementById('m-client-pass').value.trim(),
-    coverB64:currentCoverB64,
-    updatedAt:firebase.firestore.FieldValue.serverTimestamp(),
+    direccion: document.getElementById('m-dir').value.trim(),
+    barrio:    document.getElementById('m-barrio').value.trim(),
+    descripcion: document.getElementById('m-desc').value.trim(),
+    estado:    document.getElementById('m-estado').value,
+    color:     document.getElementById('m-color-hex').value||'#002FA7',
+    clientEmail: document.getElementById('m-client-email').value.trim(),
+    clientPass:  document.getElementById('m-client-pass').value.trim(),
+    coverB64:  currentCoverB64,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
   };
   try{
     if(editingId){
       await db.collection('projects').doc(editingId).update(data);
-      const idx=projects.findIndex(p=>p.id===editingId);
-      if(idx>=0)projects[idx]={...projects[idx],...data};
+      const idx = projects.findIndex(p=>p.id===editingId);
+      if(idx>=0) projects[idx] = {...projects[idx],...data};
       toast('Proyecto actualizado');
     }else{
-      data.createdAt=firebase.firestore.FieldValue.serverTimestamp();
-      data.informeCount=0;data.pctGlobal=0;
-      const ref=await db.collection('projects').add(data);
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      data.informeCount = 0; data.pctGlobal = 0;
+      const ref = await db.collection('projects').add(data);
       projects.unshift({id:ref.id,...data});
       toast('Proyecto creado');
     }
-    renderGrid();closeModal();
-  }catch(e){toast('Error: '+e.message);}
-  finally{btn.textContent='Guardar proyecto';btn.disabled=false;}
+    renderGrid(); closeModal();
+  }catch(e){ toast('Error: '+e.message); }
+  finally{ btn.textContent = 'Guardar proyecto'; btn.disabled = false; }
 }
 
+// ── UTILS ─────────────────────────────────────────────────────────────────────
 function compressImage(file,maxW,q){
   return new Promise(resolve=>{
-    const img=new Image(),url=URL.createObjectURL(file);
+    const img=new Image(), url=URL.createObjectURL(file);
     img.onload=()=>{
-      const r=Math.min(maxW/img.width,1),c=document.createElement('canvas');
-      c.width=img.width*r;c.height=img.height*r;
+      const r=Math.min(maxW/img.width,1), c=document.createElement('canvas');
+      c.width=img.width*r; c.height=img.height*r;
       c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      URL.revokeObjectURL(url);resolve(c.toDataURL('image/jpeg',q/100));
-    };img.src=url;
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL('image/jpeg',q/100));
+    };
+    img.src=url;
   });
 }
-function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
+function toast(m){
+  const el=document.getElementById('toast');
+  el.textContent=m; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),3000);
+}
 </script>
 </body>
 </html>
