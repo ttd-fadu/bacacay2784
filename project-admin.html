@@ -19,7 +19,7 @@ body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;background:#f4f4f2;co
 .tr{display:flex;align-items:center;gap:.6rem}
 .bs{padding:.38rem .85rem;font-size:.6rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2)}
 .bs:hover{background:rgba(255,255,255,.2);color:#fff}
-.bt{background:var(--t);color:#fff}.bt:hover{opacity:.85}
+.bt{background:var(--t);color:#fff;border-color:var(--t)}.bt:hover{opacity:.85}
 .ml{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 52px)}
 .sb{background:#fff;border-right:1px solid var(--b);display:flex;flex-direction:column}
 .stabs{display:flex;border-bottom:1px solid var(--b)}
@@ -47,7 +47,7 @@ body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;background:#f4f4f2;co
 .vli{padding:.65rem .8rem;cursor:pointer;border-radius:3px;transition:background .15s;margin-bottom:.15rem;display:flex;justify-content:space-between;align-items:center}
 .vli:hover{background:var(--g)}
 .vli.active{background:var(--k);color:#fff}
-.vl{font-size:.78rem;font-weight:700}
+.vl2{font-size:.78rem;font-weight:700}
 .vd{font-size:.54rem;color:#888}
 .vli.active .vd{color:rgba(255,255,255,.45)}
 .bc{font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;background:var(--t);color:#fff;padding:.1rem .35rem;border-radius:2px;white-space:nowrap}
@@ -70,8 +70,8 @@ body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;background:#f4f4f2;co
 .ps{-webkit-appearance:none;width:100%;height:4px;background:#d0d0cc;outline:none;cursor:pointer;margin-bottom:.5rem}
 .ps::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--t);border-radius:50%;cursor:pointer}
 .pp{font-size:1.1rem;font-weight:700;text-align:right}
-.br{width:32px;height:32px;background:#fff;border:1px solid #d0d0cc;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.br:hover{background:#ff6b6b;color:#fff;border-color:#ff6b6b}
+.br2{width:32px;height:32px;background:#fff;border:1px solid #d0d0cc;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.br2:hover{background:#ff6b6b;color:#fff;border-color:#ff6b6b}
 .ba{padding:.5rem 1rem;background:transparent;border:1px solid #d0d0cc;font-size:.62rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:.5rem}
 .ba:hover{border-color:var(--k);background:var(--k);color:#fff}
 .ni{display:grid;grid-template-columns:130px 1fr 32px;gap:.6rem;align-items:start;margin-bottom:.6rem}
@@ -100,8 +100,8 @@ body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;background:#f4f4f2;co
 #pm.open{display:flex}
 .ptb{background:#0a0a0a;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--t);flex-shrink:0}
 .ptt{color:var(--t);font-weight:700;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase}
-#pb{flex:1;overflow-y:auto;background:#fafafa;padding:2rem}
-#pi{max-width:860px;margin:0 auto}
+#pb2{flex:1;overflow-y:auto;background:#fafafa;padding:2rem}
+#pin{max-width:860px;margin:0 auto}
 #po{display:none;position:fixed;inset:0;background:rgba(10,10,10,.75);z-index:500;align-items:center;justify-content:center}
 #po.show{display:flex}
 .pob{background:#fff;padding:2.5rem 3rem;text-align:center;border-top:3px solid var(--t);min-width:240px}
@@ -131,20 +131,20 @@ body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;background:#f4f4f2;co
   <aside class="sb">
     <div class="stabs">
       <button class="stab active" id="ti" onclick="switchTab('i')">Informes</button>
-      <button class="stab" id="tp" onclick="switchTab('p')">Proyecto</button>
+      <button class="stab" id="tp2" onclick="switchTab('p')">Proyecto</button>
     </div>
-    <div class="sp active" id="pi2">
+    <div class="sp active" id="spi">
       <button class="bn" onclick="newReport()">+ Nuevo informe</button>
       <div class="si">
         <div class="sl">Informes publicados</div>
-        <ul class="rl" id="rl"></ul>
+        <ul class="rl" id="rlist"></ul>
       </div>
     </div>
-    <div class="sp" id="pp">
+    <div class="sp" id="spp">
       <button class="bn" onclick="newVersion()">+ Nueva version</button>
       <div class="si">
         <div class="sl">Versiones</div>
-        <ul class="rl" id="vl"></ul>
+        <ul class="rl" id="vlist"></ul>
       </div>
     </div>
   </aside>
@@ -160,7 +160,7 @@ body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;background:#f4f4f2;co
       <button class="bs" onclick="closePreview()">Cerrar</button>
     </div>
   </div>
-  <div id="pb"><div id="pi"></div></div>
+  <div id="pb2"><div id="pin"></div></div>
 </div>
 <div id="po"><div class="pob"><div class="pos"></div><div class="pom" id="pom">Publicando...</div></div></div>
 <div class="toast" id="toast"></div>
@@ -174,8 +174,29 @@ var project=null,allReports=[],allVersions=[],curId=null,curVId=null;
 var curFotos=[],curRenders=[],curPlanos=[],curHero=null,curAxo=null,pending=null;
 var pc=0,nc=0,fc=0,tab='i';
 
-auth.onAuthStateChanged(function(u){
-  if(!u){window.location.replace('admin.html');return;}
+// FIX DEFINITIVO: no depende de onAuthStateChanged
+// Espera activamente hasta que Firebase resuelva el estado
+function waitForAuth(){
+  return new Promise(function(resolve,reject){
+    // Si ya hay usuario, resolver inmediatamente
+    if(auth.currentUser){resolve(auth.currentUser);return;}
+    // Sino, esperar hasta 5 segundos
+    var done=false;
+    var unsub=auth.onAuthStateChanged(function(user){
+      if(done)return;
+      done=true;
+      unsub();
+      resolve(user);
+    });
+    setTimeout(function(){
+      if(!done){done=true;unsub();resolve(null);}
+    },5000);
+  });
+}
+
+// Iniciar
+waitForAuth().then(function(user){
+  if(!user){window.location.replace('admin.html');return;}
   if(!PID){window.location.replace('admin.html');return;}
   loadProject();
 });
@@ -189,17 +210,18 @@ function loadProject(){
     if(!d.exists){window.location.replace('admin.html');return;}
     project=Object.assign({id:d.id},d.data());
     document.getElementById('tpj').textContent=project.nombre||'Proyecto';
-    document.title='Admin - '+(project.nombre||'Proyecto');
-    loadReports();loadVersions();
-  }).catch(function(e){toast('Error: '+e.message);});
+    document.title='Admin - '+(project.nombre||'');
+    loadReports();
+    loadVersions();
+  }).catch(function(e){toast('Error cargando proyecto: '+e.message);});
 }
 
 function switchTab(t){
   tab=t;
   document.getElementById('ti').classList.toggle('active',t==='i');
-  document.getElementById('tp').classList.toggle('active',t==='p');
-  document.getElementById('pi2').classList.toggle('active',t==='i');
-  document.getElementById('pp').classList.toggle('active',t==='p');
+  document.getElementById('tp2').classList.toggle('active',t==='p');
+  document.getElementById('spi').classList.toggle('active',t==='i');
+  document.getElementById('spp').classList.toggle('active',t==='p');
   document.getElementById('co').innerHTML='<div class="ec">Selecciona un elemento o crea uno nuevo</div>';
   curId=null;curVId=null;
 }
@@ -214,14 +236,14 @@ function loadReports(){
 }
 
 function renderRL(){
-  document.getElementById('rl').innerHTML=allReports.map(function(r){
+  document.getElementById('rlist').innerHTML=allReports.map(function(r){
     var a=r.id===curId?'active':'';
-    return '<li class="rli '+a+'" onclick="selectReport(''+r.id+'')">' +
-      '<div class="rn">#'+String(r.numero||0).padStart(3,'0')+'</div>' +
-      '<div class="rt">'+esc(r.titulo||'Sin titulo')+'</div>' +
-      '<div class="rd">'+esc(r.fecha||'Sin fecha')+'</div>' +
-      '<div class="ra"><button class="bdr" onclick="event.stopPropagation();delReport(''+r.id+'',''+esc(r.titulo||'')+'')">Eliminar</button></div>' +
-    '</li>';
+    return '<li class="rli '+a+'" onclick="selectReport(\''+r.id+'\')">'
+      +'<div class="rn">#'+String(r.numero||0).padStart(3,'0')+'</div>'
+      +'<div class="rt">'+esc(r.titulo||'Sin titulo')+'</div>'
+      +'<div class="rd">'+esc(r.fecha||'Sin fecha')+'</div>'
+      +'<div class="ra"><button class="bdr" onclick="event.stopPropagation();delReport(\''+r.id+'\',\''+esc(r.titulo||'')+'\')">Eliminar</button></div>'
+      +'</li>';
   }).join('');
 }
 
@@ -229,9 +251,12 @@ function selectReport(id){
   curId=id;renderRL();
   var r=allReports.find(function(x){return x.id===id;});
   curFotos=[];curHero=r.heroB64||null;curAxo=r.axoB64||null;
-  db.collection('projects').doc(PID).collection('reports').doc(id).collection('fotos')
-  .orderBy('order','asc').get().then(function(s){
-    s.docs.forEach(function(d){curFotos.push({id:d.id,src:d.data().src,caption:d.data().caption||'',order:d.data().order||0,isNew:false,toDelete:false});});
+  db.collection('projects').doc(PID).collection('reports').doc(id)
+  .collection('fotos').orderBy('order','asc').get()
+  .then(function(s){
+    s.docs.forEach(function(d){
+      curFotos.push({id:d.id,src:d.data().src,caption:d.data().caption||'',order:d.data().order||0,isNew:false,toDelete:false});
+    });
     renderRF(r);
   }).catch(function(){renderRF(r);});
 }
@@ -252,7 +277,8 @@ function newReport(){
     proximoInforme:'',heroB64:null,axoB64:null,
     createdAt:firebase.firestore.FieldValue.serverTimestamp()
   };
-  db.collection('projects').doc(PID).collection('reports').add(draft).then(function(ref){
+  db.collection('projects').doc(PID).collection('reports').add(draft)
+  .then(function(ref){
     draft.id=ref.id;allReports.push(draft);
     curFotos=[];curHero=null;curAxo=null;curId=ref.id;
     renderRL();renderRF(draft);
@@ -266,10 +292,12 @@ function delReport(id,titulo){
   var ref=db.collection('projects').doc(PID).collection('reports').doc(id);
   ref.collection('fotos').get().then(function(s){
     var b=db.batch();s.docs.forEach(function(d){b.delete(d.ref);});return b.commit();
-  }).then(function(){return ref.delete();}).then(function(){
+  }).then(function(){return ref.delete();})
+  .then(function(){
     allReports=allReports.filter(function(r){return r.id!==id;});
     if(curId===id){curId=null;document.getElementById('co').innerHTML='<div class="ec">Selecciona un informe</div>';}
-    renderRL();db.collection('projects').doc(PID).update({informeCount:allReports.length});
+    renderRL();
+    db.collection('projects').doc(PID).update({informeCount:allReports.length});
     toast('Eliminado');
   }).catch(function(e){toast('Error: '+e.message);});
 }
@@ -283,13 +311,13 @@ function loadVersions(){
 }
 
 function renderVL(){
-  if(!allVersions.length){document.getElementById('vl').innerHTML='<li style="padding:.75rem;font-size:.72rem;color:#aaa">Sin versiones</li>';return;}
-  document.getElementById('vl').innerHTML=allVersions.map(function(v,i){
+  if(!allVersions.length){document.getElementById('vlist').innerHTML='<li style="padding:.75rem;font-size:.72rem;color:#aaa">Sin versiones</li>';return;}
+  document.getElementById('vlist').innerHTML=allVersions.map(function(v,i){
     var a=v.id===curVId?'active':'';
-    return '<li class="vli '+a+'" onclick="selectVersion(''+v.id+'')">' +
-      '<div><div class="vl2">'+esc(v.titulo||'Version')+'</div><div class="vd">'+esc(v.fecha||'')+'</div></div>' +
-      (i===0?'<span class="bc">Actual</span>':'') +
-    '</li>';
+    return '<li class="vli '+a+'" onclick="selectVersion(\''+v.id+'\')">'
+      +'<div><div class="vl2">'+esc(v.titulo||'Version')+'</div><div class="vd">'+esc(v.fecha||'')+'</div></div>'
+      +(i===0?'<span class="bc">Actual</span>':'')
+      +'</li>';
   }).join('');
 }
 
@@ -311,111 +339,198 @@ function selectVersion(id){
 function newVersion(){
   var num=allVersions.length+1;
   var draft={titulo:'Version '+num,fecha:'',etapa:'Anteproyecto primera revision',descripcion:'',memoria:'',computo:'',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
-  db.collection('projects').doc(PID).collection('versions').add(draft).then(function(ref){
+  db.collection('projects').doc(PID).collection('versions').add(draft)
+  .then(function(ref){
     draft.id=ref.id;allVersions.unshift(draft);curRenders=[];curPlanos=[];curVId=ref.id;
     renderVL();renderVF(draft);toast('Nueva version creada');
   }).catch(function(e){toast('Error: '+e.message);});
 }
+
+function g(id){var el=document.getElementById(id);return el?el.value:'';}
 
 function renderRF(r){
   pc=0;nc=0;fc=0;
   var fin=r.financiero||{};
   var ac=(project&&project.color)?project.color:'#002FA7';
   var hs=curHero||(project&&project.coverB64)||'';
-  var hd=hs?'block':'none';
-  var axh=curAxo?'<img src="'+curAxo+'" class="ips" style="max-width:300px"/>':'<div style="background:#f4f4f2;border:1px dashed #ccc;padding:1.5rem;text-align:center;font-size:.62rem;color:#aaa;margin-bottom:.75rem;max-width:180px">SVG por defecto</div>';
   var ph=(r.progreso||[]).map(function(p,i){return rPI(p,i);}).join('');
   var nh=(r.novedades||[]).map(function(n,i){return rNI(n,i);}).join('');
   var fh=(fin.items||[]).map(function(it,i){return rFI(it,i);}).join('');
+  var axoHtml=curAxo
+    ?'<img src="'+curAxo+'" class="ips" style="max-width:300px"/>'
+    :'<div style="background:#f4f4f2;border:1px dashed #ccc;padding:1.5rem;text-align:center;font-size:.62rem;color:#aaa;margin-bottom:.75rem;max-width:180px">SVG por defecto</div>';
+
   document.getElementById('co').innerHTML=
-    '<div class="ch"><div><div class="ct">'+esc(r.titulo||'')+' <span style="color:#888;font-weight:400;font-size:1rem">'+esc(r.fecha||'sin fecha')+'</span></div></div>'+
-    '<div class="ca"><button class="bs" style="background:#f4f4f2;color:#0a0a0a;border:1px solid #d0d0cc" onclick="openPreview()">Vista previa</button><button class="bs bt" onclick="publishReport()">Publicar</button></div></div>'+
-    '<div class="fs"><div class="ft">Datos generales</div>'+
-    '<div class="fr"><div><label class="fl">Titulo</label><input class="fi" id="ft" value="'+esc(r.titulo)+'"/></div><div><label class="fl">Fecha</label><input class="fi" id="ff" value="'+esc(r.fecha)+'" placeholder="Junio 2026"/></div></div>'+
-    '<div class="fr"><div><label class="fl">Etapa actual</label><input class="fi" id="fe" value="'+esc(r.etapa)+'" placeholder="Etapa 2"/></div><div><label class="fl">Avance global (%)</label><input class="fi" type="number" id="fp" value="'+(r.pctGlobal||0)+'" min="0" max="100"/></div></div>'+
-    '<div class="fr"><div><label class="fl">Clima</label><input class="fi" id="fct" value="'+esc((r.clima&&r.clima.texto)||'')+'" placeholder="Dias lluvia: 2"/></div><div><label class="fl">Clima subtexto</label><input class="fi" id="fcs" value="'+esc((r.clima&&r.clima.sub)||'')+'" placeholder="Sin impacto"/></div></div>'+
-    '<div class="fr"><div><label class="fl">Superficie m2</label><input class="fi" type="number" id="fsu" value="'+(r.superficieTotal||0)+'"/></div><div><label class="fl">Fecha proximo informe</label><input class="fi" type="date" id="fpr" value="'+(r.proximoInforme||'')+'"/></div></div>'+
-    '<div class="fc"><label class="fl">Titulo galeria</label><input class="fi" id="fga" value="'+esc(r.galeriaTitle)+'" placeholder="Lo que esta sucediendo en obra"/></div></div>'+
-    '<div class="fs"><div class="ft">Imagen principal</div>'+
-    '<img id="hip" src="'+hs+'" style="width:100%;max-height:140px;object-fit:cover;display:'+hd+';margin-bottom:.75rem;border:1px solid #d0d0cc"/>'+
-    '<div style="font-size:.66rem;color:#888;margin-bottom:.75rem">Por defecto se usa la imagen de portada del proyecto.</div>'+
-    '<div class="pb" id="hbar"><div class="pbf" id="hfil"></div></div>'+
-    '<input type="file" id="hfile" accept="image/*" style="display:none" onchange="handleHero(this)"/>'+
-    '<div style="display:flex;gap:.6rem;flex-wrap:wrap"><button class="bs" style="background:#f4f4f2;color:#0a0a0a;border:1px solid #d0d0cc" onclick="document.getElementById('hfile').click()">Cambiar imagen</button>'+(curHero?'<button class="bs" style="background:transparent;color:#ff6b6b;border:1px solid #ff6b6b" onclick="removeHero()">Restaurar portada</button>':'')+
-    '</div></div>'+
-    '<div class="fs"><div class="ft">Axonometria</div>'+axoHtml+
-    '<div class="pb" id="abar"><div class="pbf" id="afil"></div></div>'+
-    '<input type="file" id="afile" accept="image/*" style="display:none" onchange="handleAxo(this)"/>'+
-    '<div style="display:flex;gap:.6rem;flex-wrap:wrap"><button class="bs" style="background:#f4f4f2;color:#0a0a0a;border:1px solid #d0d0cc" onclick="document.getElementById('afile').click()">'+(curAxo?'Cambiar':'Subir imagen')+'</button>'+(curAxo?'<button class="bs" style="background:transparent;color:#ff6b6b;border:1px solid #ff6b6b" onclick="removeAxo()">Volver al SVG</button>':'')+
-    '</div></div>'+
-    '<div class="fs"><div class="ft">Avance por etapa</div><div id="plist">'+ph+'</div><button class="ba" onclick="addPI()">+ Agregar etapa</button></div>'+
-    '<div class="fs"><div class="ft">Novedades</div><div id="nlist">'+nh+'</div><button class="ba" onclick="addNI()">+ Agregar novedad</button></div>'+
-    '<div class="fs"><div class="ft">Fotos de obra</div>'+
-    '<div class="dz" id="dz" onclick="document.getElementById('fi2').click()" ondragover="event.preventDefault();this.classList.add('ov')" ondragleave="this.classList.remove('ov')" ondrop="hDrop(event)"><div class="dl"><strong>Clic o arrastra fotos aca</strong><br/><span style="font-size:.6rem">JPG, PNG</span></div></div>'+
-    '<input type="file" id="fi2" accept="image/*" multiple style="display:none" onchange="hFotos(this.files)"/>'+
-    '<div class="pb" id="fbar"><div class="pbf" id="ffil"></div></div>'+
-    '<div class="fg" id="fgrid"></div></div>'+
-    '<div class="fs"><div class="ft">Panel financiero</div>'+
-    '<div class="fr"><div><label class="fl">% Pagado</label><input class="fi" type="number" id="finp" value="'+(fin.pagadoPct||0)+'" min="0" max="100"/></div><div><label class="fl">Total</label><input class="fi" id="fint" value="'+esc(fin.total)+'" placeholder="$6.000.000"/></div></div>'+
-    '<div class="fr"><div><label class="fl">Pagado</label><input class="fi" id="finpag" value="'+esc(fin.pagado)+'" placeholder="$3.600.000"/></div><div><label class="fl">Pendiente</label><input class="fi" id="finpen" value="'+esc(fin.pendiente)+'" placeholder="$2.400.000"/></div></div>'+
-    '<div class="fc"><label class="fl">Proximo hito</label><input class="fi" id="finh" value="'+esc(fin.hito)+'" placeholder="Colado de losa Agosto 2026"/></div>'+
-    '<div class="fl" style="margin-bottom:.6rem">Items</div><div id="fitems">'+fh+'</div><button class="ba" onclick="addFI()">+ Agregar item</button></div>'+
-    '<div class="fs" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">'+
-    '<div><div style="font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:.25rem">Notificar al cliente</div></div>'+
-    '<a id="wabtn" href="#" target="_blank" style="display:inline-flex;align-items:center;background:#25d366;color:#fff;padding:.7rem 1.4rem;font-size:.66rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;text-decoration:none">WhatsApp</a></div>';
+    '<div class="ch"><div><div class="ct">'+esc(r.titulo||'')+' <span style="color:#888;font-weight:400;font-size:1rem">'+esc(r.fecha||'sin fecha')+'</span></div></div>'
+    +'<div class="ca"><button class="bs" style="background:#f4f4f2;color:#0a0a0a;border:1px solid #d0d0cc" onclick="openPreview()">Vista previa</button>'
+    +'<button class="bs bt" onclick="publishReport()">Publicar</button></div></div>'
+
+    +'<div class="fs"><div class="ft">Datos generales</div>'
+    +'<div class="fr"><div><label class="fl">Titulo</label><input class="fi" id="ft" value="'+esc(r.titulo)+'"/></div>'
+    +'<div><label class="fl">Fecha</label><input class="fi" id="ff" value="'+esc(r.fecha)+'" placeholder="Junio 2026"/></div></div>'
+    +'<div class="fr"><div><label class="fl">Etapa</label><input class="fi" id="fe" value="'+esc(r.etapa||'')+'" placeholder="Etapa 2"/></div>'
+    +'<div><label class="fl">Avance global %</label><input class="fi" type="number" id="fp" value="'+(r.pctGlobal||0)+'" min="0" max="100"/></div></div>'
+    +'<div class="fr"><div><label class="fl">Clima</label><input class="fi" id="fct" value="'+esc((r.clima&&r.clima.texto)||'')+'" placeholder="Dias lluvia: 2"/></div>'
+    +'<div><label class="fl">Clima subtexto</label><input class="fi" id="fcs" value="'+esc((r.clima&&r.clima.sub)||'')+'" placeholder="Sin impacto"/></div></div>'
+    +'<div class="fr"><div><label class="fl">Superficie m2</label><input class="fi" type="number" id="fsu" value="'+(r.superficieTotal||0)+'"/></div>'
+    +'<div><label class="fl">Proximo informe</label><input class="fi" type="date" id="fpr" value="'+(r.proximoInforme||'')+'"/></div></div>'
+    +'<div class="fc"><label class="fl">Titulo galeria</label><input class="fi" id="fga" value="'+esc(r.galeriaTitle||'')+'" placeholder="Lo que esta sucediendo en obra"/></div></div>'
+
+    +'<div class="fs"><div class="ft">Imagen principal</div>'
+    +'<img id="hip" src="'+hs+'" style="width:100%;max-height:140px;object-fit:cover;display:'+(hs?'block':'none')+';margin-bottom:.75rem;border:1px solid #d0d0cc"/>'
+    +'<div style="font-size:.66rem;color:#888;margin-bottom:.75rem">Por defecto se usa la imagen de portada del proyecto.</div>'
+    +'<div class="pb" id="hbar"><div class="pbf" id="hfil"></div></div>'
+    +'<input type="file" id="hfile" accept="image/*" style="display:none" onchange="handleHero(this)"/>'
+    +'<div style="display:flex;gap:.6rem;flex-wrap:wrap">'
+    +'<button class="bs" style="background:#f4f4f2;color:#0a0a0a;border:1px solid #d0d0cc" onclick="document.getElementById(\'hfile\').click()">Cambiar imagen</button>'
+    +(curHero?'<button class="bs" style="background:transparent;color:#ff6b6b;border:1px solid #ff6b6b" onclick="removeHero()">Restaurar portada</button>':'')
+    +'</div></div>'
+
+    +'<div class="fs"><div class="ft">Axonometria</div>'+axoHtml
+    +'<div class="pb" id="abar"><div class="pbf" id="afil"></div></div>'
+    +'<input type="file" id="afile" accept="image/*" style="display:none" onchange="handleAxo(this)"/>'
+    +'<div style="display:flex;gap:.6rem;flex-wrap:wrap">'
+    +'<button class="bs" style="background:#f4f4f2;color:#0a0a0a;border:1px solid #d0d0cc" onclick="document.getElementById(\'afile\').click()">'+(curAxo?'Cambiar':'Subir imagen')+'</button>'
+    +(curAxo?'<button class="bs" style="background:transparent;color:#ff6b6b;border:1px solid #ff6b6b" onclick="removeAxo()">Volver al SVG</button>':'')
+    +'</div></div>'
+
+    +'<div class="fs"><div class="ft">Avance por etapa</div><div id="plist">'+ph+'</div><button class="ba" onclick="addPI()">+ Agregar etapa</button></div>'
+    +'<div class="fs"><div class="ft">Novedades</div><div id="nlist">'+nh+'</div><button class="ba" onclick="addNI()">+ Agregar novedad</button></div>'
+
+    +'<div class="fs"><div class="ft">Fotos de obra</div>'
+    +'<div class="dz" id="dz" onclick="document.getElementById(\'fi2\').click()" ondragover="event.preventDefault();this.classList.add(\'ov\')" ondragleave="this.classList.remove(\'ov\')" ondrop="hDrop(event)">'
+    +'<div class="dl"><strong>Clic o arrastra fotos aca</strong><br/><span style="font-size:.6rem">JPG, PNG</span></div></div>'
+    +'<input type="file" id="fi2" accept="image/*" multiple style="display:none" onchange="hFotos(this.files)"/>'
+    +'<div class="pb" id="fbar"><div class="pbf" id="ffil"></div></div>'
+    +'<div class="fg" id="fgrid"></div></div>'
+
+    +'<div class="fs"><div class="ft">Panel financiero</div>'
+    +'<div class="fr"><div><label class="fl">% Pagado</label><input class="fi" type="number" id="finp" value="'+(fin.pagadoPct||0)+'" min="0" max="100"/></div>'
+    +'<div><label class="fl">Total</label><input class="fi" id="fint" value="'+esc(fin.total||'')+'" placeholder="$6.000.000"/></div></div>'
+    +'<div class="fr"><div><label class="fl">Pagado</label><input class="fi" id="finpag" value="'+esc(fin.pagado||'')+'" placeholder="$3.600.000"/></div>'
+    +'<div><label class="fl">Pendiente</label><input class="fi" id="finpen" value="'+esc(fin.pendiente||'')+'" placeholder="$2.400.000"/></div></div>'
+    +'<div class="fc"><label class="fl">Proximo hito</label><input class="fi" id="finh" value="'+esc(fin.hito||'')+'" placeholder="Colado de losa Agosto 2026"/></div>'
+    +'<div class="fl" style="margin-bottom:.6rem">Items</div><div id="fitems">'+fh+'</div>'
+    +'<button class="ba" onclick="addFI()">+ Agregar item</button></div>'
+
+    +'<div class="fs" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">'
+    +'<div><div style="font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:.25rem">Notificar al cliente</div></div>'
+    +'<a id="wabtn" href="#" target="_blank" style="display:inline-flex;align-items:center;background:#25d366;color:#fff;padding:.7rem 1.4rem;font-size:.66rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;text-decoration:none">WhatsApp</a></div>';
+
   renderFG();updateWA();
 }
 
-var axoHtml='';
-
 function renderVF(v){
   var isl=allVersions.length>0&&allVersions[0].id===v.id;
-  var rh=isl?'<div class="dz" id="rdz" onclick="document.getElementById('ri').click()" ondragover="event.preventDefault();this.classList.add('ov')" ondragleave="this.classList.remove('ov')" ondrop="hRDrop(event)"><div class="dl"><strong>Clic o arrastra renders aca</strong></div></div><input type="file" id="ri" accept="image/*" multiple style="display:none" onchange="hRFiles(this.files)"/><div class="pb" id="rbar"><div class="pbf" id="rfil"></div></div><div class="pg" id="rgrid"></div>':
-    '<div class="pg">'+curRenders.map(function(r){return '<div class="pc2"><img src="'+r.src+'" alt="'+esc(r.caption)+'"/><div class="pcap">'+esc(r.caption)+'</div></div>';}).join('')+'</div>';
-  var ph=isl?'<div class="dz" id="pdz" onclick="document.getElementById('pli').click()" ondragover="event.preventDefault();this.classList.add('ov')" ondragleave="this.classList.remove('ov')" ondrop="hPDrop(event)"><div class="dl"><strong>Clic o arrastra planos aca</strong></div></div><input type="file" id="pli" accept="image/*" multiple style="display:none" onchange="hPFiles(this.files)"/><div class="pb" id="pbar"><div class="pbf" id="pfil"></div></div><div class="pg" id="pgrid"></div>':
-    '<div class="pg">'+curPlanos.map(function(p){return '<div class="pc2"><img src="'+p.src+'" alt="'+esc(p.caption)+'"/><div class="pcap">'+esc(p.caption)+'</div></div>';}).join('')+'</div>';
+  var rh=isl
+    ?'<div class="dz" id="rdz" onclick="document.getElementById(\'ri\').click()" ondragover="event.preventDefault();this.classList.add(\'ov\')" ondragleave="this.classList.remove(\'ov\')" ondrop="hRDrop(event)"><div class="dl"><strong>Clic o arrastra renders aca</strong></div></div><input type="file" id="ri" accept="image/*" multiple style="display:none" onchange="hRFiles(this.files)"/><div class="pb" id="rbar"><div class="pbf" id="rfil"></div></div><div class="pg" id="rgrid"></div>'
+    :'<div class="pg">'+curRenders.map(function(r){return '<div class="pc2"><img src="'+r.src+'" alt="'+esc(r.caption)+'"/><div class="pcap">'+esc(r.caption)+'</div></div>';}).join('')+'</div>';
+  var ph=isl
+    ?'<div class="dz" id="pdz" onclick="document.getElementById(\'pli\').click()" ondragover="event.preventDefault();this.classList.add(\'ov\')" ondragleave="this.classList.remove(\'ov\')" ondrop="hPDrop(event)"><div class="dl"><strong>Clic o arrastra planos aca</strong></div></div><input type="file" id="pli" accept="image/*" multiple style="display:none" onchange="hPFiles(this.files)"/><div class="pb" id="pbar"><div class="pbf" id="pfil"></div></div><div class="pg" id="pgrid"></div>'
+    :'<div class="pg">'+curPlanos.map(function(p){return '<div class="pc2"><img src="'+p.src+'" alt="'+esc(p.caption)+'"/><div class="pcap">'+esc(p.caption)+'</div></div>';}).join('')+'</div>';
+
   document.getElementById('co').innerHTML=
-    '<div class="ch"><div><div class="ct">'+esc(v.titulo||'Version')+' <span style="color:#888;font-weight:400;font-size:1rem">'+esc(v.fecha||'sin fecha')+'</span></div><div class="cs">'+esc(v.etapa||'')+'</div></div>'+
-    '<div class="ca">'+(isl?'<button class="bs bt" onclick="publishVersion()">Publicar version</button>':'<div style="font-size:.65rem;color:#888">Version anterior</div>')+'</div></div>'+
-    (!isl?'<div class="vro">Version anterior — solo lectura</div>':'')+
-    '<div class="fs"><div class="ft">Identificacion</div>'+
-    '<div class="fr"><div><label class="fl">Titulo</label><input class="fi" id="vt" value="'+esc(v.titulo)+'"'+(isl?'':' disabled')+'/></div><div><label class="fl">Fecha</label><input class="fi" id="vf" value="'+esc(v.fecha)+'" placeholder="Mayo 2026"'+(isl?'':' disabled')+'/></div></div>'+
-    '<div class="fc"><label class="fl">Etapa</label><input class="fi" id="ve" value="'+esc(v.etapa)+'" placeholder="Anteproyecto"'+(isl?'':' disabled')+'/></div>'+
-    '<div class="fc"><label class="fl">Descripcion</label><textarea class="fi" id="vd" style="resize:vertical;min-height:80px"'+(isl?'':' disabled')+'>'+esc(v.descripcion)+'</textarea></div></div>'+
-    '<div class="fs"><div class="ft">Memoria descriptiva</div><textarea class="fi" id="vm" style="resize:vertical;min-height:200px;font-size:.82rem;line-height:1.6"'+(isl?'':' disabled')+'>'+esc(v.memoria)+'</textarea></div>'+
-    '<div class="fs"><div class="ft">Computo de superficies</div><textarea class="fi" id="vc" style="resize:vertical;min-height:140px;font-family:monospace;font-size:.82rem;line-height:1.7"'+(isl?'':' disabled')+'>'+esc(v.computo)+'</textarea></div>'+
-    '<div class="fs"><div class="ft">Renders</div>'+rh+'</div>'+
-    '<div class="fs"><div class="ft">Planos</div>'+ph+'</div>';
+    '<div class="ch"><div><div class="ct">'+esc(v.titulo||'Version')+' <span style="color:#888;font-weight:400;font-size:1rem">'+esc(v.fecha||'sin fecha')+'</span></div><div class="cs">'+esc(v.etapa||'')+'</div></div>'
+    +'<div class="ca">'+(isl?'<button class="bs bt" onclick="publishVersion()">Publicar version</button>':'<div style="font-size:.65rem;color:#888">Version anterior</div>')+'</div></div>'
+    +(!isl?'<div class="vro">Version anterior - solo lectura</div>':'')
+    +'<div class="fs"><div class="ft">Identificacion</div>'
+    +'<div class="fr"><div><label class="fl">Titulo</label><input class="fi" id="vt" value="'+esc(v.titulo||'')+'"'+(isl?'':' disabled')+'/></div>'
+    +'<div><label class="fl">Fecha</label><input class="fi" id="vf" value="'+esc(v.fecha||'')+'" placeholder="Mayo 2026"'+(isl?'':' disabled')+'/></div></div>'
+    +'<div class="fc"><label class="fl">Etapa</label><input class="fi" id="ve" value="'+esc(v.etapa||'')+'" placeholder="Anteproyecto"'+(isl?'':' disabled')+'/></div>'
+    +'<div class="fc"><label class="fl">Descripcion</label><textarea class="fi" id="vd" style="resize:vertical;min-height:80px"'+(isl?'':' disabled')+'>'+esc(v.descripcion||'')+'</textarea></div></div>'
+    +'<div class="fs"><div class="ft">Memoria descriptiva</div><textarea class="fi" id="vm" style="resize:vertical;min-height:200px;font-size:.82rem;line-height:1.6"'+(isl?'':' disabled')+'>'+esc(v.memoria||'')+'</textarea></div>'
+    +'<div class="fs"><div class="ft">Computo de superficies</div><textarea class="fi" id="vc" style="resize:vertical;min-height:140px;font-family:monospace;font-size:.82rem;line-height:1.7"'+(isl?'':' disabled')+'>'+esc(v.computo||'')+'</textarea></div>'
+    +'<div class="fs"><div class="ft">Renders</div>'+rh+'</div>'
+    +'<div class="fs"><div class="ft">Planos</div>'+ph+'</div>';
+
   if(isl){renderRG();renderPG();}
 }
 
-function rPI(p,i){pc=Math.max(pc,i+1);return '<div class="pi" id="pi'+i+'"><div class="pih"><input class="fi" id="pn'+i+'" value="'+esc(p.nombre)+'" placeholder="Nombre etapa"/><div class="pp" id="pd'+i+'">'+(p.val||0)+'%</div><button class="br" onclick="document.getElementById('pi'+i+'').remove()">x</button></div><input type="range" class="ps" id="pv'+i+'" min="0" max="100" value="'+(p.val||0)+'" oninput="document.getElementById('pd'+i+'').textContent=this.value+'%'"/><input class="fi" id="pno'+i+'" value="'+esc(p.nota)+'" placeholder="Nota" style="margin-top:.4rem"/></div>';}
+function rPI(p,i){
+  pc=Math.max(pc,i+1);
+  return '<div class="pi" id="pi'+i+'">'
+    +'<div class="pih"><input class="fi" id="pn'+i+'" value="'+esc(p.nombre||'')+'" placeholder="Nombre etapa"/>'
+    +'<div class="pp" id="pd'+i+'">'+(p.val||0)+'%</div>'
+    +'<button class="br2" onclick="document.getElementById(\'pi'+i+'\').remove()">x</button></div>'
+    +'<input type="range" class="ps" id="pv'+i+'" min="0" max="100" value="'+(p.val||0)+'" oninput="document.getElementById(\'pd'+i+'\').textContent=this.value+\'%\'"/>'
+    +'<input class="fi" id="pno'+i+'" value="'+esc(p.nota||'')+'" placeholder="Nota" style="margin-top:.4rem"/></div>';
+}
 function addPI(){var i=pc++;var d=document.createElement('div');d.innerHTML=rPI({nombre:'',val:0,nota:''},i);document.getElementById('plist').appendChild(d.firstElementChild);}
 
-function rNI(n,i){nc=Math.max(nc,i+1);return '<div class="ni" id="ni'+i+'"><input class="fi" id="nf'+i+'" value="'+esc(n.fecha)+'" placeholder="15/06/2026"/><input class="fi" id="nt'+i+'" value="'+esc(n.texto)+'" placeholder="Descripcion"/><button class="br" onclick="document.getElementById('ni'+i+'').remove()">x</button></div>';}
+function rNI(n,i){
+  nc=Math.max(nc,i+1);
+  return '<div class="ni" id="ni'+i+'">'
+    +'<input class="fi" id="nf'+i+'" value="'+esc(n.fecha||'')+'" placeholder="15/06/2026"/>'
+    +'<input class="fi" id="nt'+i+'" value="'+esc(n.texto||'')+'" placeholder="Descripcion"/>'
+    +'<button class="br2" onclick="document.getElementById(\'ni'+i+'\').remove()">x</button></div>';
+}
 function addNI(){var i=nc++;var d=document.createElement('div');d.innerHTML=rNI({fecha:'',texto:''},i);document.getElementById('nlist').appendChild(d.firstElementChild);}
 
-function rFI(it,i){fc=Math.max(fc,i+1);return '<div class="fni" id="fii'+i+'"><input class="fi" id="fl'+i+'" value="'+esc(it.label)+'" placeholder="Concepto"/><input class="fi" id="fv'+i+'" value="'+esc(it.valor)+'" placeholder="$0"/><label class="cl"><input type="checkbox" id="fpd'+i+'"'+(it.pagado?' checked':'')+'/> Pagado</label><button class="br" onclick="document.getElementById('fii'+i+'').remove()">x</button></div>';}
+function rFI(it,i){
+  fc=Math.max(fc,i+1);
+  return '<div class="fni" id="fii'+i+'">'
+    +'<input class="fi" id="fl'+i+'" value="'+esc(it.label||'')+'" placeholder="Concepto"/>'
+    +'<input class="fi" id="fv'+i+'" value="'+esc(it.valor||'')+'" placeholder="$0"/>'
+    +'<label class="cl"><input type="checkbox" id="fpd'+i+'"'+(it.pagado?' checked':'')+'/> Pagado</label>'
+    +'<button class="br2" onclick="document.getElementById(\'fii'+i+'\').remove()">x</button></div>';
+}
 function addFI(){var i=fc++;var d=document.createElement('div');d.innerHTML=rFI({label:'',valor:'',pagado:false},i);document.getElementById('fitems').appendChild(d.firstElementChild);}
 
 function hDrop(e){e.preventDefault();document.getElementById('dz').classList.remove('ov');hFotos(e.dataTransfer.files);}
 function hFotos(files){
   var arr=Array.from(files);if(!arr.length)return;
-  var bar=document.getElementById('fbar'),fil=document.getElementById('ffil');bar.style.display='block';
-  Promise.all(arr.map(function(f,i){return compress(f,1000,78).then(function(c){fil.style.width=((i+1)/arr.length*90)+'%';curFotos.push({id:null,src:c,caption:f.name.replace(/\.[^.]+$/,''),order:curFotos.length,isNew:true,toDelete:false});});}))
-  .then(function(){fil.style.width='100%';setTimeout(function(){bar.style.display='none';fil.style.width='0';},500);renderFG();toast(arr.length+' foto'+(arr.length>1?'s':'')+' lista'+(arr.length>1?'s':''));});
+  var bar=document.getElementById('fbar'),fil=document.getElementById('ffil');
+  bar.style.display='block';
+  Promise.all(arr.map(function(f,i){
+    return compress(f,1000,78).then(function(c){
+      fil.style.width=((i+1)/arr.length*90)+'%';
+      curFotos.push({id:null,src:c,caption:f.name.replace(/\.[^.]+$/,''),order:curFotos.length,isNew:true,toDelete:false});
+    });
+  })).then(function(){
+    fil.style.width='100%';
+    setTimeout(function(){bar.style.display='none';fil.style.width='0';},500);
+    renderFG();
+    toast(arr.length+' foto'+(arr.length>1?'s':'')+' lista'+(arr.length>1?'s':''));
+  });
 }
-function renderFG(){var g=document.getElementById('fgrid');if(!g)return;var vis=curFotos.filter(function(f){return!f.toDelete;});g.innerHTML=vis.map(function(f){var ri=curFotos.indexOf(f);return '<div class="fc2"><img src="'+f.src+'" alt="'+esc(f.caption)+'"/><div class="fo"><button class="bd" onclick="rmF('+ri+')">x</button></div><input class="cap" id="cap'+ri+'" value="'+esc(f.caption)+'" placeholder="Caption"/></div>';}).join('');}
+function renderFG(){
+  var grid=document.getElementById('fgrid');if(!grid)return;
+  var vis=curFotos.filter(function(f){return!f.toDelete;});
+  grid.innerHTML=vis.map(function(f){
+    var ri=curFotos.indexOf(f);
+    return '<div class="fc2"><img src="'+f.src+'" alt="'+esc(f.caption)+'"/>'
+      +'<div class="fo"><button class="bd" onclick="rmF('+ri+')">x</button></div>'
+      +'<input class="cap" id="cap'+ri+'" value="'+esc(f.caption)+'" placeholder="Caption"/></div>';
+  }).join('');
+}
 function rmF(i){if(curFotos[i].id){curFotos[i].toDelete=true;}else{curFotos.splice(i,1);}renderFG();}
 
 function hRDrop(e){e.preventDefault();document.getElementById('rdz').classList.remove('ov');hRFiles(e.dataTransfer.files);}
-function hRFiles(files){var arr=Array.from(files);if(!arr.length)return;var bar=document.getElementById('rbar'),fil=document.getElementById('rfil');bar.style.display='block';Promise.all(arr.map(function(f){return compress(f,1200,82).then(function(c){curRenders.push({id:null,src:c,caption:f.name.replace(/\.[^.]+$/,''),order:curRenders.length,isNew:true,toDelete:false});});})).then(function(){fil.style.width='100%';setTimeout(function(){bar.style.display='none';fil.style.width='0';},500);renderRG();toast(arr.length+' render'+(arr.length>1?'s':'')+' listo'+(arr.length>1?'s':''));});}
-function renderRG(){var g=document.getElementById('rgrid');if(!g)return;var vis=curRenders.filter(function(r){return!r.toDelete;});g.innerHTML=vis.map(function(r){var ri=curRenders.indexOf(r);return '<div class="pc2" style="position:relative"><img src="'+r.src+'" alt="'+esc(r.caption)+'"/><div style="position:absolute;top:.4rem;right:.4rem"><button class="bd" onclick="rmR('+ri+')">x</button></div><input class="pcap" id="rc'+ri+'" value="'+esc(r.caption)+'" placeholder="Caption render"/></div>';}).join('');}
+function hRFiles(files){
+  var arr=Array.from(files);if(!arr.length)return;
+  var bar=document.getElementById('rbar'),fil=document.getElementById('rfil');bar.style.display='block';
+  Promise.all(arr.map(function(f){return compress(f,1200,82).then(function(c){curRenders.push({id:null,src:c,caption:f.name.replace(/\.[^.]+$/,''),order:curRenders.length,isNew:true,toDelete:false});});}))
+  .then(function(){fil.style.width='100%';setTimeout(function(){bar.style.display='none';fil.style.width='0';},500);renderRG();toast(arr.length+' render'+(arr.length>1?'s':'')+' listo'+(arr.length>1?'s':''));});
+}
+function renderRG(){
+  var grid=document.getElementById('rgrid');if(!grid)return;
+  var vis=curRenders.filter(function(r){return!r.toDelete;});
+  grid.innerHTML=vis.map(function(r){var ri=curRenders.indexOf(r);return '<div class="pc2" style="position:relative"><img src="'+r.src+'" alt="'+esc(r.caption)+'"/><div style="position:absolute;top:.4rem;right:.4rem"><button class="bd" onclick="rmR('+ri+')">x</button></div><input class="pcap" id="rc'+ri+'" value="'+esc(r.caption)+'" placeholder="Caption render"/></div>';}).join('');
+}
 function rmR(i){if(curRenders[i].id){curRenders[i].toDelete=true;}else{curRenders.splice(i,1);}renderRG();}
 
 function hPDrop(e){e.preventDefault();document.getElementById('pdz').classList.remove('ov');hPFiles(e.dataTransfer.files);}
-function hPFiles(files){var arr=Array.from(files);if(!arr.length)return;var bar=document.getElementById('pbar'),fil=document.getElementById('pfil');bar.style.display='block';Promise.all(arr.map(function(f){return compress(f,1400,85).then(function(c){curPlanos.push({id:null,src:c,caption:f.name.replace(/\.[^.]+$/,''),order:curPlanos.length,isNew:true,toDelete:false});});})).then(function(){fil.style.width='100%';setTimeout(function(){bar.style.display='none';fil.style.width='0';},500);renderPG();toast(arr.length+' plano'+(arr.length>1?'s':'')+' listo'+(arr.length>1?'s':''));});}
-function renderPG(){var g=document.getElementById('pgrid');if(!g)return;var vis=curPlanos.filter(function(p){return!p.toDelete;});g.innerHTML=vis.map(function(p){var pi=curPlanos.indexOf(p);return '<div class="pc2" style="position:relative"><img src="'+p.src+'" alt="'+esc(p.caption)+'"/><div style="position:absolute;top:.4rem;right:.4rem"><button class="bd" onclick="rmP('+pi+')">x</button></div><input class="pcap" id="pc'+pi+'" value="'+esc(p.caption)+'" placeholder="Caption plano"/></div>';}).join('');}
+function hPFiles(files){
+  var arr=Array.from(files);if(!arr.length)return;
+  var bar=document.getElementById('pbar'),fil=document.getElementById('pfil');bar.style.display='block';
+  Promise.all(arr.map(function(f){return compress(f,1400,85).then(function(c){curPlanos.push({id:null,src:c,caption:f.name.replace(/\.[^.]+$/,''),order:curPlanos.length,isNew:true,toDelete:false});});}))
+  .then(function(){fil.style.width='100%';setTimeout(function(){bar.style.display='none';fil.style.width='0';},500);renderPG();toast(arr.length+' plano'+(arr.length>1?'s':'')+' listo'+(arr.length>1?'s':''));});
+}
+function renderPG(){
+  var grid=document.getElementById('pgrid');if(!grid)return;
+  var vis=curPlanos.filter(function(p){return!p.toDelete;});
+  grid.innerHTML=vis.map(function(p){var pi=curPlanos.indexOf(p);return '<div class="pc2" style="position:relative"><img src="'+p.src+'" alt="'+esc(p.caption)+'"/><div style="position:absolute;top:.4rem;right:.4rem"><button class="bd" onclick="rmP('+pi+')">x</button></div><input class="pcap" id="pc'+pi+'" value="'+esc(p.caption)+'" placeholder="Caption plano"/></div>';}).join('');
+}
 function rmP(i){if(curPlanos[i].id){curPlanos[i].toDelete=true;}else{curPlanos.splice(i,1);}renderPG();}
 
 function handleHero(inp){var f=inp.files[0];if(!f)return;showPB('h');compress(f,1600,82).then(function(c){curHero=c;hidePB('h');var p=document.getElementById('hip');p.src=c;p.style.display='block';toast('Imagen hero lista');});}
@@ -425,16 +540,48 @@ function removeAxo(){curAxo=null;selectReport(curId);}
 function showPB(id){document.getElementById(id+'bar').style.display='block';document.getElementById(id+'fil').style.width='55%';}
 function hidePB(id){document.getElementById(id+'fil').style.width='100%';setTimeout(function(){document.getElementById(id+'bar').style.display='none';},400);}
 
-function compress(file,maxW,q){return new Promise(function(resolve){var img=new Image(),url=URL.createObjectURL(file);img.onload=function(){var r=Math.min(maxW/img.width,1),c=document.createElement('canvas');c.width=img.width*r;c.height=img.height*r;c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);resolve(c.toDataURL('image/jpeg',q/100));};img.src=url;});}
+function compress(file,maxW,q){
+  return new Promise(function(resolve){
+    var img=new Image(),url=URL.createObjectURL(file);
+    img.onload=function(){
+      var r=Math.min(maxW/img.width,1),c=document.createElement('canvas');
+      c.width=img.width*r;c.height=img.height*r;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      URL.revokeObjectURL(url);resolve(c.toDataURL('image/jpeg',q/100));
+    };img.src=url;
+  });
+}
 
 function collectD(){
   curFotos.forEach(function(f,i){var el=document.getElementById('cap'+i);if(el)f.caption=el.value;});
-  var prog=[];document.querySelectorAll('[id^="pi"]').forEach(function(row){var i=row.id.replace('pi','');if(isNaN(i))return;prog.push({nombre:document.getElementById('pn'+i)?document.getElementById('pn'+i).value:'',val:parseInt(document.getElementById('pv'+i)?document.getElementById('pv'+i).value:0)||0,nota:document.getElementById('pno'+i)?document.getElementById('pno'+i).value:''});});
-  var nov=[];document.querySelectorAll('[id^="ni"]').forEach(function(row){var i=row.id.replace('ni','');if(isNaN(i))return;var txt=document.getElementById('nt'+i)?document.getElementById('nt'+i).value:'';if(txt)nov.push({fecha:document.getElementById('nf'+i)?document.getElementById('nf'+i).value:'',texto:txt});});
-  var fitems=[];document.querySelectorAll('[id^="fii"]').forEach(function(row){var i=row.id.replace('fii','');if(isNaN(i))return;var lbl=document.getElementById('fl'+i)?document.getElementById('fl'+i).value:'';if(lbl)fitems.push({label:lbl,valor:document.getElementById('fv'+i)?document.getElementById('fv'+i).value:'',pagado:document.getElementById('fpd'+i)?document.getElementById('fpd'+i).checked:false});});
-  return {titulo:g('ft'),fecha:g('ff'),etapa:g('fe'),pctGlobal:parseInt(g('fp'))||0,clima:{texto:g('fct'),sub:g('fcs')},superficieTotal:parseInt(g('fsu'))||0,proximoInforme:g('fpr'),galeriaTitle:g('fga'),progreso:prog,novedades:nov,fotos:curFotos,heroB64:curHero,axoB64:curAxo,financiero:{pagadoPct:parseInt(g('finp'))||0,total:g('fint'),pagado:g('finpag'),pendiente:g('finpen'),hito:g('finh'),items:fitems}};
+  var prog=[];
+  document.querySelectorAll('[id^="pi"]').forEach(function(row){
+    var i=row.id.replace('pi','');
+    if(isNaN(parseInt(i)))return;
+    prog.push({nombre:g('pn'+i),val:parseInt(g('pv'+i))||0,nota:g('pno'+i)});
+  });
+  var nov=[];
+  document.querySelectorAll('[id^="ni"]').forEach(function(row){
+    var i=row.id.replace('ni','');
+    if(isNaN(parseInt(i)))return;
+    var txt=g('nt'+i);
+    if(txt)nov.push({fecha:g('nf'+i),texto:txt});
+  });
+  var fitems=[];
+  document.querySelectorAll('[id^="fii"]').forEach(function(row){
+    var i=row.id.replace('fii','');
+    if(isNaN(parseInt(i)))return;
+    var lbl=g('fl'+i);
+    if(lbl)fitems.push({label:lbl,valor:g('fv'+i),pagado:document.getElementById('fpd'+i)?document.getElementById('fpd'+i).checked:false});
+  });
+  return {
+    titulo:g('ft'),fecha:g('ff'),etapa:g('fe'),pctGlobal:parseInt(g('fp'))||0,
+    clima:{texto:g('fct'),sub:g('fcs')},
+    superficieTotal:parseInt(g('fsu'))||0,proximoInforme:g('fpr'),galeriaTitle:g('fga'),
+    progreso:prog,novedades:nov,fotos:curFotos,heroB64:curHero,axoB64:curAxo,
+    financiero:{pagadoPct:parseInt(g('finp'))||0,total:g('fint'),pagado:g('finpag'),pendiente:g('finpen'),hito:g('finh'),items:fitems}
+  };
 }
-function g(id){var el=document.getElementById(id);return el?el.value:'';}
 
 function collectVD(){
   curRenders.forEach(function(r,i){var el=document.getElementById('rc'+i);if(el)r.caption=el.value;});
@@ -447,25 +594,26 @@ function openPreview(){
   var ac=(project&&project.color)?project.color:'#002FA7';
   var fv=curFotos.filter(function(f){return!f.toDelete;});
   var hs=r.heroB64||(project&&project.coverB64)||'';
-  document.getElementById('pi').innerHTML='<div style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif">'+
-    '<div style="position:relative;height:240px;overflow:hidden;margin-bottom:2rem">'+
-    '<div style="position:absolute;inset:0;background:url(''+hs+'') center/cover"></div>'+
-    '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.88),rgba(10,10,10,.25))"></div>'+
-    '<div style="position:absolute;bottom:1.5rem;left:2rem;right:2rem;display:flex;justify-content:space-between;align-items:flex-end">'+
-    '<div><div style="font-size:.58rem;letter-spacing:.2em;color:'+ac+';font-weight:700;text-transform:uppercase;margin-bottom:.4rem">'+esc(r.titulo)+' · '+esc(r.fecha)+'</div>'+
-    '<div style="font-size:2rem;font-weight:700;color:#fff;line-height:1">'+esc((project&&project.nombre)||'')+'</div>'+
-    '<div style="font-size:.7rem;color:rgba(255,255,255,.45);margin-top:.3rem">'+esc((project&&project.barrio)||'')+'</div></div>'+
-    '<div style="text-align:right"><div style="font-size:3rem;font-weight:700;color:#fff">'+r.pctGlobal+'<span style="font-size:1.2rem;color:'+ac+'">%</span></div></div></div></div>'+
-    (r.progreso||[]).map(function(p){return '<div style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;margin-bottom:.3rem"><span style="font-size:.78rem;font-weight:700;text-transform:uppercase">'+esc(p.nombre)+'</span><span style="font-size:1.1rem;font-weight:700">'+p.val+'%</span></div><div style="height:3px;background:#d0d0cc"><div style="height:3px;background:'+ac+';width:'+p.val+'%"></div></div><div style="font-size:.56rem;color:#888;margin-top:.2rem">'+esc(p.nota)+'</div></div>';}).join('')+
-    (fv.length?'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:1.5rem 0">'+fv.map(function(f){return '<img src="'+f.src+'" style="width:100%;aspect-ratio:4/3;object-fit:cover"/>';}).join('')+'</div>':'')+
-    '<div style="margin-top:1.5rem;border-top:1px solid #eee;padding-top:1.5rem">'+
-    '<div style="display:flex;gap:2rem;margin-bottom:1rem">'+
-    '<div><div style="font-size:1.3rem;font-weight:700;color:'+ac+'">'+esc(fin.pagado)+'</div><div style="font-size:.55rem;color:#888;text-transform:uppercase">Pagado</div></div>'+
-    '<div><div style="font-size:1.3rem;font-weight:700;color:#888">'+esc(fin.pendiente)+'</div><div style="font-size:.55rem;color:#888;text-transform:uppercase">Pendiente</div></div>'+
-    '<div><div style="font-size:1.3rem;font-weight:700">'+esc(fin.total)+'</div><div style="font-size:.55rem;color:#888;text-transform:uppercase">Total</div></div></div>'+
-    (fin.items||[]).map(function(it){return '<div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid #eee;font-size:.82rem"><span>'+esc(it.label)+'</span><span style="font-weight:700;color:'+(it.pagado?'#0a0a0a':'#888')+'">'+esc(it.valor)+'</span></div>';}).join('')+
-    (fin.hito?'<div style="margin-top:1rem;padding:.75rem 1rem;background:#f4f4f2;border-left:3px solid '+ac+'"><div style="font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:#888;margin-bottom:.2rem">Proximo hito</div><div style="font-size:.88rem;font-weight:700">'+esc(fin.hito)+'</div></div>':'')+
-    '</div></div>';
+  document.getElementById('pin').innerHTML=
+    '<div style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif">'
+    +'<div style="position:relative;height:240px;overflow:hidden;margin-bottom:2rem">'
+    +'<div style="position:absolute;inset:0;background:url(\''+hs+'\') center/cover"></div>'
+    +'<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.88),rgba(10,10,10,.25))"></div>'
+    +'<div style="position:absolute;bottom:1.5rem;left:2rem;right:2rem;display:flex;justify-content:space-between;align-items:flex-end">'
+    +'<div><div style="font-size:.58rem;letter-spacing:.2em;color:'+ac+';font-weight:700;text-transform:uppercase;margin-bottom:.4rem">'+esc(r.titulo)+' - '+esc(r.fecha)+'</div>'
+    +'<div style="font-size:2rem;font-weight:700;color:#fff;line-height:1">'+esc((project&&project.nombre)||'')+'</div>'
+    +'<div style="font-size:.7rem;color:rgba(255,255,255,.45);margin-top:.3rem">'+esc((project&&project.barrio)||'')+'</div></div>'
+    +'<div style="text-align:right"><div style="font-size:3rem;font-weight:700;color:#fff">'+r.pctGlobal+'<span style="font-size:1.2rem;color:'+ac+'">%</span></div></div></div></div>'
+    +(r.progreso||[]).map(function(p){return '<div style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;margin-bottom:.3rem"><span style="font-size:.78rem;font-weight:700;text-transform:uppercase">'+esc(p.nombre)+'</span><span style="font-size:1.1rem;font-weight:700">'+p.val+'%</span></div><div style="height:3px;background:#d0d0cc"><div style="height:3px;background:'+ac+';width:'+p.val+'%"></div></div><div style="font-size:.56rem;color:#888;margin-top:.2rem">'+esc(p.nota)+'</div></div>';}).join('')
+    +(fv.length?'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:1.5rem 0">'+fv.map(function(f){return '<img src="'+f.src+'" style="width:100%;aspect-ratio:4/3;object-fit:cover"/>';}).join('')+'</div>':'')
+    +'<div style="margin-top:1.5rem;border-top:1px solid #eee;padding-top:1.5rem">'
+    +'<div style="display:flex;gap:2rem;margin-bottom:1rem">'
+    +'<div><div style="font-size:1.3rem;font-weight:700;color:'+ac+'">'+esc(fin.pagado||'')+'</div><div style="font-size:.55rem;color:#888;text-transform:uppercase">Pagado</div></div>'
+    +'<div><div style="font-size:1.3rem;font-weight:700;color:#888">'+esc(fin.pendiente||'')+'</div><div style="font-size:.55rem;color:#888;text-transform:uppercase">Pendiente</div></div>'
+    +'<div><div style="font-size:1.3rem;font-weight:700">'+esc(fin.total||'')+'</div><div style="font-size:.55rem;color:#888;text-transform:uppercase">Total</div></div></div>'
+    +(fin.items||[]).map(function(it){return '<div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid #eee;font-size:.82rem"><span>'+esc(it.label)+'</span><span style="font-weight:700;color:'+(it.pagado?'#0a0a0a':'#888')+'">'+esc(it.valor)+'</span></div>';}).join('')
+    +(fin.hito?'<div style="margin-top:1rem;padding:.75rem 1rem;background:#f4f4f2;border-left:3px solid '+ac+'"><div style="font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:#888;margin-bottom:.2rem">Proximo hito</div><div style="font-size:.88rem;font-weight:700">'+esc(fin.hito)+'</div></div>':'')
+    +'</div></div>';
   document.getElementById('pm').classList.add('open');
 }
 function closePreview(){document.getElementById('pm').classList.remove('open');}
@@ -526,11 +674,7 @@ function updateWA(){
   var btn=document.getElementById('wabtn');if(!btn)return;
   var r=allReports.find(function(x){return x.id===curId;})||{};
   var url=window.location.origin+'/login.html';
-  var msg=encodeURIComponent('Nuevo informe '+((project&&project.nombre)||'')+'
-'+(r.titulo||'')+' - '+(r.fecha||'')+'
-Avance: '+(r.pctGlobal||0)+'%
-
-'+url);
+  var msg=encodeURIComponent('Nuevo informe '+((project&&project.nombre)||'')+'\n'+(r.titulo||'')+' - '+(r.fecha||'')+'\nAvance: '+(r.pctGlobal||0)+'%\n\n'+url);
   btn.href='https://wa.me/?text='+msg;
 }
 
