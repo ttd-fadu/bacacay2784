@@ -466,30 +466,27 @@ let rendersCache   = {};
 let planosCache    = {};
 
 // ── AUTH CHECK ────────────────────────────────────────────────────────────────
-// Viewer: no verifica quien es el usuario, solo que el PROJECT_ID exista
-// El acceso queda controlado por la contrasena del login
-auth.onAuthStateChanged(async user => {
-  if(!user){
-    // No hay sesion — verificar si el PROJECT_ID es valido antes de redirigir
-    if(!PROJECT_ID){ window.location.replace('login.html'); return; }
-    // Intentar cargar el proyecto sin auth (lectura publica si las reglas lo permiten)
-    // Si falla, redirigir al login
-    try{
-      const doc = await db.collection('projects').doc(PROJECT_ID).get();
-      if(!doc.exists){ window.location.replace('login.html'); return; }
-      currentProject = {id:doc.id,...doc.data()};
-      // Continuar sin auth — solo lectura
-      await loadContent();
-    }catch(e){
-      window.location.replace('login.html');
-    }
-    return;
-  }
+// Viewer: espera auth activamente (igual que project-admin)
+// Modo preview=true: admin ve el proyecto sin verificar clientEmail
+function waitForAuth(){
+  return new Promise(function(resolve){
+    if(auth.currentUser){resolve(auth.currentUser);return;}
+    var done=false;
+    var unsub=auth.onAuthStateChanged(function(user){
+      if(done)return;
+      done=true;unsub();resolve(user);
+    });
+    setTimeout(function(){if(!done){done=true;unsub();resolve(null);}},5000);
+  });
+}
+
+waitForAuth().then(function(user){
+  if(!user){ window.location.replace('login.html'); return; }
   if(!PROJECT_ID){ window.location.replace('login.html'); return; }
-  await init();
+  init();
 });
 
-function doLogout(){ auth.signOut().then(()=>{ window.location.replace('login.html'); }); }
+function doLogout(){ auth.signOut().then(function(){ window.location.replace('login.html'); }); }
 
 async function init(){
   try{
@@ -530,20 +527,23 @@ function showTab(tab){
 }
 
 // ── VERSIONS ──────────────────────────────────────────────────────────────────
-async function loadVersions(){
-  const snap = await db.collection('projects').doc(PROJECT_ID)
-    .collection('versions').orderBy('createdAt','desc').get();
-  allVersions = snap.docs.map(d=>{return {id:d.id,...d.data()}});
-  if(allVersions.length){
-    await selectVersion(allVersions[0].id, true);
-    if(allVersions.length>1) renderVersionNav();
-  } else {
-    document.getElementById('pres-empty').style.display='block';
-    document.getElementById('pres-project-name').textContent=currentProject?.nombre||'';
-    document.getElementById('pres-etapa').textContent='';
-    document.getElementById('pres-desc').textContent='';
-    document.getElementById('pres-version-tag').textContent='';
-  }
+function loadVersions(){
+  return db.collection('projects').doc(PROJECT_ID)
+    .collection('versions').orderBy('createdAt','desc').get()
+    .then(function(snap){
+      allVersions = snap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
+      if(allVersions.length){
+        return selectVersion(allVersions[0].id, true).then(function(){
+          if(allVersions.length>1) renderVersionNav();
+        });
+      } else {
+        document.getElementById('pres-empty').style.display='block';
+        document.getElementById('pres-project-name').textContent=(currentProject&&currentProject.nombre)||'';
+        document.getElementById('pres-etapa').textContent='';
+        document.getElementById('pres-desc').textContent='';
+        document.getElementById('pres-version-tag').textContent='';
+      }
+    }).catch(function(e){ console.warn('versions:', e); });
 }
 
 function renderVersionNav(){
@@ -555,10 +555,10 @@ function renderVersionNav(){
     </button>`).join('');
 }
 
-async function selectVersion(id, silent){
+function selectVersion(id, silent){
   currentVerId=id;
-  const v=allVersions.find(x=>x.id===id);
-  if(!v) return;
+  var v=allVersions.find(function(x){return x.id===id;});
+  if(!v) return Promise.resolve();
 
   // Update header
   document.getElementById('pres-version-tag').textContent=allVersions[0].id===id?'Version actual':'Version anterior';
@@ -620,13 +620,15 @@ async function selectVersion(id, silent){
 }
 
 // ── REPORTS ───────────────────────────────────────────────────────────────────
-async function loadReports(){
-  const snap = await db.collection('projects').doc(PROJECT_ID)
-    .collection('reports').orderBy('createdAt','asc').get();
-  allReports = snap.docs.map(d=>{return {id:d.id,...d.data()}});
-  if(!allReports.length) return;
-  initSlider();
-  await applyReport(allReports.length-1);
+function loadReports(){
+  return db.collection('projects').doc(PROJECT_ID)
+    .collection('reports').orderBy('createdAt','asc').get()
+    .then(function(snap){
+      allReports = snap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
+      if(!allReports.length) return;
+      initSlider();
+      return applyReport(allReports.length-1);
+    }).catch(function(e){ console.warn('reports:', e); });
 }
 
 async function loadFotos(reportId){
