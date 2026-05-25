@@ -11,11 +11,14 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;background:#f4f4f2;color:#0a0a0a;min-height:100vh}
 :root{--k:#002FA7;--t:#9E3A26;--b:#e0e0dc;--g:#f4f4f2}
-.topbar{background:var(--k);padding:0 2rem;height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--t);position:sticky;top:0;z-index:200}
-.tl{display:flex;align-items:center;gap:1rem}
+.topbar{background:var(--k);padding:0 1.25rem;height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--t);position:sticky;top:0;z-index:200}
+.tl{display:flex;align-items:center;gap:.75rem}
 .tb{font-size:.92rem;font-weight:700;color:#fff}
 .ts{color:rgba(255,255,255,.25)}
 .tp{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.85)}
+.bbk{display:flex;align-items:center;gap:.35rem;padding:.38rem .7rem;font-size:.6rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;border:none;cursor:pointer;background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.2);transition:all .2s;white-space:nowrap}
+.bbk:hover{background:rgba(255,255,255,.22);color:#fff}
+.bbk svg{flex-shrink:0}
 .tr{display:flex;align-items:center;gap:.6rem}
 .bs{padding:.38rem .85rem;font-size:.6rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2)}
 .bs:hover{background:rgba(255,255,255,.2);color:#fff}
@@ -96,12 +99,12 @@ body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;background:#f4f4f2;co
 .pc2 img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
 .pcap{width:100%;padding:.35rem .4rem;font-size:.6rem;border:none;border-top:1px solid var(--b);background:#fff;font-family:inherit;outline:none}
 .vro{background:#f9f9f7;border:1px solid var(--b);padding:1rem;margin-bottom:.75rem;font-size:.82rem;color:#555;font-style:italic}
-#pm{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;flex-direction:column}
+#pm{display:none;position:fixed;inset:0;background:#fafafa;z-index:1000;flex-direction:column}
 #pm.open{display:flex}
-.ptb{background:#0a0a0a;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--t);flex-shrink:0}
-.ptt{color:var(--t);font-weight:700;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase}
-#pb2{flex:1;overflow-y:auto;background:#fafafa;padding:2rem}
-#pin{max-width:860px;margin:0 auto}
+.ptb{background:var(--k);padding:0 1.25rem;height:48px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--t);flex-shrink:0}
+.ptt{color:rgba(255,255,255,.85);font-weight:700;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
+#pb2{flex:1;overflow:hidden;display:flex;flex-direction:column}
+#previewFrame{width:100%;height:100%;border:none;flex:1}
 #po{display:none;position:fixed;inset:0;background:rgba(10,10,10,.75);z-index:500;align-items:center;justify-content:center}
 #po.show{display:flex}
 .pob{background:#fff;padding:2.5rem 3rem;text-align:center;border-top:3px solid var(--t);min-width:240px}
@@ -111,18 +114,22 @@ body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;background:#f4f4f2;co
 .toast{position:fixed;bottom:2rem;right:2rem;background:#0a0a0a;color:#fff;padding:.9rem 1.5rem;font-size:.72rem;letter-spacing:.08em;font-weight:700;text-transform:uppercase;border-left:3px solid var(--t);opacity:0;transform:translateY(8px);transition:all .3s;z-index:9999;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
 .ec{text-align:center;padding:4rem 0;color:#aaa;font-size:.88rem}
-@media(max-width:860px){.ml{grid-template-columns:1fr}.fr{grid-template-columns:1fr}.fg,.pg{grid-template-columns:repeat(2,1fr)}.fni{grid-template-columns:1fr 110px}}
+@media(max-width:860px){.ml{grid-template-columns:1fr}.fr{grid-template-columns:1fr}.fg,.pg{grid-template-columns:repeat(2,1fr)}.fni{grid-template-columns:1fr 110px auto 32px}.co{padding:1.25rem 1rem}.sb{border-right:none;border-bottom:1px solid var(--b)}.tr{gap:.4rem}.bs{padding:.32rem .6rem;font-size:.55rem}}
+@media(max-width:500px){.fg,.pg{grid-template-columns:1fr 1fr}.fni{grid-template-columns:1fr 90px}.tl .tb{display:none}.tl .ts{display:none}.bbk span{display:none}}
 </style>
 </head>
 <body>
 <div class="topbar">
   <div class="tl">
+    <button class="bbk" onclick="goBack()" title="Volver a proyectos">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Proyectos</span>
+    </button>
     <div class="tb">espacio humo</div>
     <span class="ts">/</span>
     <span class="tp" id="tpj">Cargando...</span>
   </div>
   <div class="tr">
-    <button class="bs" onclick="goBack()">Proyectos</button>
     <button class="bs" onclick="openClientView()">Ver como cliente</button>
     <button class="bs" onclick="doLogout()">Salir</button>
   </div>
@@ -147,6 +154,11 @@ body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;background:#f4f4f2;co
         <ul class="rl" id="vlist"></ul>
       </div>
     </div>
+    <!-- Sección portfolio -->
+    <div style="border-top:1px solid var(--b);padding:1rem;flex-shrink:0">
+      <div style="font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:#aaa;font-weight:700;margin-bottom:.6rem">Portfolio público</div>
+      <a href="portfolio-admin.html" style="display:block;width:100%;padding:.65rem .8rem;background:var(--g);border:1px solid var(--b);font-size:.62rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;color:var(--k);text-decoration:none;text-align:center;transition:all .2s" onmouseover="this.style.background='var(--k)';this.style.color='#fff'" onmouseout="this.style.background='var(--g)';this.style.color='var(--k)'">Editar portfolio →</a>
+    </div>
   </aside>
   <main class="co" id="co">
     <div class="ec">Selecciona un informe o crea uno nuevo</div>
@@ -154,13 +166,15 @@ body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;background:#f4f4f2;co
 </div>
 <div id="pm">
   <div class="ptb">
-    <span class="ptt">Vista previa</span>
-    <div style="display:flex;gap:.6rem">
+    <span class="ptt">Vista previa — como lo ve el cliente</span>
+    <div style="display:flex;gap:.6rem;align-items:center">
       <button class="bs bt" onclick="publishFromPreview()">Publicar</button>
-      <button class="bs" onclick="closePreview()">Cerrar</button>
+      <button class="bs" onclick="closePreview()">Cerrar ✕</button>
     </div>
   </div>
-  <div id="pb2"><div id="pin"></div></div>
+  <div id="pb2">
+    <iframe id="previewFrame" src="about:blank"></iframe>
+  </div>
 </div>
 <div id="po"><div class="pob"><div class="pos"></div><div class="pom" id="pom">Publicando...</div></div></div>
 <div class="toast" id="toast"></div>
@@ -589,34 +603,28 @@ function collectVD(){
   return {titulo:g('vt'),fecha:g('vf'),etapa:g('ve'),descripcion:g('vd'),memoria:g('vm'),computo:g('vc')};
 }
 
+function openClientView(){
+  // Abre viewer con preview=true para que no haga signOut
+  window.open('viewer.html?id='+PID+'&preview=true','_blank');
+}
+
 function openPreview(){
-  pending=collectD();var r=pending,fin=r.financiero||{};
-  var ac=(project&&project.color)?project.color:'#002FA7';
-  var fv=curFotos.filter(function(f){return!f.toDelete;});
-  var hs=r.heroB64||(project&&project.coverB64)||'';
-  document.getElementById('pin').innerHTML=
-    '<div style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif">'
-    +'<div style="position:relative;height:240px;overflow:hidden;margin-bottom:2rem">'
-    +'<div style="position:absolute;inset:0;background:url(\''+hs+'\') center/cover"></div>'
-    +'<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.88),rgba(10,10,10,.25))"></div>'
-    +'<div style="position:absolute;bottom:1.5rem;left:2rem;right:2rem;display:flex;justify-content:space-between;align-items:flex-end">'
-    +'<div><div style="font-size:.58rem;letter-spacing:.2em;color:'+ac+';font-weight:700;text-transform:uppercase;margin-bottom:.4rem">'+esc(r.titulo)+' - '+esc(r.fecha)+'</div>'
-    +'<div style="font-size:2rem;font-weight:700;color:#fff;line-height:1">'+esc((project&&project.nombre)||'')+'</div>'
-    +'<div style="font-size:.7rem;color:rgba(255,255,255,.45);margin-top:.3rem">'+esc((project&&project.barrio)||'')+'</div></div>'
-    +'<div style="text-align:right"><div style="font-size:3rem;font-weight:700;color:#fff">'+r.pctGlobal+'<span style="font-size:1.2rem;color:'+ac+'">%</span></div></div></div></div>'
-    +(r.progreso||[]).map(function(p){return '<div style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;margin-bottom:.3rem"><span style="font-size:.78rem;font-weight:700;text-transform:uppercase">'+esc(p.nombre)+'</span><span style="font-size:1.1rem;font-weight:700">'+p.val+'%</span></div><div style="height:3px;background:#d0d0cc"><div style="height:3px;background:'+ac+';width:'+p.val+'%"></div></div><div style="font-size:.56rem;color:#888;margin-top:.2rem">'+esc(p.nota)+'</div></div>';}).join('')
-    +(fv.length?'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:1.5rem 0">'+fv.map(function(f){return '<img src="'+f.src+'" style="width:100%;aspect-ratio:4/3;object-fit:cover"/>';}).join('')+'</div>':'')
-    +'<div style="margin-top:1.5rem;border-top:1px solid #eee;padding-top:1.5rem">'
-    +'<div style="display:flex;gap:2rem;margin-bottom:1rem">'
-    +'<div><div style="font-size:1.3rem;font-weight:700;color:'+ac+'">'+esc(fin.pagado||'')+'</div><div style="font-size:.55rem;color:#888;text-transform:uppercase">Pagado</div></div>'
-    +'<div><div style="font-size:1.3rem;font-weight:700;color:#888">'+esc(fin.pendiente||'')+'</div><div style="font-size:.55rem;color:#888;text-transform:uppercase">Pendiente</div></div>'
-    +'<div><div style="font-size:1.3rem;font-weight:700">'+esc(fin.total||'')+'</div><div style="font-size:.55rem;color:#888;text-transform:uppercase">Total</div></div></div>'
-    +(fin.items||[]).map(function(it){return '<div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid #eee;font-size:.82rem"><span>'+esc(it.label)+'</span><span style="font-weight:700;color:'+(it.pagado?'#0a0a0a':'#888')+'">'+esc(it.valor)+'</span></div>';}).join('')
-    +(fin.hito?'<div style="margin-top:1rem;padding:.75rem 1rem;background:#f4f4f2;border-left:3px solid '+ac+'"><div style="font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:#888;margin-bottom:.2rem">Proximo hito</div><div style="font-size:.88rem;font-weight:700">'+esc(fin.hito)+'</div></div>':'')
-    +'</div></div>';
+  pending=collectD();
+  // Cargamos el viewer real en un iframe a pantalla completa
+  // Primero guardamos el estado en sessionStorage para que el iframe lo lea
+  var previewData=Object.assign({},pending,{
+    projectData:project,
+    fotos:curFotos.filter(function(f){return!f.toDelete;})
+  });
+  try{sessionStorage.setItem('previewPayload_'+PID,JSON.stringify(previewData));}catch(e){}
+  var frame=document.getElementById('previewFrame');
+  frame.src='viewer.html?id='+PID+'&preview=true&previewDraft=true';
   document.getElementById('pm').classList.add('open');
 }
-function closePreview(){document.getElementById('pm').classList.remove('open');}
+function closePreview(){
+  document.getElementById('pm').classList.remove('open');
+  document.getElementById('previewFrame').src='about:blank';
+}
 
 function publishReport(){pending=collectD();doPublish();}
 function publishFromPreview(){closePreview();doPublish();}
