@@ -6,3 +6,4 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "19699091973",
   appId:             "1:19699091973:web:bbea2d03e243e897f86a6c"
 };
+ 
