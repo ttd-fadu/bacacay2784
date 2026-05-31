@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>espacio humo — proyecto</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#fafafa;color:#0a0a0a;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;overflow-x:hidden}
+:root{--accent:#002FA7;--border:#d0d0cc;--gray:#f4f4f2;--sidebar:180px}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:space-between;padding:2rem 1.4rem;border-right:1px solid var(--border);background:#fafafa;z-index:50}
+.sidebar-top{}
+.sidebar-logo{font-size:.78rem;font-weight:700;letter-spacing:-.01em;color:#0a0a0a;text-decoration:none;display:block;margin-bottom:2rem}
+.sidebar-nav{list-style:none;display:flex;flex-direction:column;gap:.1rem}
+.sidebar-nav a{font-size:.78rem;color:#0a0a0a;text-decoration:none;line-height:1.9;transition:color .15s}
+.sidebar-nav a.active{font-weight:700;color:var(--accent)}
+.sidebar-nav a:hover{color:var(--accent)}
+.sidebar-search{margin-top:1.6rem;cursor:pointer;opacity:.5;transition:opacity .2s}
+.sidebar-search:hover{opacity:1}
+.sidebar-search svg{width:16px;height:16px}
+.sidebar-bottom{font-size:.6rem;line-height:1.6;color:#888;padding-top:1rem;border-top:1px solid var(--border)}
+.sidebar-project-name{font-weight:700;color:var(--accent);font-size:.62rem;letter-spacing:.04em;margin-bottom:.15rem}
+.sidebar-project-loc{color:#aaa}
+
+/* ── MAIN ── */
+.main{overflow:hidden}
+
+/* ── HERO ── */
+.hero{position:relative;height:70svh;min-height:420px;overflow:hidden}
+.hero-slides{position:absolute;inset:0}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;background-size:cover;background-position:center}
+.hero-slide.active{opacity:1}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.72) 0%,rgba(10,10,10,.1) 60%)}
+.hero-title{position:absolute;bottom:2.5rem;left:0;right:0;text-align:center;font-size:clamp(2.2rem,6vw,5rem);font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1;z-index:2;pointer-events:none}
+.hero-dots{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);display:flex;gap:.4rem;z-index:3}
+.hero-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:background .2s}
+.hero-dot.active{background:#fff}
+
+/* ── CONTENT ── */
+.content{padding:3.5rem 3.5rem 3.5rem 3rem}
+
+/* Ficha */
+.project-name{font-size:clamp(2rem,5vw,3.8rem);font-weight:700;color:var(--accent);letter-spacing:-.02em;line-height:.95;margin-bottom:1.5rem}
+.ficha{display:grid;grid-template-columns:1fr 1fr;gap:.15rem 2rem;margin-bottom:1.5rem}
+.ficha-row{font-size:.65rem;line-height:1.9}
+.ficha-key{color:#aaa;text-transform:lowercase;letter-spacing:.04em}
+.ficha-val{font-weight:700;color:#0a0a0a}
+.divider{height:1px;background:var(--border);margin-bottom:1.8rem}
+.descripcion{font-size:.85rem;line-height:1.85;color:#444;max-width:580px;margin-bottom:3.5rem}
+
+/* ── GALERÍA MASONRY ── */
+.galeria-label{font-size:.55rem;letter-spacing:.22em;text-transform:uppercase;color:#aaa;font-weight:700;margin-bottom:1.8rem;display:flex;align-items:center;gap:1rem}
+.galeria-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.masonry{
+  columns:2;
+  column-gap:.6rem;
+}
+.masonry-item{
+  break-inside:avoid;
+  margin-bottom:.6rem;
+  overflow:hidden;
+  cursor:zoom-in;
+  position:relative;
+  opacity:0;
+  transform:translateY(18px);
+  transition:opacity .65s cubic-bezier(.16,1,.3,1), transform .65s cubic-bezier(.16,1,.3,1);
+}
+.masonry-item.visible{opacity:1;transform:translateY(0)}
+/* Desfase orgánico: cada item par sube un poco */
+.masonry-item:nth-child(2n){margin-top:.9rem}
+.masonry-item:nth-child(3n){margin-top:-.4rem}
+.masonry-item img{
+  width:100%;
+  height:auto;
+  display:block;
+  transition:transform .55s cubic-bezier(.16,1,.3,1);
+}
+.masonry-item:hover img{transform:scale(1.03)}
+.masonry-caption{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(10,10,10,.7));
+  color:#fff;font-size:.52rem;letter-spacing:.1em;
+  padding:1.5rem .6rem .5rem;
+  opacity:0;transition:opacity .3s;
+  font-weight:700;text-transform:uppercase;
+}
+.masonry-item:hover .masonry-caption{opacity:1}
+
+/* ── NAV INFERIOR ── */
+.project-nav{border-top:1px solid var(--border);margin-top:4rem;padding:1.8rem 0 0;display:flex;justify-content:space-between;align-items:flex-start;gap:2rem}
+.project-nav-item{display:flex;flex-direction:column;gap:.25rem;text-decoration:none}
+.project-nav-item.next{text-align:right}
+.project-nav-direction{font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:#aaa;font-weight:700}
+.project-nav-name{font-size:.82rem;font-weight:700;color:var(--accent);transition:opacity .2s}
+.project-nav-item:hover .project-nav-name{opacity:.6}
+
+/* ── LIGHTBOX ── */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:1000;align-items:center;justify-content:center;cursor:zoom-out}
+#lightbox.open{display:flex}
+#lightbox img{max-width:94vw;max-height:94vh;object-fit:contain}
+#lb-close{position:absolute;top:1.2rem;right:1.4rem;background:none;border:none;color:rgba(255,255,255,.5);font-size:1.4rem;cursor:pointer;line-height:1;padding:.4rem}
+#lb-close:hover{color:#fff}
+
+/* ── LOADING ── */
+#loading-screen{position:fixed;inset:0;background:#002FA7;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease}
+#loading-screen.hide{opacity:0;pointer-events:none}
+.loading-logo{font-size:clamp(1.8rem,5vw,3rem);font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:1.5rem}
+.loading-dots{display:flex;gap:.5rem}
+.loading-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);animation:dotPulse 1.4s ease-in-out infinite}
+.loading-dot:nth-child(2){animation-delay:.2s}
+.loading-dot:nth-child(3){animation-delay:.4s}
+@keyframes dotPulse{0%,80%,100%{background:rgba(255,255,255,.2);transform:scale(.8)}40%{background:#fff;transform:scale(1)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  :root{--sidebar:0px}
+  .sidebar{display:none}
+  .layout{grid-template-columns:1fr}
+  .content{padding:2rem 1.2rem 3rem}
+  .masonry{columns:2;column-gap:.4rem}
+  .hero-title{font-size:clamp(1.8rem,8vw,3rem)}
+  .project-nav{flex-direction:column;gap:1.5rem}
+  .project-nav-item.next{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<div id="loading-screen">
+  <div class="loading-logo">espacio humo</div>
+  <div class="loading-dots">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <a href="index.html" class="sidebar-logo">espacio humo</a>
+      <ul class="sidebar-nav">
+        <li><a href="proyectos.html" class="active">proyectos</a></li>
+        <li><a href="nosotros.html">nosotros</a></li>
+        <li><a href="contacto.html">contacto</a></li>
+        <li><a href="portal.html">portal clientes</a></li>
+      </ul>
+      <div class="sidebar-search" onclick="toggleSearch()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="sidebar-project-name" id="sb-nombre">—</div>
+      <div class="sidebar-project-loc" id="sb-loc">—</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HERO SLIDER -->
+    <div class="hero" id="hero">
+      <div class="hero-slides" id="hero-slides"></div>
+      <div class="hero-overlay"></div>
+      <h1 class="hero-title" id="hero-title">—</h1>
+      <div class="hero-dots" id="hero-dots"></div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="content">
+
+      <h2 class="project-name" id="p-nombre">—</h2>
+
+      <div class="ficha" id="ficha">
+        <div class="ficha-row"><span class="ficha-key">año_</span><span class="ficha-val" id="f-anio">—</span></div>
+        <div class="ficha-row"><span class="ficha-key">tipología_</span><span class="ficha-val" id="f-tipo">—</span></div>
+        <div class="ficha-row"><span class="ficha-key">estado_</span><span class="ficha-val" id="f-estado">—</span></div>
+        <div class="ficha-row"><span class="ficha-key">superficie_</span><span class="ficha-val" id="f-sup">—</span></div>
+        <div class="ficha-row" style="grid-column:1/-1"><span class="ficha-key">equipo_</span><span class="ficha-val" id="f-equipo">—</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="descripcion" id="p-desc">—</p>
+
+      <!-- GALERÍA ÚNICA -->
+      <div class="galeria-label">Galería</div>
+      <div class="masonry" id="masonry"></div>
+
+      <!-- NAV INFERIOR -->
+      <nav class="project-nav">
+        <a class="project-nav-item prev" id="nav-prev" href="#">
+          <span class="project-nav-direction">proyecto anterior</span>
+          <span class="project-nav-name" id="nav-prev-name">—</span>
+        </a>
+        <a class="project-nav-item next" id="nav-next" href="#">
+          <span class="project-nav-direction">siguiente proyecto</span>
+          <span class="project-nav-name" id="nav-next-name">—</span>
+        </a>
+      </nav>
+
+    </div><!-- /content -->
+  </main>
+</div>
+</div><!-- /app -->
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lb-close" onclick="closeLightbox()">✕</button>
+  <img id="lb-img" src="" alt=""/>
+</div>
+
+<script>
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBWkrGK26Puv6e0ECJRO0BFjLMGsPJ6CvM",
+  authDomain: "bacacay2784.firebaseapp.com",
+  databaseURL: "https://bacacay2784-default-rtdb.firebaseio.com",
+  projectId: "bacacay2784",
+  storageBucket: "bacacay2784.firebasestorage.app",
+  messagingSenderId: "19699091973",
+  appId: "1:19699091973:web:bbea2d03e243e897f86a6c",
+  measurementId: "G-8YH5N03016"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const db = firebase.firestore();
+
+const params = new URLSearchParams(window.location.search);
+const PROJECT_ID = params.get('id');
+
+// ── HERO SLIDER ────────────────────────────────────────────────────────────
+let slideIdx = 0, slideTimer = null;
+
+function buildSlider(fotos){
+  if(!fotos || !fotos.length) return;
+  const slidesEl = document.getElementById('hero-slides');
+  const dotsEl   = document.getElementById('hero-dots');
+  slidesEl.innerHTML = '';
+  dotsEl.innerHTML   = '';
+  fotos.forEach((f, i) => {
+    const s = document.createElement('div');
+    s.className = 'hero-slide' + (i===0?' active':'');
+    s.style.backgroundImage = `url('${f.src}')`;
+    slidesEl.appendChild(s);
+    const d = document.createElement('div');
+    d.className = 'hero-dot' + (i===0?' active':'');
+    d.onclick = () => goSlide(i);
+    dotsEl.appendChild(d);
+  });
+  if(fotos.length > 1){
+    slideTimer = setInterval(() => goSlide((slideIdx+1) % fotos.length), 4000);
+  }
+}
+
+function goSlide(n){
+  const slides = document.querySelectorAll('.hero-slide');
+  const dots   = document.querySelectorAll('.hero-dot');
+  slides[slideIdx]?.classList.remove('active');
+  dots[slideIdx]?.classList.remove('active');
+  slideIdx = n;
+  slides[slideIdx]?.classList.add('active');
+  dots[slideIdx]?.classList.add('active');
+}
+
+// ── MASONRY ────────────────────────────────────────────────────────────────
+function buildMasonry(items){
+  const grid = document.getElementById('masonry');
+  grid.innerHTML = '';
+  if(!items || !items.length){
+    grid.innerHTML = '<p style="color:#aaa;font-size:.8rem;grid-column:1/-1">Sin imágenes cargadas aún.</p>';
+    return;
+  }
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'masonry-item';
+    const img = document.createElement('img');
+    img.src = item.src;
+    img.alt = item.caption || '';
+    img.loading = 'lazy';
+    img.onclick = () => openLightbox(item.src);
+    div.appendChild(img);
+    if(item.caption){
+      const cap = document.createElement('div');
+      cap.className = 'masonry-caption';
+      cap.textContent = item.caption;
+      div.appendChild(cap);
+    }
+    grid.appendChild(div);
+  });
+
+  // Intersection observer para stagger reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if(e.isIntersecting){
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+        obs.unobserve(e.target);
+      }
+    });
+  }, {threshold: 0.05});
+  grid.querySelectorAll('.masonry-item').forEach(el => obs.observe(el));
+}
+
+// ── LOAD PROJECT ───────────────────────────────────────────────────────────
+async function init(){
+  if(!PROJECT_ID){ window.location.href = 'proyectos.html'; return; }
+
+  try{
+    // Datos del proyecto
+    const doc = await db.collection('projects').doc(PROJECT_ID).get();
+    if(!doc.exists){ window.location.href = 'proyectos.html'; return; }
+    const p = { id: doc.id, ...doc.data() };
+
+    // Aplicar color de acento si tiene
+    if(p.color) document.documentElement.style.setProperty('--accent', p.color);
+
+    document.title = 'espacio humo — ' + (p.nombre || '');
+    document.getElementById('hero-title').textContent  = p.nombre || '—';
+    document.getElementById('p-nombre').textContent    = p.nombre || '—';
+    document.getElementById('sb-nombre').textContent   = p.nombre || '—';
+    document.getElementById('sb-loc').textContent      = (p.barrio ? p.barrio + ' · ' : '') + (p.anio || '');
+    document.getElementById('f-anio').textContent      = p.anio    || '—';
+    document.getElementById('f-tipo').textContent      = p.tipologia|| '—';
+    document.getElementById('f-estado').textContent    = p.estado  || '—';
+    document.getElementById('f-sup').textContent       = p.superficie|| '—';
+    document.getElementById('f-equipo').textContent    = p.equipo  || '—';
+    document.getElementById('p-desc').textContent      = p.descripcion || '—';
+
+    // Galería (fotos + planos unificados)
+    const [fotosSnap, planosSnap] = await Promise.all([
+      db.collection('projects').doc(PROJECT_ID).collection('galeria')
+        .orderBy('order','asc').get().catch(()=>({docs:[]})),
+      db.collection('projects').doc(PROJECT_ID).collection('planos')
+        .orderBy('order','asc').get().catch(()=>({docs:[]}))
+    ]);
+
+    const fotos  = fotosSnap.docs.map(d => d.data());
+    const planos = planosSnap.docs.map(d => d.data());
+
+    // Hero: primeras fotos de galería (o cover)
+    const heroFotos = fotos.length ? fotos : (p.coverB64 ? [{src: p.coverB64}] : []);
+    buildSlider(heroFotos);
+
+    // Galería unificada: planos primero, luego fotos (o mezclado según campo "order")
+    const allItems = [...planos, ...fotos];
+    buildMasonry(allItems);
+
+    // Navegación entre proyectos
+    await buildProjectNav(p);
+
+    hideLoading();
+    document.getElementById('app').style.display = 'block';
+
+  } catch(e){
+    console.error(e);
+    hideLoading();
+    document.getElementById('app').style.display = 'block';
+  }
+}
+
+async function buildProjectNav(currentProject){
+  try{
+    const snap = await db.collection('projects').orderBy('order','asc').get();
+    const all  = snap.docs.map(d => ({id:d.id, ...d.data()}));
+    const idx  = all.findIndex(p => p.id === PROJECT_ID);
+    const prev = idx > 0 ? all[idx-1] : null;
+    const next = idx < all.length-1 ? all[idx+1] : null;
+
+    const prevEl = document.getElementById('nav-prev');
+    const nextEl = document.getElementById('nav-next');
+
+    if(prev){
+      document.getElementById('nav-prev-name').textContent = prev.nombre || '—';
+      prevEl.href = `proyecto.html?id=${prev.id}`;
+    } else {
+      prevEl.style.visibility = 'hidden';
+    }
+    if(next){
+      document.getElementById('nav-next-name').textContent = next.nombre || '—';
+      nextEl.href = `proyecto.html?id=${next.id}`;
+    } else {
+      nextEl.style.visibility = 'hidden';
+    }
+  } catch(e){ console.warn('nav:', e); }
+}
+
+function hideLoading(){
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hide');
+    setTimeout(() => document.getElementById('loading-screen').style.display='none', 700);
+  }, 350);
+}
+
+// ── LIGHTBOX ───────────────────────────────────────────────────────────────
+function openLightbox(src){
+  document.getElementById('lb-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox(); });
+
+function toggleSearch(){ /* conectar al buscador existente del sitio */ }
+
+init();
+</script>
+</body>
+</html>
