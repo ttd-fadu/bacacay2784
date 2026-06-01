@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — Portfolio</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f4f4f2;color:#0a0a0a;min-height:100vh}
+:root{--k:#002FA7;--t:#9E3A26;--b:#e0e0dc;--g:#f4f4f2}
+
+/* TOPBAR */
+.topbar{background:var(--k);padding:0 1.25rem;height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--t);position:sticky;top:0;z-index:200}
+.tl{display:flex;align-items:center;gap:.75rem}
+.tb{font-size:.92rem;font-weight:700;color:#fff}
+.ts{color:rgba(255,255,255,.25)}
+.tp{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.85)}
+.bbk{display:flex;align-items:center;gap:.35rem;padding:.38rem .7rem;font-size:.6rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;border:1px solid rgba(255,255,255,.2);cursor:pointer;background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);transition:all .2s}
+.bbk:hover{background:rgba(255,255,255,.22);color:#fff}
+.tr{display:flex;align-items:center;gap:.6rem}
+.bs{padding:.38rem .85rem;font-size:.6rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;border:1px solid rgba(255,255,255,.2);cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)}
+.bs:hover{background:rgba(255,255,255,.2);color:#fff}
+.bt{background:var(--t)!important;color:#fff!important;border-color:var(--t)!important}.bt:hover{opacity:.85!important}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 52px)}
+
+/* SIDEBAR */
+.sb{background:#fff;border-right:1px solid var(--b);display:flex;flex-direction:column}
+.sb-head{padding:1.25rem;border-bottom:1px solid var(--b)}
+.sb-label{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:#aaa;font-weight:700;margin-bottom:.75rem}
+.btn-new{display:block;width:100%;padding:.75rem;text-align:center;background:var(--t);color:#fff;font-size:.62rem;letter-spacing:.12em;font-weight:700;text-transform:uppercase;border:none;cursor:pointer}
+.btn-new:hover{background:#7a2d1e}
+.sb-list{flex:1;overflow-y:auto;padding:1rem}
+.pli{padding:.75rem .8rem;cursor:pointer;margin-bottom:.2rem;transition:background .15s;border:1px solid transparent}
+.pli:hover{background:var(--g)}
+.pli.active{background:var(--k);color:#fff;border-color:var(--k)}
+.pli-nombre{font-size:.82rem;font-weight:700}
+.pli-meta{font-size:.56rem;color:#888;margin-top:.15rem}
+.pli.active .pli-meta{color:rgba(255,255,255,.5)}
+.pli-actions{display:none;gap:.25rem;margin-top:.35rem}
+.pli:hover .pli-actions,.pli.active .pli-actions{display:flex}
+.btn-del{padding:.12rem .4rem;background:rgba(158,58,38,.1);border:none;cursor:pointer;font-size:.56rem;color:var(--t);font-weight:700;transition:all .2s}
+.btn-del:hover{background:var(--t);color:#fff}
+
+/* MAIN */
+.main{padding:2rem 2.5rem;max-width:960px;overflow-y:auto}
+.main-empty{text-align:center;padding:5rem 0;color:#aaa;font-size:.88rem}
+
+/* FORM */
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:1px solid #d0d0cc;flex-wrap:wrap;gap:1rem}
+.ct{font-size:1.35rem;font-weight:700}
+.cs{font-size:.68rem;color:#888;margin-top:.2rem}
+.ca{display:flex;gap:.6rem;flex-wrap:wrap}
+.btn-save{padding:.5rem 1.5rem;background:var(--t);color:#fff;font-size:.62rem;letter-spacing:.12em;font-weight:700;text-transform:uppercase;border:none;cursor:pointer;transition:opacity .2s}
+.btn-save:hover{opacity:.85}
+
+.fs{background:#fff;padding:1.5rem;margin-bottom:1.25rem;border:1px solid var(--b)}
+.ft{font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;color:#0a0a0a}
+.ft::after{content:'';flex:1;height:1px;background:#eee}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.fc{margin-bottom:1.25rem}
+.fl{display:block;font-size:.54rem;letter-spacing:.18em;text-transform:uppercase;color:#888;font-weight:700;margin-bottom:.35rem}
+.fi{width:100%;padding:.62rem .8rem;background:#fff;border:1px solid #d0d0cc;color:#0a0a0a;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--k)}
+textarea.fi{resize:vertical;min-height:100px;line-height:1.6}
+
+/* COVER */
+.cover-preview{width:100%;max-height:180px;object-fit:cover;display:none;margin-bottom:.75rem;border:1px solid #d0d0cc}
+.cover-preview.show{display:block}
+.dz{border:2px dashed #d0d0cc;padding:2rem;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:.75rem}
+.dz:hover,.dz.ov{border-color:var(--k);background:#f0f4ff}
+.dl{font-size:.78rem;color:#888}
+.dl strong{color:#0a0a0a}
+.pb{height:3px;background:#d0d0cc;margin:.5rem 0;display:none;overflow:hidden}
+.pbf{height:100%;background:var(--t);width:0;transition:width .2s}
+.btn-action{padding:.45rem 1rem;background:transparent;border:1px solid #d0d0cc;font-size:.6rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.btn-action:hover{border-color:var(--k);background:var(--k);color:#fff}
+
+/* GALERÍA */
+.masonry-grid{columns:3;column-gap:.6rem;margin-bottom:.75rem}
+.gitem{break-inside:avoid;margin-bottom:.6rem;background:#f4f4f2;border:1px solid var(--b);position:relative}
+.gitem img{width:100%;display:block}
+.gitem-cap{width:100%;padding:.35rem .5rem;font-size:.6rem;border:none;border-top:1px solid var(--b);background:#fff;font-family:inherit;outline:none}
+.gitem-del{position:absolute;top:.35rem;right:.35rem;background:rgba(255,107,107,.9);color:#fff;border:none;padding:.2rem .45rem;font-size:.58rem;font-weight:700;cursor:pointer}
+.gitem-type{position:absolute;top:.35rem;left:.35rem;background:rgba(0,47,167,.85);color:#fff;font-size:.48rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;padding:.15rem .4rem}
+
+/* OVERLAY */
+#po{display:none;position:fixed;inset:0;background:rgba(10,10,10,.75);z-index:500;align-items:center;justify-content:center}
+#po.show{display:flex}
+.pob{background:#fff;padding:2.5rem 3rem;text-align:center;border-top:3px solid var(--t);min-width:240px}
+.pos{width:36px;height:36px;border:3px solid #eee;border-top-color:var(--t);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pom{font-size:.8rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;background:#0a0a0a;color:#fff;padding:.9rem 1.5rem;font-size:.72rem;letter-spacing:.08em;font-weight:700;text-transform:uppercase;border-left:3px solid var(--t);opacity:0;transform:translateY(8px);transition:all .3s;z-index:9999;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:860px){
+  .layout{grid-template-columns:1fr}
+  .fr{grid-template-columns:1fr}
+  .masonry-grid{columns:2}
+  .main{padding:1.25rem 1rem}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tl">
+    <button class="bbk" onclick="goBack()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Proyectos</span>
+    </button>
+    <div class="tb">espacio humo</div>
+    <span class="ts">/</span>
+    <span class="tp">Portfolio</span>
+  </div>
+  <div class="tr">
+    <a class="bs" href="portfolio.html" target="_blank">Ver portfolio →</a>
+    <button class="bs" onclick="doLogout()">Salir</button>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sb">
+    <div class="sb-head">
+      <div class="sb-label">Proyectos del portfolio</div>
+      <button class="btn-new" onclick="newProject()">+ Nuevo proyecto</button>
+    </div>
+    <div class="sb-list" id="project-list">
+      <div style="padding:1rem;font-size:.72rem;color:#aaa">Cargando...</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="main">
+    <div class="main-empty">Seleccioná un proyecto o creá uno nuevo</div>
+  </main>
+</div>
+
+<!-- OVERLAY -->
+<div id="po"><div class="pob"><div class="pos"></div><div class="pom" id="pom">Guardando...</div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBWkrGK26Puv6e0ECJRO0BFjLMGsPJ6CvM",
+  authDomain: "bacacay2784.firebaseapp.com",
+  databaseURL: "https://bacacay2784-default-rtdb.firebaseio.com",
+  projectId: "bacacay2784",
+  storageBucket: "bacacay2784.firebasestorage.app",
+  messagingSenderId: "19699091973",
+  appId: "1:19699091973:web:bbea2d03e243e897f86a6c",
+  measurementId: "G-8YH5N03016"
+};
+if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+let allProjects = [];
+let curId = null;
+let curGaleria = []; // {src, caption, tipo:'foto'|'plano', order, id, isNew, toDelete}
+let coverB64 = null;
+
+// ── AUTH ──────────────────────────────────────────────────────────────────
+function waitForAuth(){
+  return new Promise(resolve => {
+    if(auth.currentUser){ resolve(auth.currentUser); return; }
+    var done = false;
+    var unsub = auth.onAuthStateChanged(user => {
+      if(done) return; done = true; unsub(); resolve(user);
+    });
+    setTimeout(() => { if(!done){ done=true; unsub(); resolve(null); } }, 8000);
+  });
+}
+
+waitForAuth().then(user => {
+  if(!user){ window.location.replace('admin.html'); return; }
+  loadProjects();
+});
+
+function doLogout(){ auth.signOut().then(() => window.location.replace('admin.html')); }
+function goBack(){ window.location.replace('admin.html'); }
+
+// ── LOAD PROJECTS ─────────────────────────────────────────────────────────
+async function loadProjects(){
+  try{
+    const snap = await db.collection('portfolio').orderBy('order','asc').get();
+    allProjects = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    renderList();
+    if(allProjects.length) selectProject(allProjects[0].id);
+  } catch(e){
+    // Si no existe la colección aún, empezar vacío
+    allProjects = [];
+    renderList();
+  }
+}
+
+function renderList(){
+  const el = document.getElementById('project-list');
+  if(!allProjects.length){
+    el.innerHTML = '<div style="padding:1rem;font-size:.72rem;color:#aaa;font-style:italic">Sin proyectos. Creá el primero.</div>';
+    return;
+  }
+  el.innerHTML = allProjects.map(p => `
+    <div class="pli ${p.id===curId?'active':''}" onclick="selectProject('${p.id}')">
+      <div class="pli-nombre">${esc(p.nombre||'Sin nombre')}</div>
+      <div class="pli-meta">${esc(p.tipologia||'')} · ${esc(String(p.anio||''))}</div>
+      <div class="pli-actions">
+        <button class="btn-del" onclick="event.stopPropagation();delProject('${p.id}','${esc(p.nombre||'')}')">Eliminar</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── SELECT PROJECT ────────────────────────────────────────────────────────
+async function selectProject(id){
+  curId = id;
+  curGaleria = [];
+  coverB64 = null;
+  renderList();
+
+  const p = allProjects.find(x => x.id === id);
+  if(!p) return;
+
+  // Cargar galería
+  try{
+    const [fotosSnap, planosSnap] = await Promise.all([
+      db.collection('portfolio').doc(id).collection('galeria').orderBy('order','asc').get().catch(()=>({docs:[]})),
+      db.collection('portfolio').doc(id).collection('planos').orderBy('order','asc').get().catch(()=>({docs:[]}))
+    ]);
+    fotosSnap.docs.forEach(d => curGaleria.push({id:d.id, src:d.data().src, caption:d.data().caption||'', tipo:'foto', order:d.data().order||0, isNew:false, toDelete:false}));
+    planosSnap.docs.forEach(d => curGaleria.push({id:d.id, src:d.data().src, caption:d.data().caption||'', tipo:'plano', order:d.data().order||0, isNew:false, toDelete:false}));
+    curGaleria.sort((a,b) => a.order - b.order);
+  } catch(e){}
+
+  coverB64 = p.coverUrl || p.img || null;
+  renderForm(p);
+}
+
+// ── RENDER FORM ───────────────────────────────────────────────────────────
+function renderForm(p){
+  const main = document.getElementById('main');
+  const coverShow = coverB64 ? 'show' : '';
+
+  main.innerHTML = `
+    <div class="ch">
+      <div>
+        <div class="ct">${esc(p.nombre||'Nuevo proyecto')}</div>
+        <div class="cs">ID: ${p.id}</div>
+      </div>
+      <div class="ca">
+        <a class="bs" style="background:#f4f4f2;color:#0a0a0a;border:1px solid #d0d0cc;text-decoration:none" href="proyecto.html?id=${p.id}" target="_blank">Ver página →</a>
+        <button class="btn-save" onclick="saveProject()">Guardar cambios</button>
+      </div>
+    </div>
+
+    <!-- DATOS BÁSICOS -->
+    <div class="fs">
+      <div class="ft">Datos del proyecto</div>
+      <div class="fr">
+        <div><label class="fl">Nombre</label><input class="fi" id="f-nombre" value="${esc(p.nombre||'')}" placeholder="Casa Jaguar"/></div>
+        <div><label class="fl">Año</label><input class="fi" id="f-anio" value="${esc(String(p.anio||''))}" placeholder="2026"/></div>
+      </div>
+      <div class="fr">
+        <div><label class="fl">Tipología</label><input class="fi" id="f-tipologia" value="${esc(p.tipologia||'')}" placeholder="comercial, vivienda, reforma..."/></div>
+        <div><label class="fl">Estado</label><input class="fi" id="f-estado" value="${esc(p.estado||'')}" placeholder="ejecutado, en obra, anteproyecto..."/></div>
+      </div>
+      <div class="fr">
+        <div><label class="fl">Superficie</label><input class="fi" id="f-superficie" value="${esc(p.superficie||'')}" placeholder="16m2"/></div>
+        <div><label class="fl">Barrio / Ubicación</label><input class="fi" id="f-barrio" value="${esc(p.barrio||'')}" placeholder="Villa del Parque, CABA"/></div>
+      </div>
+      <div class="fc">
+        <label class="fl">Equipo</label>
+        <input class="fi" id="f-equipo" value="${esc(p.equipo||'')}" placeholder="espacio humo + casa jaguar"/>
+      </div>
+      <div class="fc">
+        <label class="fl">Descripción</label>
+        <textarea class="fi" id="f-desc" placeholder="Descripción del proyecto que aparece en la página...">${esc(p.descripcion||'')}</textarea>
+      </div>
+      <div class="fc">
+        <label class="fl">Orden en el portfolio</label>
+        <input class="fi" type="number" id="f-order" value="${p.order||0}" style="max-width:100px"/>
+      </div>
+    </div>
+
+    <!-- IMAGEN DE PORTADA -->
+    <div class="fs">
+      <div class="ft">Imagen de portada</div>
+      <img id="cover-preview" class="cover-preview ${coverShow}" src="${coverB64||''}" />
+      <div style="font-size:.66rem;color:#888;margin-bottom:.75rem">Se usa en el grid del portfolio y como hero de la página del proyecto.</div>
+      <div class="pb" id="cbar"><div class="pbf" id="cfil"></div></div>
+      <input type="file" id="cover-file" accept="image/*" style="display:none" onchange="handleCover(this)"/>
+      <button class="btn-action" onclick="document.getElementById('cover-file').click()">
+        ${coverB64 ? 'Cambiar portada' : 'Subir portada'}
+      </button>
+    </div>
+
+    <!-- GALERÍA UNIFICADA -->
+    <div class="fs">
+      <div class="ft">Galería (fotos + planos)</div>
+      <div style="font-size:.72rem;color:#888;margin-bottom:1rem;line-height:1.6">
+        Subí fotos de obra y planos. Se muestran todos juntos en la galería masonry de la página del proyecto. Cada imagen respeta su proporción original.
+      </div>
+
+      <div style="display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap">
+        <div>
+          <div class="fl" style="margin-bottom:.4rem">Fotos de obra</div>
+          <div class="dz" style="padding:1.2rem 2rem" onclick="document.getElementById('fotos-file').click()"
+               ondragover="event.preventDefault();this.classList.add('ov')"
+               ondragleave="this.classList.remove('ov')"
+               ondrop="hDrop(event,'foto')">
+            <div class="dl"><strong>Clic o arrastrá fotos</strong><br/><span style="font-size:.6rem">JPG, PNG</span></div>
+          </div>
+          <input type="file" id="fotos-file" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files,'foto')"/>
+        </div>
+        <div>
+          <div class="fl" style="margin-bottom:.4rem">Planos / renders</div>
+          <div class="dz" style="padding:1.2rem 2rem" onclick="document.getElementById('planos-file').click()"
+               ondragover="event.preventDefault();this.classList.add('ov')"
+               ondragleave="this.classList.remove('ov')"
+               ondrop="hDrop(event,'plano')">
+            <div class="dl"><strong>Clic o arrastrá planos</strong><br/><span style="font-size:.6rem">JPG, PNG</span></div>
+          </div>
+          <input type="file" id="planos-file" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files,'plano')"/>
+        </div>
+      </div>
+
+      <div class="pb" id="gbar"><div class="pbf" id="gfil"></div></div>
+      <div class="masonry-grid" id="galeria-grid"></div>
+    </div>
+  `;
+
+  renderGaleria();
+}
+
+// ── GALERÍA RENDER ────────────────────────────────────────────────────────
+function renderGaleria(){
+  const grid = document.getElementById('galeria-grid');
+  if(!grid) return;
+  const visible = curGaleria.filter(x => !x.toDelete);
+  if(!visible.length){
+    grid.innerHTML = '<div style="font-size:.72rem;color:#aaa;font-style:italic;padding:.5rem 0">Sin imágenes aún.</div>';
+    return;
+  }
+  grid.innerHTML = visible.map((item, i) => `
+    <div class="gitem">
+      <div class="gitem-type">${item.tipo === 'plano' ? 'plano' : 'foto'}</div>
+      <img src="${item.src}" loading="lazy"/>
+      <button class="gitem-del" onclick="removeGItem(${i})">✕</button>
+      <input class="gitem-cap" value="${esc(item.caption)}" placeholder="Descripción opcional..." oninput="curGaleria.filter(x=>!x.toDelete)[${i}].caption=this.value"/>
+    </div>`).join('');
+}
+
+function removeGItem(visibleIdx){
+  const visible = curGaleria.filter(x => !x.toDelete);
+  const item = visible[visibleIdx];
+  if(!item) return;
+  if(item.isNew){
+    const idx = curGaleria.indexOf(item);
+    curGaleria.splice(idx, 1);
+  } else {
+    item.toDelete = true;
+  }
+  renderGaleria();
+}
+
+// ── FILE HANDLING ─────────────────────────────────────────────────────────
+function handleCover(input){
+  const file = input.files[0];
+  if(!file) return;
+  const bar = document.getElementById('cbar');
+  const fil = document.getElementById('cfil');
+  bar.style.display = 'block'; fil.style.width = '0%';
+  readFileAsBase64(file, (progress) => { fil.style.width = progress+'%'; },
+    (b64) => {
+      bar.style.display = 'none';
+      coverB64 = b64;
+      const prev = document.getElementById('cover-preview');
+      if(prev){ prev.src = b64; prev.classList.add('show'); }
+      const btn = document.querySelector('[onclick="document.getElementById(\'cover-file\').click()"]');
+      if(btn) btn.textContent = 'Cambiar portada';
+    }
+  );
+}
+
+function handleFiles(files, tipo){
+  if(!files || !files.length) return;
+  const bar = document.getElementById('gbar');
+  const fil = document.getElementById('gfil');
+  bar.style.display = 'block';
+  const arr = Array.from(files);
+  let done = 0;
+  arr.forEach(file => {
+    readFileAsBase64(file, () => {},
+      (b64) => {
+        const order = curGaleria.length;
+        curGaleria.push({src: b64, caption: '', tipo, order, isNew: true, toDelete: false});
+        done++;
+        fil.style.width = Math.round(done/arr.length*100)+'%';
+        if(done === arr.length){
+          bar.style.display = 'none';
+          renderGaleria();
+        }
+      }
+    );
+  });
+}
+
+function hDrop(event, tipo){
+  event.preventDefault();
+  event.currentTarget.classList.remove('ov');
+  handleFiles(event.dataTransfer.files, tipo);
+}
+
+function readFileAsBase64(file, onProgress, onDone){
+  const reader = new FileReader();
+  reader.onprogress = e => { if(e.lengthComputable) onProgress(Math.round(e.loaded/e.total*100)); };
+  reader.onload = e => onDone(e.target.result);
+  reader.readAsDataURL(file);
+}
+
+// ── SAVE ──────────────────────────────────────────────────────────────────
+async function saveProject(){
+  if(!curId) return;
+  const ov = document.getElementById('po');
+  const msg = document.getElementById('pom');
+  ov.classList.add('show');
+  msg.textContent = 'Guardando datos...';
+
+  try{
+    const data = {
+      nombre:    document.getElementById('f-nombre')?.value || '',
+      anio:      document.getElementById('f-anio')?.value || '',
+      tipologia: document.getElementById('f-tipologia')?.value || '',
+      estado:    document.getElementById('f-estado')?.value || '',
+      superficie:document.getElementById('f-superficie')?.value || '',
+      barrio:    document.getElementById('f-barrio')?.value || '',
+      equipo:    document.getElementById('f-equipo')?.value || '',
+      descripcion: document.getElementById('f-desc')?.value || '',
+      order:     parseInt(document.getElementById('f-order')?.value) || 0,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+    if(coverB64) { data.img = coverB64; data.coverUrl = coverB64; }
+
+    await db.collection('portfolio').doc(curId).update(data);
+
+    // Sincronizar también en projects/{curId} para que proyecto.html lo lea
+    try{ await db.collection('projects').doc(curId).update(data); } catch(e){}
+
+    msg.textContent = 'Guardando galería...';
+
+    // Fotos
+    const fCol = db.collection('portfolio').doc(curId).collection('galeria');
+    const pCol = db.collection('portfolio').doc(curId).collection('planos');
+    // Espejo en projects/
+    const fCol2 = db.collection('projects').doc(curId).collection('galeria');
+    const pCol2 = db.collection('projects').doc(curId).collection('planos');
+
+    const batch = db.batch();
+    for(const item of curGaleria){
+      const col  = item.tipo === 'plano' ? pCol  : fCol;
+      const col2 = item.tipo === 'plano' ? pCol2 : fCol2;
+      if(item.isNew && !item.toDelete){
+        const ref  = col.doc();
+        const ref2 = col2.doc();
+        item.id = ref.id; item.isNew = false;
+        const d = {src: item.src, caption: item.caption, order: item.order};
+        batch.set(ref, d); batch.set(ref2, d);
+      }
+      if(item.toDelete && item.id){
+        batch.delete(col.doc(item.id));
+        try{ batch.delete(col2.doc(item.id)); }catch(e){}
+      }
+      if(!item.isNew && !item.toDelete && item.id){
+        batch.update(col.doc(item.id), {caption: item.caption, order: item.order});
+        try{ batch.update(col2.doc(item.id), {caption: item.caption, order: item.order}); }catch(e){}
+      }
+    }
+    await batch.commit();
+    curGaleria = curGaleria.filter(x => !x.toDelete);
+
+    // Actualizar lista local
+    const idx = allProjects.findIndex(p => p.id === curId);
+    if(idx >= 0) allProjects[idx] = {...allProjects[idx], ...data};
+
+    msg.textContent = '¡Guardado!';
+    setTimeout(() => { ov.classList.remove('show'); renderList(); toast('Cambios guardados'); }, 700);
+
+  } catch(e){
+    ov.classList.remove('show');
+    toast('Error: ' + e.message);
+    console.error(e);
+  }
+}
+
+// ── NEW PROJECT ───────────────────────────────────────────────────────────
+async function newProject(){
+  const nombre = prompt('Nombre del proyecto:');
+  if(!nombre || !nombre.trim()) return;
+  try{
+    const draft = {
+      nombre: nombre.trim(),
+      anio: new Date().getFullYear(),
+      tipologia: '',
+      estado: '',
+      superficie: '',
+      barrio: '',
+      equipo: 'espacio humo',
+      descripcion: '',
+      order: allProjects.length,
+      img: '',
+      coverUrl: '',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    const ref = await db.collection('portfolio').doc().set ? null : null;
+    // Crear en portfolio y en projects (mismo ID)
+    const newRef = db.collection('portfolio').doc();
+    await newRef.set(draft);
+    // Espejo en projects para que viewer y proyecto.html lo encuentren
+    await db.collection('projects').doc(newRef.id).set({...draft, clientEmail: ''});
+
+    draft.id = newRef.id;
+    allProjects.push(draft);
+    renderList();
+    selectProject(newRef.id);
+    toast('Proyecto creado');
+  } catch(e){
+    toast('Error: ' + e.message);
+    console.error(e);
+  }
+}
+
+// ── DELETE PROJECT ────────────────────────────────────────────────────────
+async function delProject(id, nombre){
+  if(!confirm(`Eliminar "${nombre}"? Esta acción no se puede deshacer.`)) return;
+  try{
+    await db.collection('portfolio').doc(id).delete();
+    allProjects = allProjects.filter(p => p.id !== id);
+    if(curId === id){
+      curId = null;
+      document.getElementById('main').innerHTML = '<div class="main-empty">Seleccioná un proyecto o creá uno nuevo</div>';
+    }
+    renderList();
+    toast('Proyecto eliminado');
+  } catch(e){ toast('Error: ' + e.message); }
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(m){ const el=document.getElementById('toast'); el.textContent=m; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3000); }
+</script>
+</body>
+</html>
