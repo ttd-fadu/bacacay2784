@@ -7,7 +7,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<style> 
+<style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:#fafafa;color:#0a0a0a;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;overflow-x:hidden}
@@ -48,11 +48,14 @@ body{background:#fafafa;color:#0a0a0a;font-family:'Helvetica Neue',Helvetica,Ari
 section{padding:5rem 5vw}
 .section-label{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:#888;font-weight:700;margin-bottom:3rem;display:flex;align-items:center;gap:1rem}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
-.pres-header{background:#0a0a0a;padding:4rem 5vw}
-.pres-version-tag{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:1rem}
-.pres-project-name{font-size:clamp(2.5rem,6vw,5rem);font-weight:700;color:#fff;line-height:.95;letter-spacing:-.02em;margin-bottom:.5rem}
-.pres-etapa{font-size:.88rem;color:rgba(255,255,255,.5);letter-spacing:.04em;margin-bottom:2rem}
-.pres-desc{font-size:1rem;color:rgba(255,255,255,.65);line-height:1.7;max-width:600px}
+.pres-header{position:relative;height:82svh;min-height:480px;overflow:hidden;display:flex;align-items:flex-end}
+.pres-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:background-image .4s ease}
+.pres-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.88) 0%,rgba(10,10,10,.2) 55%,rgba(10,10,10,.45) 100%)}
+.pres-hero-content{position:relative;z-index:2;width:100%;padding:0 5vw 6vh;display:flex;flex-direction:column;gap:.75rem}
+.pres-version-tag{font-size:.62rem;letter-spacing:.22em;color:var(--accent);text-transform:uppercase;font-weight:700;background:rgba(0,0,0,.5);display:inline-block;padding:.3rem .7rem;align-self:flex-start}
+.pres-project-name{font-size:clamp(3rem,8.5vw,7.5rem);font-weight:700;line-height:.92;color:#fff;letter-spacing:-.02em}
+.pres-etapa{display:inline-flex;align-items:center;gap:.5rem;background:var(--accent);color:#fff;padding:.4rem 1rem;font-size:.68rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;align-self:flex-start}
+.pres-desc{font-size:.88rem;color:rgba(255,255,255,.55);line-height:1.7;max-width:560px}
 .version-nav{background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1rem 5vw;display:flex;align-items:center;gap:1.5rem;overflow-x:auto}
 .version-nav-label{font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:#888;font-weight:700;white-space:nowrap}
 .version-btn{padding:.4rem .9rem;font-size:.6rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;border:1px solid var(--border);background:transparent;cursor:pointer;transition:all .2s;white-space:nowrap}
@@ -168,7 +171,7 @@ footer .f-brand{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.6);lett
 
 <div id="preview-bar">
   <span>👁 Vista previa — así ve el cliente este proyecto</span>
-  <button onclick="window.parent.postMessage('closePreview','*')">✕ Cerrar preview</button>
+  <button onclick="if(window.opener){window.close();}else{window.history.back();}">✕ Cerrar preview</button>
 </div>
 
 <div id="loading-screen">
@@ -198,11 +201,13 @@ footer .f-brand{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.6);lett
 <!-- PRESENTACION -->
 <div class="page-section active" id="section-presentacion">
   <div class="pres-header">
-    <div class="pres-inner">
+    <div class="pres-hero-bg" id="pres-hero-bg"></div>
+    <div class="pres-hero-overlay"></div>
+    <div class="pres-hero-content">
       <div class="pres-version-tag" id="pres-version-tag">Version actual</div>
       <div class="pres-project-name" id="pres-project-name">—</div>
-      <div class="pres-etapa" id="pres-etapa">—</div>
-      <div class="pres-desc" id="pres-desc">—</div>
+      <div class="pres-etapa" id="pres-etapa" style="display:none">—</div>
+      <div class="pres-desc" id="pres-desc"></div>
     </div>
   </div>
   <div class="version-nav" id="version-nav" style="display:none">
@@ -484,7 +489,9 @@ function loadVersions(){
       }else{
         document.getElementById('pres-empty').style.display='block';
         document.getElementById('pres-project-name').textContent=(currentProject&&currentProject.nombre)||'';
-        document.getElementById('pres-etapa').textContent='';
+        const heroBgEl=document.getElementById('pres-hero-bg');
+        if(heroBgEl&&currentProject?.coverB64) heroBgEl.style.background=`url('${currentProject.coverB64}') center/cover no-repeat`;
+        document.getElementById('pres-etapa').style.display='none';
         document.getElementById('pres-desc').textContent='';
         document.getElementById('pres-version-tag').textContent='';
       }
@@ -506,7 +513,13 @@ async function selectVersion(id,silent){
   if(!v)return;
   document.getElementById('pres-version-tag').textContent=allVersions[0].id===id?'Version actual':'Version anterior';
   document.getElementById('pres-project-name').textContent=currentProject?.nombre||'';
-  document.getElementById('pres-etapa').textContent=v.etapa||'';
+  // Hero bg: imagen de la versión o cover del proyecto
+  const heroBg=v.coverB64||currentProject?.coverB64||'';
+  const heroBgEl=document.getElementById('pres-hero-bg');
+  if(heroBgEl) heroBgEl.style.background=heroBg?`url('${heroBg}') center/cover no-repeat`:'#0a0a0a';
+  // Etapa
+  const etapaEl=document.getElementById('pres-etapa');
+  if(etapaEl){etapaEl.textContent=v.etapa||'';etapaEl.style.display=v.etapa?'inline-flex':'none';}
   document.getElementById('pres-desc').textContent=v.descripcion||'';
   const memEl=document.getElementById('memoria-block');
   const memText=document.getElementById('memoria-text');
