@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"/> 
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>espacio humo — Panel</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -132,7 +132,7 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
     <div class="topbar-logo">espacio humo</div>
     <div class="topbar-right">
       <span class="topbar-user" id="topbar-user"></span>
-      <a href="portfolio.html" class="btn-top" target="_blank">Portfolio</a>
+      <a href="portfolio-admin.html" class="btn-top">Portfolio</a>
       <button class="btn-top" onclick="doLogout()">Salir</button>
     </div>
   </div>
@@ -246,7 +246,18 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f7f6f4;
 
 <div class="toast" id="toast"></div>
 
-<script src="firebase-config.js"></script>
+<script>
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBWkrGK26Puv6e0ECJRO0BFjLMGsPJ6CvM",
+  authDomain: "bacacay2784.firebaseapp.com",
+  databaseURL: "https://bacacay2784-default-rtdb.firebaseio.com",
+  projectId: "bacacay2784",
+  storageBucket: "bacacay2784.firebasestorage.app",
+  messagingSenderId: "19699091973",
+  appId: "1:19699091973:web:bbea2d03e243e897f86a6c",
+  measurementId: "G-8YH5N03016"
+};
+</script>
 <script>
 // ── INIT ──────────────────────────────────────────────────────────────────────
 // Inicializar Firebase solo una vez
