@@ -197,20 +197,19 @@ function renderList(){
 
 // ── SELECT ────────────────────────────────────────────────────────────────
 async function selectProject(id){
-  curId=id; curGaleria=[]; coverUrl=null;
+  curId=id; curSlots=Array(TOTAL_SLOTS).fill(null); coverUrl=null;
   renderList();
   const p=allProjects.find(x=>x.id===id);
   if(!p) return;
   coverUrl=p.coverUrl||p.img||null;
-  // Cargar galería desde subcol portfolio/{id}/galeria y portfolio/{id}/planos
   try{
-    const [fSnap,pSnap]=await Promise.all([
-      db.collection(COL).doc(id).collection('galeria').orderBy('order','asc').get().catch(()=>({docs:[]})),
-      db.collection(COL).doc(id).collection('planos').orderBy('order','asc').get().catch(()=>({docs:[]}))
-    ]);
-    fSnap.docs.forEach(d=>curGaleria.push({id:d.id,src:d.data().src,caption:d.data().caption||'',tipo:'foto',order:d.data().order||0,isNew:false,toDelete:false}));
-    pSnap.docs.forEach(d=>curGaleria.push({id:d.id,src:d.data().src,caption:d.data().caption||'',tipo:'plano',order:d.data().order||0,isNew:false,toDelete:false}));
-    curGaleria.sort((a,b)=>a.order-b.order);
+    const snap=await db.collection(COL).doc(id).collection('slots').get().catch(()=>({docs:[]}));
+    snap.docs.forEach(d=>{
+      const s=d.data();
+      if(s.slotIndex>=0&&s.slotIndex<TOTAL_SLOTS){
+        curSlots[s.slotIndex]={src:s.src,caption:s.caption||'',isNew:false,toDelete:false,firestoreId:d.id};
+      }
+    });
   }catch(e){}
   renderForm(p);
 }
@@ -269,64 +268,106 @@ function renderForm(p){
     </div>
 
     <div class="fs">
-      <div class="ft">Galería (fotos + planos)</div>
-      <div style="font-size:.72rem;color:#888;margin-bottom:1rem;line-height:1.6">Subí fotos de obra y planos por separado. Se muestran juntos en la página del proyecto respetando la proporción de cada imagen.</div>
-      <div class="upload-row">
-        <div class="upload-col">
-          <div class="fl" style="margin-bottom:.4rem">Fotos de obra</div>
-          <div class="dz" onclick="document.getElementById('fotos-file').click()"
-               ondragover="event.preventDefault();this.classList.add('ov')"
-               ondragleave="this.classList.remove('ov')"
-               ondrop="hDrop(event,'foto')">
-            <div class="dl"><strong>Clic o arrastrá fotos</strong><br/><span style="font-size:.6rem">JPG, PNG — sin límite de peso</span></div>
-          </div>
-          <input type="file" id="fotos-file" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files,'foto')"/>
-        </div>
-        <div class="upload-col">
-          <div class="fl" style="margin-bottom:.4rem">Planos / renders</div>
-          <div class="dz" onclick="document.getElementById('planos-file').click()"
-               ondragover="event.preventDefault();this.classList.add('ov')"
-               ondragleave="this.classList.remove('ov')"
-               ondrop="hDrop(event,'plano')">
-            <div class="dl"><strong>Clic o arrastrá planos</strong><br/><span style="font-size:.6rem">JPG, PNG — sin límite de peso</span></div>
-          </div>
-          <input type="file" id="planos-file" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files,'plano')"/>
-        </div>
+      <div class="ft">Galería editorial — slots</div>
+      <div style="font-size:.72rem;color:#888;margin-bottom:1.5rem;line-height:1.6">
+        Cada slot tiene una posición y tamaño fijo en la página. Hacé clic en un slot para subir una imagen, o la X para dejarlo vacío. Los slots vacíos no se muestran en el sitio.
       </div>
       <div class="pb" id="gbar"><div class="pbf" id="gfil"></div></div>
-      <div class="masonry-grid" id="galeria-grid"></div>
+      <div id="slots-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem"></div>
     </div>
   `;
-  renderGaleria();
+  renderSlots();
 }
 
-// ── GALERÍA ───────────────────────────────────────────────────────────────
-function renderGaleria(){
-  const grid=document.getElementById('galeria-grid');
+// ── SLOTS ─────────────────────────────────────────────────────────────────
+// Misma plantilla que proyecto.html
+const SLOT_LABELS = [
+  'Pequeño — centro alto',    // 0
+  'Pequeño — derecha alta',   // 1
+  'Pequeño — izquierda',      // 2
+  'Mediano — centro',         // 3
+  'Mediano — centro bajo',    // 4
+  'Vertical — derecha',       // 5
+  'Grande — izquierda',       // 6
+  'Mediano — derecha',        // 7
+  'Mediano — derecha bajo',   // 8
+  'Vertical — derecha baja',  // 9
+  'Mediano — izquierda',      // 10
+  'Mediano — centro',         // 11
+  'Pequeño — izquierda',      // 12
+  'Pequeño — centro',         // 13
+];
+const TOTAL_SLOTS = 14;
+
+// curSlots: array de 14 posiciones, cada una {src, caption, isNew, toDelete} o null
+let curSlots = Array(TOTAL_SLOTS).fill(null);
+
+function renderSlots(){
+  const grid = document.getElementById('slots-grid');
   if(!grid) return;
-  const visible=curGaleria.filter(x=>!x.toDelete);
-  if(!visible.length){
-    grid.innerHTML='<div style="font-size:.72rem;color:#aaa;font-style:italic;padding:.5rem 0">Sin imágenes aún.</div>';
-    return;
-  }
-  grid.innerHTML=visible.map((item,i)=>`
-    <div class="gitem">
-      <div class="gitem-type">${item.tipo==='plano'?'plano':'foto'}</div>
-      <img src="${item.src}" loading="lazy"/>
-      <button class="gitem-del" onclick="removeGItem(${i})">✕</button>
-      <input class="gitem-cap" value="${esc(item.caption)}" placeholder="Descripción opcional..."
-             oninput="curGaleria.filter(x=>!x.toDelete)[${i}].caption=this.value"/>
-    </div>`).join('');
+  grid.innerHTML = curSlots.map((s, i) => {
+    const label = SLOT_LABELS[i] || `Slot ${i+1}`;
+    const hasImg = s && s.src && !s.toDelete;
+    return `
+      <div style="border:1px solid ${hasImg?'#d0d0cc':'#e8e8e4'};background:${hasImg?'#fff':'#fafafa'};position:relative;min-height:120px;display:flex;flex-direction:column">
+        <div style="font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#aaa;padding:.5rem .6rem .3rem">${i+1}. ${label}</div>
+        ${hasImg ? `
+          <img src="${s.src}" style="width:100%;height:100px;object-fit:cover;display:block"/>
+          <input value="${esc(s.caption||'')}" placeholder="Caption..."
+            style="width:100%;padding:.3rem .5rem;font-size:.6rem;border:none;border-top:1px solid #eee;font-family:inherit;outline:none"
+            oninput="if(curSlots[${i}])curSlots[${i}].caption=this.value"/>
+          <button onclick="clearSlot(${i})" style="position:absolute;top:.3rem;right:.3rem;background:rgba(255,100,100,.9);color:#fff;border:none;width:20px;height:20px;font-size:.7rem;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center">✕</button>
+        ` : `
+          <div onclick="triggerSlotUpload(${i})" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:1rem;gap:.4rem;min-height:80px" 
+               ondragover="event.preventDefault();this.style.background='#f0f4ff'"
+               ondragleave="this.style.background=''"
+               ondrop="hSlotDrop(event,${i})">
+            <div style="font-size:1.4rem;color:#d0d0cc">+</div>
+            <div style="font-size:.58rem;color:#bbb;text-align:center">Subir imagen<br/>o arrastrar</div>
+          </div>
+        `}
+        <input type="file" id="slot-file-${i}" accept="image/*" style="display:none" onchange="handleSlotFile(this,${i})"/>
+      </div>`;
+  }).join('');
 }
 
-function removeGItem(visIdx){
-  const visible=curGaleria.filter(x=>!x.toDelete);
-  const item=visible[visIdx];
-  if(!item) return;
-  if(item.isNew){ const i=curGaleria.indexOf(item); curGaleria.splice(i,1); }
-  else { item.toDelete=true; }
-  renderGaleria();
+function triggerSlotUpload(i){
+  document.getElementById(`slot-file-${i}`)?.click();
 }
+
+function hSlotDrop(e, i){
+  e.preventDefault();
+  e.currentTarget.style.background='';
+  const file = e.dataTransfer.files[0];
+  if(file) uploadSlot(file, i);
+}
+
+function handleSlotFile(input, i){
+  const file = input.files[0];
+  if(file) uploadSlot(file, i);
+}
+
+function uploadSlot(file, i){
+  const bar=document.getElementById('gbar'), fil=document.getElementById('gfil');
+  bar.style.display='block'; fil.style.width='10%';
+  compress(file, 1400, 85).then(blob => {
+    const path = `portfolio/${curId}/slots/${i}_${Date.now()}.jpg`;
+    return uploadBlob(blob, path, pct => { fil.style.width = pct+'%'; });
+  }).then(url => {
+    bar.style.display='none';
+    curSlots[i] = {src: url, caption: curSlots[i]?.caption||'', isNew: true, toDelete: false};
+    renderSlots();
+    toast(`Slot ${i+1} listo — guardá los cambios`);
+  }).catch(e => { bar.style.display='none'; toast('Error: '+e.message); });
+}
+
+function clearSlot(i){
+  if(curSlots[i]) curSlots[i] = {...curSlots[i], toDelete: true, src: null};
+  else curSlots[i] = null;
+  renderSlots();
+}
+
+function removeGItem(){}  // compatibilidad, ya no se usa
 
 // ── UPLOAD ────────────────────────────────────────────────────────────────
 function compress(file,maxW,q){
@@ -381,36 +422,6 @@ function handleCover(input){
   }).catch(e=>{bar.style.display='none';toast('Error: '+e.message);});
 }
 
-function hDrop(e,tipo){
-  e.preventDefault(); e.currentTarget.classList.remove('ov');
-  handleFiles(e.dataTransfer.files,tipo);
-}
-
-function handleFiles(files,tipo){
-  if(!files||!files.length) return;
-  const bar=document.getElementById('gbar'),fil=document.getElementById('gfil');
-  bar.style.display='block'; fil.style.width='5%';
-  const arr=Array.from(files);
-  let done=0;
-  const maxW=tipo==='plano'?1800:1200;
-  Promise.all(arr.map(f=>{
-    return compress(f,maxW,85).then(blob=>{
-      const path=`portfolio/${curId}/${tipo}s/${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
-      return uploadBlob(blob,path,pct=>{
-        fil.style.width=Math.max(5,Math.round((done/arr.length+pct/100/arr.length)*95))+'%';
-      }).then(url=>{
-        done++;
-        fil.style.width=Math.round(done/arr.length*100)+'%';
-        curGaleria.push({src:url,caption:f.name.replace(/\.[^.]+$/,''),tipo,order:curGaleria.length,isNew:true,toDelete:false});
-      });
-    });
-  })).then(()=>{
-    setTimeout(()=>{bar.style.display='none';fil.style.width='0';},400);
-    renderGaleria();
-    toast(arr.length+' archivo'+(arr.length>1?'s':'')+' subido'+(arr.length>1?'s':'')+' — guardá los cambios');
-  }).catch(e=>{bar.style.display='none';toast('Error subiendo: '+e.message);});
-}
-
 // ── SAVE ──────────────────────────────────────────────────────────────────
 async function saveProject(){
   if(!curId) return;
@@ -433,20 +444,21 @@ async function saveProject(){
     await db.collection(COL).doc(curId).update(data);
 
     msg.textContent='Guardando galería...';
-    const fCol=db.collection(COL).doc(curId).collection('galeria');
-    const pCol=db.collection(COL).doc(curId).collection('planos');
+    const sCol=db.collection(COL).doc(curId).collection('slots');
     const batch=db.batch();
-    for(const item of curGaleria){
-      const col=item.tipo==='plano'?pCol:fCol;
-      if(item.isNew&&!item.toDelete){
-        const ref=col.doc(); item.id=ref.id; item.isNew=false;
-        batch.set(ref,{src:item.src,caption:item.caption,order:item.order});
+    curSlots.forEach((s,i)=>{
+      if(!s) return;
+      if(s.toDelete&&s.firestoreId){ batch.delete(sCol.doc(s.firestoreId)); return; }
+      if(s.toDelete) return;
+      if(s.isNew&&s.src){
+        const ref=sCol.doc();
+        batch.set(ref,{slotIndex:i,src:s.src,caption:s.caption||''});
+        curSlots[i]={...s,isNew:false,firestoreId:ref.id};
+      } else if(!s.isNew&&s.src&&s.firestoreId){
+        batch.update(sCol.doc(s.firestoreId),{caption:s.caption||''});
       }
-      if(item.toDelete&&item.id) batch.delete(col.doc(item.id));
-      if(!item.isNew&&!item.toDelete&&item.id) batch.update(col.doc(item.id),{caption:item.caption,order:item.order});
-    }
+    });
     await batch.commit();
-    curGaleria=curGaleria.filter(x=>!x.toDelete);
 
     const idx=allProjects.findIndex(p=>p.id===curId);
     if(idx>=0) allProjects[idx]={...allProjects[idx],...data};
