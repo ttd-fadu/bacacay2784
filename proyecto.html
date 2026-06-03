@@ -13,7 +13,6 @@ html{scroll-behavior:smooth}
 body{background:#fff;color:#0a0a0a;font-family:'Poppins',sans-serif;overflow-x:hidden}
 :root{--accent:#002FA7;--border:#ebebeb;--sw:260px}
 
-/* ── LOADING ── */
 #loading-screen{position:fixed;inset:0;background:#002FA7;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease}
 #loading-screen.hide{opacity:0;pointer-events:none}
 .loading-logo{font-size:clamp(1.8rem,5vw,3rem);font-weight:300;color:#fff;letter-spacing:-.01em;margin-bottom:1.5rem}
@@ -23,19 +22,10 @@ body{background:#fff;color:#0a0a0a;font-family:'Poppins',sans-serif;overflow-x:h
 .loading-dot:nth-child(3){animation-delay:.4s}
 @keyframes dotPulse{0%,80%,100%{background:rgba(255,255,255,.2);transform:scale(.8)}40%{background:#fff;transform:scale(1)}}
 
-/* ── LAYOUT ── */
 .layout{display:flex;min-height:100vh}
 
-/* ── SIDEBAR ── */
-.sidebar{
-  width:var(--sw);flex-shrink:0;
-  height:100vh;position:sticky;top:0;
-  display:flex;flex-direction:column;
-  justify-content:space-between;
-  padding:3rem 2.5rem;
-  border-right:1px solid var(--border);
-  background:#fff;z-index:10;
-}
+/* SIDEBAR */
+.sidebar{width:var(--sw);flex-shrink:0;height:100vh;position:sticky;top:0;display:flex;flex-direction:column;justify-content:space-between;padding:3rem 2.5rem;border-right:1px solid var(--border);background:#fff;z-index:10}
 .sidebar-brand{font-size:1.05rem;font-weight:700;letter-spacing:-.01em;color:#0a0a0a;text-decoration:none;display:block;margin-bottom:2.5rem;line-height:1;transition:opacity .2s}
 .sidebar-brand:hover{opacity:.5}
 .sidebar-brand span{color:var(--accent)}
@@ -50,144 +40,75 @@ body{background:#fff;color:#0a0a0a;font-family:'Poppins',sans-serif;overflow-x:h
 .sidebar-contact a{color:var(--accent);text-decoration:none;transition:opacity .2s;display:block}
 .sidebar-contact a:hover{opacity:.55}
 
-/* ── MAIN ── */
-.main{flex:1;min-width:0}
-
-/* ── HERO ── */
-.hero{
-  position:relative;
-  height:100svh;
-  min-height:500px;
-  overflow:hidden;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-}
-.hero-slide{
-  position:absolute;inset:0;
-  opacity:0;transition:opacity .9s ease;
-  background-size:cover;background-position:center;
-}
+/* HERO */
+.hero{position:relative;height:100svh;min-height:500px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity .9s ease;background-size:cover;background-position:center}
 .hero-slide.active{opacity:1}
 .hero-overlay{position:absolute;inset:0;background:rgba(0,0,0,.38)}
 .hero-content{position:relative;z-index:2;text-align:center;padding:0 2rem}
-.hero-title{
-  font-size:clamp(2.8rem,7vw,6.5rem);
-  font-weight:300;
-  color:#fff;
-  letter-spacing:-.01em;
-  line-height:1;
-}
-.hero-dots{
-  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
-  display:flex;gap:.6rem;z-index:3;
-}
+.hero-title{font-size:clamp(2.8rem,7vw,6.5rem);font-weight:300;color:#fff;letter-spacing:-.01em;line-height:1}
+.hero-dots{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;gap:.6rem;z-index:3}
 .hero-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:all .2s}
 .hero-dot.active{background:#fff;transform:scale(1.2)}
 
-/* ── DATOS ── */
-.datos{padding:7rem var(--sw) 4rem 4rem}
-.datos-nombre{
-  font-size:clamp(2.5rem,5vw,4.5rem);
-  font-weight:700;
-  color:var(--accent);
-  letter-spacing:-.02em;
-  line-height:.95;
-  margin-bottom:2.5rem;
-}
-.ficha{
-  display:flex;flex-wrap:wrap;
-  gap:.15rem 3rem;
-  margin-bottom:2rem;
-  font-size:.68rem;
-}
+/* DATOS */
+.datos{padding:7rem 4rem 4rem}
+.datos-nombre{font-size:clamp(2.5rem,5vw,4.5rem);font-weight:700;color:var(--accent);letter-spacing:-.02em;line-height:.95;margin-bottom:2.5rem}
+.ficha{display:flex;flex-wrap:wrap;gap:.15rem 3rem;margin-bottom:2rem;font-size:.68rem}
 .ficha-item{display:flex;gap:.4rem;align-items:baseline}
 .ficha-key{color:#aaa;font-weight:300;font-style:italic}
 .ficha-val{font-weight:700;color:#0a0a0a}
-.separador{height:2px;background:var(--accent);margin-bottom:2.5rem;width:100%}
-.descripcion{
-  font-size:.85rem;line-height:1.95;
-  color:#444;font-weight:300;
-  max-width:600px;
-  margin-bottom:0;
-}
+.separador{height:2px;background:var(--accent);margin-bottom:2.5rem}
+.descripcion{font-size:.85rem;line-height:1.95;color:#444;font-weight:300;max-width:600px;margin-bottom:0}
 
-/* ── GALERÍA AIREADA ── */
-.galeria{padding:5rem 0 5rem}
-.masonry{
-  columns:2;
-  column-gap:3rem;
-  padding:0 4rem;
-}
-.masonry-item{
-  break-inside:avoid;
-  margin-bottom:4rem;
-  overflow:hidden;
-  cursor:zoom-in;
+/* ── GALERÍA EDITORIAL ── */
+.galeria-editorial{
   position:relative;
-  opacity:0;
-  transform:translateY(24px);
-  transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);
-}
-/* Desfase orgánico — alterna alturas de inicio */
-.masonry-item:nth-child(4n+1){margin-top:0}
-.masonry-item:nth-child(4n+2){margin-top:5rem}
-.masonry-item:nth-child(4n+3){margin-top:2rem}
-.masonry-item:nth-child(4n+4){margin-top:8rem}
-.masonry-item.visible{opacity:1;transform:translateY(0)}
-.masonry-item img{width:100%;height:auto;display:block;transition:transform .6s cubic-bezier(.16,1,.3,1)}
-.masonry-item:hover img{transform:scale(1.02)}
-.masonry-caption{
-  font-size:.58rem;font-weight:300;font-style:italic;
-  color:#aaa;letter-spacing:.04em;
-  padding:.5rem 0 0;
-}
-
-/* ── CIERRE ── */
-.cierre-img{
   width:100%;
-  aspect-ratio:21/9;
-  object-fit:cover;
-  display:block;
-  margin-top:3rem;
+  /* altura se calcula en JS según slots */
 }
-.related{
-  padding:3.5rem 4rem;
-  display:flex;gap:1.5rem;
-}
-.related-card{
-  flex:1;
-  text-decoration:none;
+/* cada slot es absolute dentro del contenedor */
+.slot{
+  position:absolute;
   overflow:hidden;
-  position:relative;
-  display:block;
+  opacity:0;
+  transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
+  transform:translateY(16px);
+  cursor:zoom-in;
 }
-.related-card-img{
-  width:100%;aspect-ratio:4/3;object-fit:cover;display:block;
-  transition:transform .6s cubic-bezier(.16,1,.3,1);
-}
+.slot.visible{opacity:1;transform:translateY(0)}
+.slot img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.slot:hover img{transform:scale(1.04)}
+.slot-caption{font-size:.56rem;font-weight:300;font-style:italic;color:#aaa;letter-spacing:.04em;padding:.4rem 0 0;position:absolute;bottom:-1.4rem;left:0;white-space:nowrap}
+
+/* CIERRE */
+.cierre-img{width:100%;aspect-ratio:21/9;object-fit:cover;display:block;margin-top:8rem}
+.related{padding:3.5rem 4rem;display:flex;gap:1.5rem}
+.related-card{flex:1;text-decoration:none;overflow:hidden;display:block}
+.related-card-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.16,1,.3,1)}
 .related-card:hover .related-card-img{transform:scale(1.04)}
 .related-card-info{padding:.75rem 0}
 .related-card-dir{font-size:.55rem;font-weight:300;font-style:italic;color:#aaa;margin-bottom:.2rem}
 .related-card-name{font-size:.95rem;font-weight:700;color:var(--accent);letter-spacing:-.01em}
 .related-card-tipo{font-size:.6rem;font-weight:300;color:#888;margin-top:.1rem}
 
-/* ── LIGHTBOX ── */
+/* LIGHTBOX */
 #lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:1000;align-items:center;justify-content:center;cursor:zoom-out}
 #lightbox.open{display:flex}
 #lightbox img{max-width:94vw;max-height:94vh;object-fit:contain}
 #lb-close{position:absolute;top:1.2rem;right:1.4rem;background:none;border:none;color:rgba(255,255,255,.5);font-size:1.8rem;cursor:pointer;line-height:1;transition:color .2s;font-family:inherit}
 #lb-close:hover{color:#fff}
 
-/* ── RESPONSIVE ── */
 @media(max-width:900px){
   :root{--sw:0px}
   .sidebar{display:none}
   .layout{flex-direction:column}
   .datos{padding:4rem 1.5rem 3rem}
-  .masonry{columns:1;padding:0 1.5rem;column-gap:0}
-  .masonry-item:nth-child(n){margin-top:0;margin-bottom:2.5rem}
+  .galeria-editorial{height:auto!important;position:relative}
+  .slot{position:relative!important;left:0!important;top:0!important;width:80%!important;height:auto!important;margin:0 auto 3rem!important;opacity:1!important;transform:none!important}
+  .slot img{height:auto!important}
   .related{flex-direction:column;padding:2rem 1.5rem}
-  .cierre-img{aspect-ratio:16/9}
+  .cierre-img{aspect-ratio:16/9;margin-top:3rem}
 }
 </style>
 </head>
@@ -203,7 +124,6 @@ body{background:#fff;color:#0a0a0a;font-family:'Poppins',sans-serif;overflow-x:h
 <div id="app" style="display:none">
 <div class="layout">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div>
       <a class="sidebar-brand" href="index.html">espacio <span>humo</span></a>
@@ -230,39 +150,30 @@ body{background:#fff;color:#0a0a0a;font-family:'Poppins',sans-serif;overflow-x:h
     </div>
   </aside>
 
-  <!-- MAIN -->
-  <main class="main">
+  <main class="main" style="flex:1;min-width:0">
 
-    <!-- HERO FULLSCREEN -->
     <div class="hero" id="hero">
       <div id="hero-slides"></div>
       <div class="hero-overlay"></div>
-      <div class="hero-content">
-        <h1 class="hero-title" id="hero-title">—</h1>
-      </div>
+      <div class="hero-content"><h1 class="hero-title" id="hero-title">—</h1></div>
       <div class="hero-dots" id="hero-dots"></div>
     </div>
 
-    <!-- DATOS -->
     <div class="datos">
       <div class="datos-nombre" id="p-nombre">—</div>
-      <div class="ficha" id="ficha">
-        <div class="ficha-item"><span class="ficha-key">tipología</span><span class="ficha-val" id="f-tipo">—</span></div>
-        <div class="ficha-item"><span class="ficha-key">año</span><span class="ficha-val" id="f-anio">—</span></div>
-        <div class="ficha-item"><span class="ficha-key">estado</span><span class="ficha-val" id="f-estado">—</span></div>
-        <div class="ficha-item"><span class="ficha-key">superficie</span><span class="ficha-val" id="f-sup">—</span></div>
-        <div class="ficha-item"><span class="ficha-key">equipo</span><span class="ficha-val" id="f-equipo">—</span></div>
+      <div class="ficha">
+        <div class="ficha-item"><span class="ficha-key">tipología&nbsp;</span><span class="ficha-val" id="f-tipo">—</span></div>
+        <div class="ficha-item"><span class="ficha-key">año&nbsp;</span><span class="ficha-val" id="f-anio">—</span></div>
+        <div class="ficha-item"><span class="ficha-key">estado&nbsp;</span><span class="ficha-val" id="f-estado">—</span></div>
+        <div class="ficha-item"><span class="ficha-key">superficie&nbsp;</span><span class="ficha-val" id="f-sup">—</span></div>
+        <div class="ficha-item"><span class="ficha-key">equipo&nbsp;</span><span class="ficha-val" id="f-equipo">—</span></div>
       </div>
       <div class="separador"></div>
       <p class="descripcion" id="p-desc"></p>
     </div>
 
-    <!-- GALERÍA MASONRY AIREADA -->
-    <div class="galeria">
-      <div class="masonry" id="masonry"></div>
-    </div>
+    <div class="galeria-editorial" id="galeria"></div>
 
-    <!-- CIERRE: imagen full + relacionados -->
     <img class="cierre-img" id="cierre-img" src="" alt="" style="display:none"/>
     <div class="related" id="related"></div>
 
@@ -270,46 +181,142 @@ body{background:#fff;color:#0a0a0a;font-family:'Poppins',sans-serif;overflow-x:h
 </div>
 </div>
 
-<!-- LIGHTBOX -->
 <div id="lightbox" onclick="closeLightbox()">
   <button id="lb-close" onclick="closeLightbox()">×</button>
   <img id="lb-img" src="" alt=""/>
 </div>
 
 <script>
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyBWkrGK26Puv6e0ECJRO0BFjLMGsPJ6CvM",
-  authDomain: "bacacay2784.firebaseapp.com",
-  databaseURL: "https://bacacay2784-default-rtdb.firebaseio.com",
-  projectId: "bacacay2784",
-  storageBucket: "bacacay2784.firebasestorage.app",
-  messagingSenderId: "19699091973",
-  appId: "1:19699091973:web:bbea2d03e243e897f86a6c",
-  measurementId: "G-8YH5N03016"
-};
+const FIREBASE_CONFIG={apiKey:"AIzaSyBWkrGK26Puv6e0ECJRO0BFjLMGsPJ6CvM",authDomain:"bacacay2784.firebaseapp.com",databaseURL:"https://bacacay2784-default-rtdb.firebaseio.com",projectId:"bacacay2784",storageBucket:"bacacay2784.firebasestorage.app",messagingSenderId:"19699091973",appId:"1:19699091973:web:bbea2d03e243e897f86a6c",measurementId:"G-8YH5N03016"};
 firebase.initializeApp(FIREBASE_CONFIG);
-const db = firebase.firestore();
-const COL = 'portfolio';
-const PROJECT_ID = new URLSearchParams(window.location.search).get('id');
-let slideIdx = 0;
+const db=firebase.firestore();
+const COL='portfolio';
+const PROJECT_ID=new URLSearchParams(window.location.search).get('id');
+let slideIdx=0;
+
+// ── PLANTILLA DE SLOTS ────────────────────────────────────────────────────
+// Cada slot: { left%, top_px, width%, aspect (w/h ratio) }
+// El contenedor tiene padding lateral de 4rem (≈ 6%)
+// Se distribuyen en 3 "bandas" verticales con mucho aire
+const TEMPLATE = [
+  // banda 1
+  {left:38, top:0,    w:18, ratio:4/3},   // 0 pequeño centro-derecha
+  {left:62, top:20,   w:22, ratio:4/3},   // 1 pequeño extremo derecha
+  {left:2,  top:120,  w:20, ratio:1},     // 2 pequeño extremo izquierda
+  // banda 2
+  {left:30, top:280,  w:26, ratio:4/3},   // 3 mediano centro
+  {left:30, top:530,  w:26, ratio:4/3},   // 4 mediano centro-bajo
+  {left:64, top:360,  w:30, ratio:3/4},   // 5 vertical derecha
+  // banda 3 — imagen grande
+  {left:2,  top:720,  w:48, ratio:4/3},   // 6 GRANDE izquierda
+  {left:56, top:780,  w:22, ratio:4/3},   // 7 mediano derecha
+  {left:56, top:1010, w:22, ratio:4/3},   // 8 mediano derecha bajo
+  // banda 4
+  {left:64, top:1260, w:28, ratio:3/4},   // 9 vertical derecha
+  // banda 5
+  {left:2,  top:1380, w:26, ratio:4/3},   // 10 mediano izquierda
+  {left:34, top:1420, w:24, ratio:4/3},   // 11 mediano centro
+  // banda 6
+  {left:20, top:1680, w:20, ratio:4/3},   // 12 pequeño
+  {left:46, top:1700, w:20, ratio:4/3},   // 13 pequeño
+];
+
+function buildEditorial(slots){
+  // slots: array de {slotIndex, src, caption} ordenados por slotIndex
+  const container=document.getElementById('galeria');
+  container.innerHTML='';
+  if(!slots||!slots.length){container.style.height='0';return;}
+
+  const isMobile=window.innerWidth<=900;
+  if(isMobile){container.style.height='auto';renderMobile(slots,container);return;}
+
+  // Calcular altura total del contenedor
+  let maxBottom=0;
+  slots.forEach(s=>{
+    const t=TEMPLATE[s.slotIndex];
+    if(!t)return;
+    const wPx=(window.innerWidth - 260) * t.w/100; // ancho en px
+    const hPx=wPx/t.ratio;
+    const bottom=t.top+hPx;
+    if(bottom>maxBottom)maxBottom=bottom;
+  });
+  container.style.height=(maxBottom+120)+'px';
+
+  slots.forEach((s,i)=>{
+    const t=TEMPLATE[s.slotIndex];
+    if(!t||!s.src)return;
+    const el=document.createElement('div');
+    el.className='slot';
+    el.style.left=t.left+'%';
+    el.style.top=t.top+'px';
+    el.style.width=t.w+'%';
+    const wPx=(window.innerWidth-260)*t.w/100;
+    const hPx=wPx/t.ratio;
+    el.style.height=hPx+'px';
+    el.onclick=()=>openLightbox(s.src);
+    const img=document.createElement('img');
+    img.src=s.src; img.alt=s.caption||''; img.loading='lazy';
+    el.appendChild(img);
+    if(s.caption){
+      const cap=document.createElement('div');
+      cap.className='slot-caption';
+      cap.textContent=s.caption;
+      el.appendChild(cap);
+    }
+    container.appendChild(el);
+  });
+
+  // Intersection observer para reveal
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach((e,i)=>{
+      if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*100);obs.unobserve(e.target);}
+    });
+  },{threshold:0.05});
+  container.querySelectorAll('.slot').forEach(el=>obs.observe(el));
+}
+
+function renderMobile(slots,container){
+  container.style.display='flex';
+  container.style.flexDirection='column';
+  container.style.gap='2.5rem';
+  container.style.padding='3rem 1.5rem';
+  slots.forEach(s=>{
+    if(!s.src)return;
+    const div=document.createElement('div');
+    div.style.width=['2','6','10'].includes(String(s.slotIndex))?'65%':'85%';
+    div.style.alignSelf=s.slotIndex%2===0?'flex-start':'flex-end';
+    div.style.cursor='zoom-in';
+    div.onclick=()=>openLightbox(s.src);
+    const img=document.createElement('img');
+    img.src=s.src; img.alt=s.caption||''; img.loading='lazy';
+    img.style.cssText='width:100%;height:auto;display:block';
+    div.appendChild(img);
+    if(s.caption){
+      const cap=document.createElement('div');
+      cap.style.cssText='font-size:.56rem;font-weight:300;font-style:italic;color:#aaa;padding:.4rem 0 0';
+      cap.textContent=s.caption;
+      div.appendChild(cap);
+    }
+    container.appendChild(div);
+  });
+}
 
 // ── HERO SLIDER ──────────────────────────────────────────────────────────
 function buildSlider(fotos){
-  if(!fotos||!fotos.length) return;
-  const slidesEl=document.getElementById('hero-slides');
-  const dotsEl=document.getElementById('hero-dots');
-  slidesEl.innerHTML=''; dotsEl.innerHTML='';
+  if(!fotos||!fotos.length)return;
+  const se=document.getElementById('hero-slides'),de=document.getElementById('hero-dots');
+  se.innerHTML='';de.innerHTML='';
   fotos.forEach((f,i)=>{
     const s=document.createElement('div');
     s.className='hero-slide'+(i===0?' active':'');
     s.style.backgroundImage=`url('${f.src}')`;
-    slidesEl.appendChild(s);
+    se.appendChild(s);
     const d=document.createElement('div');
     d.className='hero-dot'+(i===0?' active':'');
     d.onclick=()=>goSlide(i);
-    dotsEl.appendChild(d);
+    de.appendChild(d);
   });
-  if(fotos.length>1) setInterval(()=>goSlide((slideIdx+1)%fotos.length),4500);
+  if(fotos.length>1)setInterval(()=>goSlide((slideIdx+1)%fotos.length),4500);
 }
 function goSlide(n){
   document.querySelectorAll('.hero-slide')[slideIdx]?.classList.remove('active');
@@ -319,54 +326,16 @@ function goSlide(n){
   document.querySelectorAll('.hero-dot')[slideIdx]?.classList.add('active');
 }
 
-// ── MASONRY AIREADO ──────────────────────────────────────────────────────
-function buildMasonry(items){
-  const grid=document.getElementById('masonry');
-  grid.innerHTML='';
-  if(!items||!items.length){
-    grid.innerHTML='<p style="color:#aaa;font-size:.8rem;padding:2rem 0">Sin imágenes cargadas aún.</p>';
-    return;
-  }
-  items.forEach(item=>{
-    const div=document.createElement('div');
-    div.className='masonry-item';
-    const img=document.createElement('img');
-    img.src=item.src; img.alt=item.caption||''; img.loading='lazy';
-    img.onclick=()=>openLightbox(item.src);
-    div.appendChild(img);
-    if(item.caption){
-      const cap=document.createElement('div');
-      cap.className='masonry-caption';
-      cap.textContent=item.caption;
-      div.appendChild(cap);
-    }
-    grid.appendChild(div);
-  });
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach((e,i)=>{
-      if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);obs.unobserve(e.target);}
-    });
-  },{threshold:0.04});
-  grid.querySelectorAll('.masonry-item').forEach(el=>obs.observe(el));
-}
-
 // ── RELACIONADOS ─────────────────────────────────────────────────────────
-async function buildRelated(currentProject, allProjects){
-  // Busca proyectos de la misma tipología primero, luego cualquiera
-  const others = allProjects.filter(p=>p.id!==currentProject.id);
-  const sameType = others.filter(p=>p.tipologia===currentProject.tipologia);
-  const pool = sameType.length>=2 ? sameType : others;
-  // Tomar 2 al azar
-  const shuffled = pool.sort(()=>Math.random()-.5).slice(0,2);
-  if(!shuffled.length) return;
-
-  // Imagen de cierre = cover del primer relacionado o del propio proyecto
-  const cierreImg = document.getElementById('cierre-img');
-  const cierreSrc = currentProject.coverUrl||currentProject.img||'';
-  if(cierreSrc){ cierreImg.src=cierreSrc; cierreImg.style.display='block'; }
-
-  const rel = document.getElementById('related');
-  rel.innerHTML = shuffled.map(p=>`
+async function buildRelated(current,all){
+  const others=all.filter(p=>p.id!==current.id);
+  const same=others.filter(p=>p.tipologia===current.tipologia);
+  const pool=same.length>=2?same:others;
+  const picks=pool.sort(()=>Math.random()-.5).slice(0,2);
+  if(!picks.length)return;
+  const ci=document.getElementById('cierre-img');
+  if(current.coverUrl){ci.src=current.coverUrl;ci.style.display='block';}
+  document.getElementById('related').innerHTML=picks.map(p=>`
     <a class="related-card" href="proyecto.html?id=${p.id}">
       <img class="related-card-img" src="${p.coverUrl||p.img||''}" alt="${esc(p.nombre||'')}"/>
       <div class="related-card-info">
@@ -381,13 +350,13 @@ async function buildRelated(currentProject, allProjects){
 async function init(){
   if(!PROJECT_ID){window.location.href='portfolio.html';return;}
   try{
-    const [doc, allSnap] = await Promise.all([
+    const [doc,allSnap]=await Promise.all([
       db.collection(COL).doc(PROJECT_ID).get(),
       db.collection(COL).orderBy('order','asc').get()
     ]);
     if(!doc.exists){window.location.href='portfolio.html';return;}
     const p={id:doc.id,...doc.data()};
-    const allProjects = allSnap.docs.map(d=>({id:d.id,...d.data()}));
+    const all=allSnap.docs.map(d=>({id:d.id,...d.data()}));
 
     document.title='espacio humo — '+(p.nombre||'');
     document.getElementById('hero-title').textContent=p.nombre||'—';
@@ -401,23 +370,18 @@ async function init(){
     document.getElementById('f-equipo').textContent=p.equipo||'—';
     document.getElementById('p-desc').textContent=p.descripcion||'';
 
-    // Galería
-    const [fSnap,pSnap]=await Promise.all([
-      db.collection(COL).doc(PROJECT_ID).collection('galeria').orderBy('order','asc').get().catch(()=>({docs:[]})),
-      db.collection(COL).doc(PROJECT_ID).collection('planos').orderBy('order','asc').get().catch(()=>({docs:[]}))
-    ]);
-    const fotos=fSnap.docs.map(d=>d.data());
-    const planos=pSnap.docs.map(d=>d.data());
+    // Cargar slots desde Firestore
+    const slotsSnap=await db.collection(COL).doc(PROJECT_ID)
+      .collection('slots').orderBy('slotIndex','asc').get()
+      .catch(()=>({docs:[]}));
+    const slots=slotsSnap.docs.map(d=>d.data()).filter(s=>s.src);
 
-    // Hero: fotos de galería o cover
-    const heroFotos=fotos.length?fotos:(p.coverUrl?[{src:p.coverUrl}]:[]);
+    // Hero: primer slot o cover
+    const heroFotos=slots.length?[{src:slots[0].src}]:(p.coverUrl?[{src:p.coverUrl}]:[]);
     buildSlider(heroFotos);
 
-    // Galería: planos + fotos mezclados
-    buildMasonry([...planos,...fotos]);
-
-    // Relacionados
-    await buildRelated(p, allProjects);
+    buildEditorial(slots);
+    await buildRelated(p,all);
 
     hideLoading();
     document.getElementById('app').style.display='block';
@@ -434,13 +398,17 @@ function hideLoading(){
     setTimeout(()=>document.getElementById('loading-screen').style.display='none',700);
   },350);
 }
-
 function openLightbox(src){document.getElementById('lb-img').src=src;document.getElementById('lightbox').classList.add('open');document.body.style.overflow='hidden';}
 function closeLightbox(){document.getElementById('lightbox').classList.remove('open');document.body.style.overflow='';}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 init();
+window.addEventListener('resize',()=>{
+  // Recalcular layout editorial al cambiar tamaño
+  const g=document.getElementById('galeria');
+  if(g&&g.querySelectorAll('.slot').length)location.reload();
+});
 </script>
 </body>
 </html>
