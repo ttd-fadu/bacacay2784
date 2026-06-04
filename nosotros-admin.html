@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — Nosotros</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#f4f4f2;color:#0a0a0a;min-height:100vh}
+:root{--k:#002FA7;--t:#9E3A26;--b:#e0e0dc;--g:#f4f4f2}
+.topbar{background:var(--k);padding:0 1.25rem;height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--t);position:sticky;top:0;z-index:200}
+.tl{display:flex;align-items:center;gap:.75rem}
+.tb{font-size:.92rem;font-weight:700;color:#fff}
+.ts{color:rgba(255,255,255,.25)}
+.tp{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.85)}
+.bbk{display:flex;align-items:center;gap:.35rem;padding:.38rem .7rem;font-size:.6rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;border:1px solid rgba(255,255,255,.2);cursor:pointer;background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);transition:all .2s}
+.bbk:hover{background:rgba(255,255,255,.22);color:#fff}
+.tr{display:flex;align-items:center;gap:.6rem}
+.bs{padding:.38rem .85rem;font-size:.6rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;border:1px solid rgba(255,255,255,.2);cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)}
+.bs:hover{background:rgba(255,255,255,.2);color:#fff}
+.main{max-width:860px;margin:0 auto;padding:2.5rem 2rem}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:1px solid #d0d0cc;flex-wrap:wrap;gap:1rem}
+.ct{font-size:1.35rem;font-weight:700}
+.btn-save{padding:.5rem 1.5rem;background:var(--t);color:#fff;font-size:.62rem;letter-spacing:.12em;font-weight:700;text-transform:uppercase;border:none;cursor:pointer}
+.btn-save:hover{opacity:.85}
+.fs{background:#fff;padding:1.5rem;margin-bottom:1.25rem;border:1px solid var(--b)}
+.ft{font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;color:#0a0a0a}
+.ft::after{content:'';flex:1;height:1px;background:#eee}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.fc{margin-bottom:1.25rem}
+.fl{display:block;font-size:.54rem;letter-spacing:.18em;text-transform:uppercase;color:#888;font-weight:700;margin-bottom:.35rem}
+.fi{width:100%;padding:.62rem .8rem;background:#fff;border:1px solid #d0d0cc;color:#0a0a0a;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--k)}
+textarea.fi{resize:vertical;min-height:100px;line-height:1.6}
+.preview-img{width:100%;max-height:200px;object-fit:cover;display:none;margin-bottom:.75rem;border:1px solid #d0d0cc}
+.preview-img.show{display:block}
+.dz{border:2px dashed #d0d0cc;padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:.75rem}
+.dz:hover,.dz.ov{border-color:var(--k);background:#f0f4ff}
+.dl{font-size:.78rem;color:#888}
+.dl strong{color:#0a0a0a}
+.pb{height:3px;background:#d0d0cc;margin:.5rem 0;display:none;overflow:hidden}
+.pbf{height:100%;background:var(--t);width:0;transition:width .15s}
+.btn-action{padding:.45rem 1rem;background:transparent;border:1px solid #d0d0cc;font-size:.6rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.btn-action:hover{border-color:var(--k);background:var(--k);color:#fff}
+.slots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.slot-item{border:1px solid var(--b);background:#fafafa;position:relative;min-height:120px;display:flex;flex-direction:column}
+.slot-label{font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#aaa;padding:.5rem .6rem .3rem}
+.slot-img{width:100%;height:100px;object-fit:cover;display:block}
+.slot-cap{width:100%;padding:.3rem .5rem;font-size:.6rem;border:none;border-top:1px solid #eee;background:#fff;font-family:inherit;outline:none}
+.slot-add{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:1rem;gap:.4rem;min-height:80px}
+.slot-del{position:absolute;top:.3rem;right:.3rem;background:rgba(255,100,100,.9);color:#fff;border:none;width:20px;height:20px;font-size:.7rem;cursor:pointer;font-weight:700}
+#po{display:none;position:fixed;inset:0;background:rgba(10,10,10,.75);z-index:500;align-items:center;justify-content:center}
+#po.show{display:flex}
+.pob{background:#fff;padding:2.5rem 3rem;text-align:center;border-top:3px solid var(--t);min-width:240px}
+.pos{width:36px;height:36px;border:3px solid #eee;border-top-color:var(--t);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pom{font-size:.8rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase}
+.toast{position:fixed;bottom:2rem;right:2rem;background:#0a0a0a;color:#fff;padding:.9rem 1.5rem;font-size:.72rem;letter-spacing:.08em;font-weight:700;text-transform:uppercase;border-left:3px solid var(--t);opacity:0;transform:translateY(8px);transition:all .3s;z-index:9999;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:700px){.fr{grid-template-columns:1fr}.slots-grid{grid-template-columns:repeat(2,1fr)}.main{padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tl">
+    <button class="bbk" onclick="window.location.replace('admin.html')">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Admin
+    </button>
+    <div class="tb">espacio humo</div>
+    <span class="ts">/</span>
+    <span class="tp">Nosotros</span>
+  </div>
+  <div class="tr">
+    <a class="bs" href="nosotros.html" target="_blank">Ver página →</a>
+    <button class="bs" onclick="doLogout()">Salir</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="ch">
+    <div><div class="ct">Página Nosotros</div></div>
+    <button class="btn-save" onclick="saveAll()">Guardar cambios</button>
+  </div>
+
+  <!-- TEXTOS -->
+  <div class="fs">
+    <div class="ft">Textos</div>
+    <div class="fc">
+      <label class="fl">Título principal</label>
+      <input class="fi" id="f-titulo" placeholder="arquitectura e interiorismo"/>
+    </div>
+    <div class="fc">
+      <label class="fl">Párrafo 1</label>
+      <textarea class="fi" id="f-p1" placeholder="Filosofía del estudio..."></textarea>
+    </div>
+    <div class="fc">
+      <label class="fl">Párrafo 2</label>
+      <textarea class="fi" id="f-p2" placeholder="Continuación..."></textarea>
+    </div>
+  </div>
+
+  <!-- FOTO HERO -->
+  <div class="fs">
+    <div class="ft">Foto de portada (vertical)</div>
+    <img id="prev-hero" class="preview-img" src=""/>
+    <div class="pb" id="pb-hero"><div class="pbf" id="pf-hero"></div></div>
+    <input type="file" id="file-hero" accept="image/*" style="display:none" onchange="uploadFoto(this,'hero','prev-hero','pb-hero','pf-hero')"/>
+    <button class="btn-action" onclick="document.getElementById('file-hero').click()">Subir foto de portada</button>
+  </div>
+
+  <!-- SOCIOS -->
+  <div class="fs">
+    <div class="ft">Socios</div>
+    <div class="fr">
+      <div>
+        <div class="fl" style="margin-bottom:.75rem">Socio 1</div>
+        <img id="prev-s1" class="preview-img" src=""/>
+        <div class="pb" id="pb-s1"><div class="pbf" id="pf-s1"></div></div>
+        <input type="file" id="file-s1" accept="image/*" style="display:none" onchange="uploadFoto(this,'s1','prev-s1','pb-s1','pf-s1')"/>
+        <button class="btn-action" onclick="document.getElementById('file-s1').click()" style="margin-bottom:.75rem">Subir foto</button>
+        <label class="fl">Nombre</label>
+        <input class="fi" id="f-s1nombre" placeholder="Nombre Apellido"/>
+        <label class="fl" style="margin-top:.75rem">Rol</label>
+        <input class="fi" id="f-s1rol" placeholder="Arquitecto / Diseñador"/>
+      </div>
+      <div>
+        <div class="fl" style="margin-bottom:.75rem">Socio 2</div>
+        <img id="prev-s2" class="preview-img" src=""/>
+        <div class="pb" id="pb-s2"><div class="pbf" id="pf-s2"></div></div>
+        <input type="file" id="file-s2" accept="image/*" style="display:none" onchange="uploadFoto(this,'s2','prev-s2','pb-s2','pf-s2')"/>
+        <button class="btn-action" onclick="document.getElementById('file-s2').click()" style="margin-bottom:.75rem">Subir foto</button>
+        <label class="fl">Nombre</label>
+        <input class="fi" id="f-s2nombre" placeholder="Nombre Apellido"/>
+        <label class="fl" style="margin-top:.75rem">Rol</label>
+        <input class="fi" id="f-s2rol" placeholder="Arquitecto / Diseñador"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- GALERÍA SLOTS -->
+  <div class="fs">
+    <div class="ft">Galería editorial</div>
+    <div style="font-size:.72rem;color:#888;margin-bottom:1rem;line-height:1.6">Misma plantilla que los proyectos. Clic en cada slot para subir una imagen.</div>
+    <div class="pb" id="pb-slot"><div class="pbf" id="pf-slot"></div></div>
+    <div class="slots-grid" id="slots-grid"></div>
+  </div>
+</div>
+
+<div id="po"><div class="pob"><div class="pos"></div><div class="pom" id="pom">Guardando...</div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const FIREBASE_CONFIG={apiKey:"AIzaSyBWkrGK26Puv6e0ECJRO0BFjLMGsPJ6CvM",authDomain:"bacacay2784.firebaseapp.com",databaseURL:"https://bacacay2784-default-rtdb.firebaseio.com",projectId:"bacacay2784",storageBucket:"bacacay2784.firebasestorage.app",messagingSenderId:"19699091973",appId:"1:19699091973:web:bbea2d03e243e897f86a6c",measurementId:"G-8YH5N03016"};
+if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
+const db=firebase.firestore(),auth=firebase.auth();
+
+const CLOUDINARY_CLOUD='dlkkvhbjk';
+const CLOUDINARY_PRESET='espacio_humo';
+const SLOT_LABELS=['Pequeña — derecha alta','Pequeña vertical — derecha','Pequeña cuadrada — izq','Mediana — centro','GRANDE — izquierda','Mediana — derecha','Vertical alta — derecha','Mediana — izq baja','Mediana — centro baja','Grande panorámica','Pequeña — izq final','Pequeña — der final','Mediana cierre','Vertical suelta'];
+const TOTAL_SLOTS=14;
+let curSlots=Array(TOTAL_SLOTS).fill(null);
+let uploads={}; // {hero, s1, s2} urls subidas
+
+// AUTH
+function waitForAuth(){return new Promise(r=>{if(auth.currentUser){r(auth.currentUser);return;}var d=false,u=auth.onAuthStateChanged(user=>{if(d)return;d=true;u();r(user);});setTimeout(()=>{if(!d){d=true;u();r(null);}},8000);});}
+waitForAuth().then(user=>{if(!user){window.location.replace('admin.html');return;}loadData();});
+function doLogout(){auth.signOut().then(()=>window.location.replace('admin.html'));}
+
+async function loadData(){
+  try{
+    const doc=await db.collection('config').doc('nosotros').get();
+    const d=doc.exists?doc.data():{};
+    document.getElementById('f-titulo').value=d.titulo||'';
+    document.getElementById('f-p1').value=d.parrafo1||'';
+    document.getElementById('f-p2').value=d.parrafo2||'';
+    document.getElementById('f-s1nombre').value=d.s1Nombre||'';
+    document.getElementById('f-s1rol').value=d.s1Rol||'';
+    document.getElementById('f-s2nombre').value=d.s2Nombre||'';
+    document.getElementById('f-s2rol').value=d.s2Rol||'';
+    if(d.fotoHero){uploads.hero=d.fotoHero;showPreview('prev-hero',d.fotoHero);}
+    if(d.s1Foto){uploads.s1=d.s1Foto;showPreview('prev-s1',d.s1Foto);}
+    if(d.s2Foto){uploads.s2=d.s2Foto;showPreview('prev-s2',d.s2Foto);}
+    // Slots
+    const sSnap=await db.collection('config').doc('nosotros').collection('slots').get().catch(()=>({docs:[]}));
+    sSnap.docs.forEach(d=>{const s=d.data();if(s.slotIndex>=0&&s.slotIndex<TOTAL_SLOTS)curSlots[s.slotIndex]={src:s.src,caption:s.caption||'',isNew:false,toDelete:false,firestoreId:d.id};});
+  }catch(e){console.error(e);}
+  renderSlots();
+}
+
+function showPreview(id,url){const el=document.getElementById(id);if(el){el.src=url;el.classList.add('show');}}
+
+function compress(file,maxW,q){return new Promise(res=>{const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{const r=Math.min(maxW/img.width,1),c=document.createElement('canvas');c.width=img.width*r;c.height=img.height*r;c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);c.toBlob(blob=>res(blob),'image/jpeg',q/100);};img.src=url;});}
+
+function uploadToCloud(blob,folder,onProgress){return new Promise((res,rej)=>{const fd=new FormData();fd.append('file',blob);fd.append('upload_preset',CLOUDINARY_PRESET);fd.append('folder',folder);const xhr=new XMLHttpRequest();xhr.open('POST','https://api.cloudinary.com/v1_1/'+CLOUDINARY_CLOUD+'/image/upload');xhr.upload.onprogress=e=>{if(e.lengthComputable&&onProgress)onProgress(e.loaded/e.total*100);};xhr.onload=()=>{const r=JSON.parse(xhr.responseText);r.secure_url?res(r.secure_url):rej(new Error(r.error?.message||'Upload failed'));};xhr.onerror=()=>rej(new Error('Network error'));xhr.send(fd);});}
+
+function uploadFoto(input,key,prevId,pbId,pfId){
+  const file=input.files[0];if(!file)return;
+  const bar=document.getElementById(pbId),fil=document.getElementById(pfId);
+  bar.style.display='block';fil.style.width='10%';
+  compress(file,1400,88).then(blob=>uploadToCloud(blob,'nosotros/'+key,pct=>{fil.style.width=pct+'%';}))
+  .then(url=>{uploads[key]=url;bar.style.display='none';showPreview(prevId,url);toast('Foto lista — guardá los cambios');})
+  .catch(e=>{bar.style.display='none';toast('Error: '+e.message);});
+}
+
+function renderSlots(){
+  const grid=document.getElementById('slots-grid');if(!grid)return;
+  grid.innerHTML=curSlots.map((s,i)=>{
+    const hasImg=s&&s.src&&!s.toDelete;
+    return `<div class="slot-item">
+      <div class="slot-label">${i+1}. ${SLOT_LABELS[i]||''}</div>
+      ${hasImg?`<img class="slot-img" src="${s.src}"/>
+        <input class="slot-cap" value="${esc(s.caption||'')}" placeholder="Caption..." oninput="if(curSlots[${i}])curSlots[${i}].caption=this.value"/>
+        <button class="slot-del" onclick="clearSlot(${i})">✕</button>`
+      :`<div class="slot-add" onclick="triggerSlot(${i})" ondragover="event.preventDefault();this.style.background='#f0f4ff'" ondragleave="this.style.background=''" ondrop="hSlotDrop(event,${i})">
+          <div style="font-size:1.4rem;color:#d0d0cc">+</div>
+          <div style="font-size:.58rem;color:#bbb;text-align:center">Subir imagen</div>
+        </div>`}
+      <input type="file" id="sfile-${i}" accept="image/*" style="display:none" onchange="handleSlot(this,${i})"/>
+    </div>`;
+  }).join('');
+}
+
+function triggerSlot(i){document.getElementById('sfile-'+i)?.click();}
+function hSlotDrop(e,i){e.preventDefault();e.currentTarget.style.background='';const f=e.dataTransfer.files[0];if(f)uploadSlot(f,i);}
+function handleSlot(input,i){const f=input.files[0];if(f)uploadSlot(f,i);}
+function clearSlot(i){if(curSlots[i])curSlots[i]={...curSlots[i],toDelete:true,src:null};else curSlots[i]=null;renderSlots();}
+
+function uploadSlot(file,i){
+  const bar=document.getElementById('pb-slot'),fil=document.getElementById('pf-slot');
+  bar.style.display='block';fil.style.width='10%';
+  compress(file,1400,85).then(blob=>uploadToCloud(blob,'nosotros/slots/'+i+'_'+Date.now(),pct=>{fil.style.width=pct+'%';}))
+  .then(url=>{bar.style.display='none';curSlots[i]={src:url,caption:curSlots[i]?.caption||'',isNew:true,toDelete:false};renderSlots();toast('Slot '+(i+1)+' listo — guardá los cambios');})
+  .catch(e=>{bar.style.display='none';toast('Error: '+e.message);});
+}
+
+async function saveAll(){
+  const ov=document.getElementById('po'),msg=document.getElementById('pom');
+  ov.classList.add('show');msg.textContent='Guardando...';
+  try{
+    const data={
+      titulo:document.getElementById('f-titulo').value||'',
+      parrafo1:document.getElementById('f-p1').value||'',
+      parrafo2:document.getElementById('f-p2').value||'',
+      s1Nombre:document.getElementById('f-s1nombre').value||'',
+      s1Rol:document.getElementById('f-s1rol').value||'',
+      s2Nombre:document.getElementById('f-s2nombre').value||'',
+      s2Rol:document.getElementById('f-s2rol').value||'',
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp(),
+    };
+    if(uploads.hero)data.fotoHero=uploads.hero;
+    if(uploads.s1)data.s1Foto=uploads.s1;
+    if(uploads.s2)data.s2Foto=uploads.s2;
+    await db.collection('config').doc('nosotros').set(data,{merge:true});
+    // Slots
+    msg.textContent='Guardando galería...';
+    const sCol=db.collection('config').doc('nosotros').collection('slots');
+    const batch=db.batch();
+    curSlots.forEach((s,i)=>{
+      if(!s)return;
+      if(s.toDelete&&s.firestoreId){batch.delete(sCol.doc(s.firestoreId));return;}
+      if(s.toDelete)return;
+      if(s.isNew&&s.src){const ref=sCol.doc();batch.set(ref,{slotIndex:i,src:s.src,caption:s.caption||''});curSlots[i]={...s,isNew:false,firestoreId:ref.id};}
+      else if(!s.isNew&&s.src&&s.firestoreId)batch.update(sCol.doc(s.firestoreId),{caption:s.caption||''});
+    });
+    await batch.commit();
+    msg.textContent='¡Guardado!';
+    setTimeout(()=>{ov.classList.remove('show');toast('Cambios guardados');},600);
+  }catch(e){ov.classList.remove('show');toast('Error: '+e.message);console.error(e);}
+}
+
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
+</script>
+</body>
+</html>
