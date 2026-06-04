@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>espacio humo — nosotros</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet"/>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#fff;color:#0a0a0a;font-family:'Poppins',sans-serif;overflow-x:hidden}
+:root{--accent:#002FA7;--border:#ebebeb;--sw:280px}
+
+/* LOADING */
+#loading-screen{position:fixed;inset:0;background:#002FA7;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease}
+#loading-screen.hide{opacity:0;pointer-events:none}
+.loading-logo{font-size:clamp(1.8rem,5vw,3rem);font-weight:300;color:#fff;letter-spacing:-.01em;margin-bottom:1.5rem}
+.loading-dots{display:flex;gap:.5rem}
+.loading-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);animation:dotPulse 1.4s ease-in-out infinite}
+.loading-dot:nth-child(2){animation-delay:.2s}
+.loading-dot:nth-child(3){animation-delay:.4s}
+@keyframes dotPulse{0%,80%,100%{background:rgba(255,255,255,.2);transform:scale(.8)}40%{background:#fff;transform:scale(1)}}
+
+/* LAYOUT */
+.layout{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);flex-shrink:0;height:100vh;position:sticky;top:0;display:flex;flex-direction:column;justify-content:space-between;padding:3rem 2.5rem;border-right:1px solid var(--border);background:#fff;z-index:10}
+.sidebar-brand{font-size:1.05rem;font-weight:700;letter-spacing:-.01em;color:#0a0a0a;text-decoration:none;display:block;margin-bottom:2.5rem;line-height:1;transition:opacity .2s}
+.sidebar-brand:hover{opacity:.5}
+.sidebar-brand span{color:var(--accent)}
+.sidebar-nav{list-style:none;display:flex;flex-direction:column;gap:.05rem}
+.sidebar-nav a{font-size:1.4rem;font-weight:700;letter-spacing:-.02em;color:#0a0a0a;text-decoration:none;padding:.15rem 0;transition:opacity .2s;line-height:1.35;display:block}
+.sidebar-nav a:hover{opacity:.35}
+.sidebar-nav a.active{color:var(--accent)}
+.sidebar-contact{font-size:.62rem;line-height:2;color:#0a0a0a}
+.sidebar-contact a{color:var(--accent);text-decoration:none;transition:opacity .2s;display:block}
+.sidebar-contact a:hover{opacity:.55}
+
+/* MAIN */
+.main{flex:1;min-width:0;overflow:hidden}
+
+/* ── HERO ── */
+.hero{
+  display:grid;
+  grid-template-columns:1fr 38%;
+  min-height:100svh;
+}
+.hero-left{
+  padding:8rem 4rem 6rem;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  border-right:1px solid var(--border);
+}
+.hero-eyebrow{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:2rem}
+.hero-titulo{
+  font-size:clamp(2.2rem,5vw,4rem);
+  font-weight:700;color:var(--accent);
+  letter-spacing:-.02em;line-height:1;
+  margin-bottom:3rem;
+}
+.hero-p1{font-size:.9rem;line-height:1.9;color:#333;font-weight:300;max-width:520px;margin-bottom:2rem}
+.hero-p2{font-size:.9rem;line-height:1.9;color:#333;font-weight:300;max-width:520px}
+.hero-right{
+  position:relative;overflow:hidden;
+}
+.hero-right img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center top;
+  display:block;
+}
+.hero-right-placeholder{
+  width:100%;height:100%;
+  background:#f4f4f2;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;color:#aaa;font-style:italic;
+}
+
+/* ── SOCIOS ── */
+.socios{
+  padding:6rem 4rem;
+  border-top:1px solid var(--border);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4rem;
+  align-items:start;
+}
+.socios-label{font-size:.55rem;letter-spacing:.22em;text-transform:uppercase;color:#aaa;font-weight:700;margin-bottom:3rem;grid-column:1/-1;display:flex;align-items:center;gap:1rem}
+.socios-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.socio-foto{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center top;display:block;margin-bottom:1.25rem;filter:grayscale(20%)}
+.socio-foto-placeholder{width:100%;aspect-ratio:3/4;background:#f4f4f2;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#aaa;font-style:italic;margin-bottom:1.25rem}
+.socio-nombre{font-size:1.1rem;font-weight:700;letter-spacing:-.01em;margin-bottom:.25rem}
+.socio-rol{font-size:.65rem;font-weight:300;font-style:italic;color:#888}
+
+/* ── GALERÍA EDITORIAL ── */
+.galeria-wrap{padding:0 0 8rem;border-top:1px solid var(--border);margin-top:2rem}
+.galeria-label{font-size:.55rem;letter-spacing:.22em;text-transform:uppercase;color:#aaa;font-weight:700;padding:4rem 4rem 0;display:flex;align-items:center;gap:1rem;margin-bottom:0}
+.galeria-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.galeria-editorial{position:relative;width:100%}
+.slot{position:absolute;overflow:hidden;opacity:0;transform:translateY(16px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);cursor:zoom-in}
+.slot.visible{opacity:1;transform:translateY(0)}
+.slot img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.slot:hover img{transform:scale(1.04)}
+.slot-caption{font-size:.56rem;font-weight:300;font-style:italic;color:#aaa;letter-spacing:.04em;padding:.4rem 0 0;position:absolute;bottom:-1.4rem;left:0;white-space:nowrap}
+
+/* LIGHTBOX */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:1000;align-items:center;justify-content:center;cursor:zoom-out}
+#lightbox.open{display:flex}
+#lightbox img{max-width:94vw;max-height:94vh;object-fit:contain}
+#lb-close{position:absolute;top:1.2rem;right:1.4rem;background:none;border:none;color:rgba(255,255,255,.5);font-size:1.8rem;cursor:pointer;line-height:1;transition:color .2s;font-family:inherit}
+#lb-close:hover{color:#fff}
+
+@media(max-width:900px){
+  :root{--sw:0px}
+  .sidebar{display:none}
+  .layout{flex-direction:column}
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-right{height:60vw}
+  .hero-left{padding:4rem 1.5rem 3rem}
+  .socios{grid-template-columns:1fr;gap:3rem;padding:4rem 1.5rem}
+  .galeria-label{padding:3rem 1.5rem 0}
+  .slot{position:relative!important;left:0!important;top:0!important;width:80%!important;height:auto!important;margin:0 auto 3rem!important;opacity:1!important;transform:none!important}
+  .slot img{height:auto!important}
+  .galeria-editorial{height:auto!important;display:flex;flex-direction:column;padding:2rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<div id="loading-screen">
+  <div class="loading-logo">espacio humo</div>
+  <div class="loading-dots">
+    <div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+<div class="layout">
+
+  <aside class="sidebar">
+    <div>
+      <a class="sidebar-brand" href="index.html">espacio <span>humo</span></a>
+      <ul class="sidebar-nav">
+        <li><a href="portfolio.html">proyectos</a></li>
+        <li><a href="nosotros.html" class="active">nosotros</a></li>
+        <li><a href="mailto:espaciohumo@gmail.com">contacto</a></li>
+        <li><a href="login.html">portal clientes</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-contact">
+      <a href="mailto:espaciohumo@gmail.com">espaciohumo@gmail.com</a>
+      <a href="https://wa.me/5491169796742">+54 9 11 6979 6742</a>
+      <a href="https://www.instagram.com/espaciohumo/" target="_blank" style="display:flex;align-items:center;gap:.4rem">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#002FA7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="#002FA7" stroke="none"/></svg>
+        espaciohumo
+      </a>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- HERO: texto izquierda + foto vertical derecha -->
+    <div class="hero">
+      <div class="hero-left">
+        <div class="hero-eyebrow">espacio humo</div>
+        <h1 class="hero-titulo" id="hero-titulo">—</h1>
+        <p class="hero-p1" id="hero-p1"></p>
+        <p class="hero-p2" id="hero-p2"></p>
+      </div>
+      <div class="hero-right" id="hero-right">
+        <div class="hero-right-placeholder" id="hero-placeholder">foto</div>
+      </div>
+    </div>
+
+    <!-- SOCIOS -->
+    <div class="socios">
+      <div class="socios-label">el estudio</div>
+      <div id="socio-1">
+        <div class="socio-foto-placeholder">foto socio 1</div>
+        <div class="socio-nombre" id="s1-nombre">—</div>
+        <div class="socio-rol" id="s1-rol">—</div>
+      </div>
+      <div id="socio-2">
+        <div class="socio-foto-placeholder">foto socio 2</div>
+        <div class="socio-nombre" id="s2-nombre">—</div>
+        <div class="socio-rol" id="s2-rol">—</div>
+      </div>
+    </div>
+
+    <!-- GALERÍA EDITORIAL -->
+    <div class="galeria-wrap">
+      <div class="galeria-label">nuestro trabajo</div>
+      <div class="galeria-editorial" id="galeria"></div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lb-close" onclick="closeLightbox()">×</button>
+  <img id="lb-img" src="" alt=""/>
+</div>
+
+<script>
+const FIREBASE_CONFIG={apiKey:"AIzaSyBWkrGK26Puv6e0ECJRO0BFjLMGsPJ6CvM",authDomain:"bacacay2784.firebaseapp.com",databaseURL:"https://bacacay2784-default-rtdb.firebaseio.com",projectId:"bacacay2784",storageBucket:"bacacay2784.firebasestorage.app",messagingSenderId:"19699091973",appId:"1:19699091973:web:bbea2d03e243e897f86a6c",measurementId:"G-8YH5N03016"};
+firebase.initializeApp(FIREBASE_CONFIG);
+const db=firebase.firestore();
+
+const TEMPLATE=[
+  {left:52,top:60,  w:20,ratio:4/3},
+  {left:74,top:120, w:18,ratio:3/4},
+  {left:4, top:320, w:18,ratio:1},
+  {left:28,top:520, w:32,ratio:4/3},
+  {left:2, top:880, w:52,ratio:3/2},
+  {left:60,top:980, w:22,ratio:4/3},
+  {left:68,top:1380,w:20,ratio:2/3},
+  {left:4, top:1500,w:28,ratio:4/3},
+  {left:38,top:1620,w:26,ratio:4/3},
+  {left:6, top:1980,w:60,ratio:16/9},
+  {left:2, top:2460,w:16,ratio:4/3},
+  {left:52,top:2500,w:18,ratio:4/3},
+  {left:28,top:2700,w:30,ratio:3/2},
+  {left:6, top:3000,w:16,ratio:2/3},
+];
+
+async function init(){
+  try{
+    const doc=await db.collection('config').doc('nosotros').get();
+    const d=doc.exists?doc.data():{};
+
+    document.getElementById('hero-titulo').textContent=d.titulo||'arquitectura e interiorismo';
+    document.getElementById('hero-p1').textContent=d.parrafo1||'';
+    document.getElementById('hero-p2').textContent=d.parrafo2||'';
+
+    // Foto hero
+    if(d.fotoHero){
+      const hr=document.getElementById('hero-right');
+      hr.innerHTML=`<img src="${d.fotoHero}" alt="espacio humo" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block"/>`;
+    }
+
+    // Socio 1
+    if(d.s1Foto){
+      document.getElementById('socio-1').innerHTML=`
+        <img class="socio-foto" src="${d.s1Foto}" alt="${d.s1Nombre||''}"/>
+        <div class="socio-nombre">${d.s1Nombre||''}</div>
+        <div class="socio-rol">${d.s1Rol||''}</div>`;
+    } else {
+      document.getElementById('s1-nombre').textContent=d.s1Nombre||'—';
+      document.getElementById('s1-rol').textContent=d.s1Rol||'—';
+    }
+
+    // Socio 2
+    if(d.s2Foto){
+      document.getElementById('socio-2').innerHTML=`
+        <img class="socio-foto" src="${d.s2Foto}" alt="${d.s2Nombre||''}"/>
+        <div class="socio-nombre">${d.s2Nombre||''}</div>
+        <div class="socio-rol">${d.s2Rol||''}</div>`;
+    } else {
+      document.getElementById('s2-nombre').textContent=d.s2Nombre||'—';
+      document.getElementById('s2-rol').textContent=d.s2Rol||'—';
+    }
+
+    // Galería slots
+    const sSnap=await db.collection('config').doc('nosotros').collection('slots')
+      .orderBy('slotIndex','asc').get().catch(()=>({docs:[]}));
+    const slots=sSnap.docs.map(d=>d.data()).filter(s=>s.src);
+    buildEditorial(slots);
+
+  }catch(e){console.error(e);}
+  hideLoading();
+  document.getElementById('app').style.display='block';
+}
+
+function buildEditorial(slots){
+  const container=document.getElementById('galeria');
+  container.innerHTML='';
+  if(!slots||!slots.length){container.style.height='200px';return;}
+  const isMobile=window.innerWidth<=900;
+  if(isMobile){
+    container.style.cssText='display:flex;flex-direction:column;gap:2.5rem;padding:3rem 1.5rem';
+    slots.forEach(s=>{
+      const div=document.createElement('div');
+      div.style.cssText='width:80%;margin:0 auto;cursor:zoom-in';
+      div.onclick=()=>openLightbox(s.src);
+      const img=document.createElement('img');
+      img.src=s.src;img.style.cssText='width:100%;height:auto;display:block';
+      div.appendChild(img);
+      container.appendChild(div);
+    });
+    return;
+  }
+  let maxBottom=0;
+  slots.forEach(s=>{
+    const t=TEMPLATE[s.slotIndex];if(!t)return;
+    const cw=window.innerWidth-280;
+    const wPx=cw*t.w/100;
+    const bottom=t.top+wPx/t.ratio;
+    if(bottom>maxBottom)maxBottom=bottom;
+  });
+  container.style.height=(maxBottom+120)+'px';
+  slots.forEach(s=>{
+    const t=TEMPLATE[s.slotIndex];if(!t||!s.src)return;
+    const cw=window.innerWidth-280;
+    const el=document.createElement('div');
+    el.className='slot';
+    el.style.left=t.left+'%';
+    el.style.top=t.top+'px';
+    el.style.width=t.w+'%';
+    el.style.height=(cw*t.w/100/t.ratio)+'px';
+    el.onclick=()=>openLightbox(s.src);
+    const img=document.createElement('img');
+    img.src=s.src;img.alt=s.caption||'';img.loading='lazy';
+    el.appendChild(img);
+    if(s.caption){const cap=document.createElement('div');cap.className='slot-caption';cap.textContent=s.caption;el.appendChild(cap);}
+    container.appendChild(el);
+  });
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*100);obs.unobserve(e.target);}});
+  },{threshold:0.05});
+  container.querySelectorAll('.slot').forEach(el=>obs.observe(el));
+}
+
+function hideLoading(){
+  setTimeout(()=>{document.getElementById('loading-screen').classList.add('hide');setTimeout(()=>document.getElementById('loading-screen').style.display='none',700);},350);
+}
+function openLightbox(src){document.getElementById('lb-img').src=src;document.getElementById('lightbox').classList.add('open');document.body.style.overflow='hidden';}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+
+init();
+</script>
+</body>
+</html>
