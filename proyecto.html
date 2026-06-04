@@ -83,14 +83,21 @@ body{background:#fff;color:#0a0a0a;font-family:'Poppins',sans-serif;overflow-x:h
 
 /* CIERRE */
 .cierre-img{width:100%;aspect-ratio:21/9;object-fit:cover;display:block;margin-top:8rem}
-.related{padding:3.5rem 4rem;display:flex;gap:1.5rem}
-.related-card{flex:1;text-decoration:none;overflow:hidden;display:block}
-.related-card-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.16,1,.3,1)}
-.related-card:hover .related-card-img{transform:scale(1.04)}
-.related-card-info{padding:.75rem 0}
-.related-card-dir{font-size:.55rem;font-weight:300;font-style:italic;color:#aaa;margin-bottom:.2rem}
-.related-card-name{font-size:.95rem;font-weight:700;color:var(--accent);letter-spacing:-.01em}
-.related-card-tipo{font-size:.6rem;font-weight:300;color:#888;margin-top:.1rem}
+.related{
+  padding:4rem 4rem 5rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  border-top:1px solid var(--border);
+  margin-top:8rem;
+  gap:2rem;
+}
+.related-card{text-decoration:none;display:flex;flex-direction:column;gap:.4rem;max-width:280px}
+.related-card.next{text-align:right;align-items:flex-end}
+.related-card-dir{font-size:.55rem;font-weight:300;font-style:italic;color:#aaa}
+.related-card-name{font-size:1.1rem;font-weight:700;color:var(--accent);letter-spacing:-.01em;line-height:1.15;transition:opacity .2s}
+.related-card:hover .related-card-name{opacity:.5}
+.related-card-tipo{font-size:.6rem;font-weight:300;color:#888}
 
 /* LIGHTBOX */
 #lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:1000;align-items:center;justify-content:center;cursor:zoom-out}
@@ -107,8 +114,8 @@ body{background:#fff;color:#0a0a0a;font-family:'Poppins',sans-serif;overflow-x:h
   .galeria-editorial{height:auto!important;position:relative}
   .slot{position:relative!important;left:0!important;top:0!important;width:80%!important;height:auto!important;margin:0 auto 3rem!important;opacity:1!important;transform:none!important}
   .slot img{height:auto!important}
-  .related{flex-direction:column;padding:2rem 1.5rem}
-  .cierre-img{aspect-ratio:16/9;margin-top:3rem}
+  .related{flex-direction:column;padding:2rem 1.5rem;margin-top:4rem;gap:2.5rem}
+  .related-card.next{text-align:left;align-items:flex-start}
 }
 </style>
 </head>
@@ -195,30 +202,42 @@ const PROJECT_ID=new URLSearchParams(window.location.search).get('id');
 let slideIdx=0;
 
 // ── PLANTILLA DE SLOTS ────────────────────────────────────────────────────
-// Cada slot: { left%, top_px, width%, aspect (w/h ratio) }
-// El contenedor tiene padding lateral de 4rem (≈ 6%)
-// Se distribuyen en 3 "bandas" verticales con mucho aire
+// left en %, top en px (base 1400px de ancho de contenido)
+// w en %, ratio = ancho/alto
 const TEMPLATE = [
-  // banda 1
-  {left:38, top:0,    w:18, ratio:4/3},   // 0 pequeño centro-derecha
-  {left:62, top:20,   w:22, ratio:4/3},   // 1 pequeño extremo derecha
-  {left:2,  top:120,  w:20, ratio:1},     // 2 pequeño extremo izquierda
-  // banda 2
-  {left:30, top:280,  w:26, ratio:4/3},   // 3 mediano centro
-  {left:30, top:530,  w:26, ratio:4/3},   // 4 mediano centro-bajo
-  {left:64, top:360,  w:30, ratio:3/4},   // 5 vertical derecha
-  // banda 3 — imagen grande
-  {left:2,  top:720,  w:48, ratio:4/3},   // 6 GRANDE izquierda
-  {left:56, top:780,  w:22, ratio:4/3},   // 7 mediano derecha
-  {left:56, top:1010, w:22, ratio:4/3},   // 8 mediano derecha bajo
-  // banda 4
-  {left:64, top:1260, w:28, ratio:3/4},   // 9 vertical derecha
-  // banda 5
-  {left:2,  top:1380, w:26, ratio:4/3},   // 10 mediano izquierda
-  {left:34, top:1420, w:24, ratio:4/3},   // 11 mediano centro
-  // banda 6
-  {left:20, top:1680, w:20, ratio:4/3},   // 12 pequeño
-  {left:46, top:1700, w:20, ratio:4/3},   // 13 pequeño
+  // BANDA 1 — dos pequeñas flotando en el espacio derecho, mucho aire arriba
+  {left:52, top:60,   w:20, ratio:4/3,  label:'Pequeña — derecha alta'},
+  {left:74, top:120,  w:18, ratio:3/4,  label:'Pequeña vertical — extremo derecha'},
+
+  // BANDA 2 — una sola pequeña izquierda, muy aislada
+  {left:4,  top:320,  w:18, ratio:1,    label:'Pequeña cuadrada — izquierda'},
+
+  // BANDA 3 — mediana centro con mucho aire alrededor
+  {left:28, top:520,  w:32, ratio:4/3,  label:'Mediana — centro'},
+
+  // BANDA 4 — grande izquierda dominante, pequeña derecha desalineada
+  {left:2,  top:880,  w:52, ratio:3/2,  label:'GRANDE — izquierda'},
+  {left:60, top:980,  w:22, ratio:4/3,  label:'Mediana — derecha'},
+
+  // BANDA 5 — vertical derecha sola, muy aireada
+  {left:68, top:1380, w:20, ratio:2/3,  label:'Vertical alta — derecha'},
+
+  // BANDA 6 — dos medianas escalonadas
+  {left:4,  top:1500, w:28, ratio:4/3,  label:'Mediana — izquierda baja'},
+  {left:38, top:1620, w:26, ratio:4/3,  label:'Mediana — centro baja'},
+
+  // BANDA 7 — grande final casi full width
+  {left:6,  top:1980, w:60, ratio:16/9, label:'Grande panorámica — final'},
+
+  // BANDA 8 — dos pequeñas finales muy separadas
+  {left:2,  top:2460, w:16, ratio:4/3,  label:'Pequeña — izquierda final'},
+  {left:52, top:2500, w:18, ratio:4/3,  label:'Pequeña — derecha final'},
+
+  // BANDA 9 — una mediana centrada de cierre
+  {left:28, top:2700, w:30, ratio:3/2,  label:'Mediana cierre — centro'},
+
+  // BANDA 10 — vertical izquierda suelta
+  {left:6,  top:3000, w:16, ratio:2/3,  label:'Vertical — izquierda suelta'},
 ];
 
 function buildEditorial(slots){
@@ -301,12 +320,13 @@ function renderMobile(slots,container){
   });
 }
 
-// ── HERO SLIDER ──────────────────────────────────────────────────────────
+// ── HERO SLIDER — hasta 3 fotos, autoplay 1s ─────────────────────────────
 function buildSlider(fotos){
   if(!fotos||!fotos.length)return;
   const se=document.getElementById('hero-slides'),de=document.getElementById('hero-dots');
   se.innerHTML='';de.innerHTML='';
-  fotos.forEach((f,i)=>{
+  const max=fotos.slice(0,3); // máximo 3
+  max.forEach((f,i)=>{
     const s=document.createElement('div');
     s.className='hero-slide'+(i===0?' active':'');
     s.style.backgroundImage=`url('${f.src}')`;
@@ -316,7 +336,7 @@ function buildSlider(fotos){
     d.onclick=()=>goSlide(i);
     de.appendChild(d);
   });
-  if(fotos.length>1)setInterval(()=>goSlide((slideIdx+1)%fotos.length),4500);
+  if(max.length>1)setInterval(()=>goSlide((slideIdx+1)%max.length),1000);
 }
 function goSlide(n){
   document.querySelectorAll('.hero-slide')[slideIdx]?.classList.remove('active');
@@ -326,24 +346,29 @@ function goSlide(n){
   document.querySelectorAll('.hero-dot')[slideIdx]?.classList.add('active');
 }
 
-// ── RELACIONADOS ─────────────────────────────────────────────────────────
+// ── RELACIONADOS — solo texto, siempre 2 ─────────────────────────────────
 async function buildRelated(current,all){
   const others=all.filter(p=>p.id!==current.id);
+  // Buscar por tipología primero
   const same=others.filter(p=>p.tipologia===current.tipologia);
-  const pool=same.length>=2?same:others;
-  const picks=pool.sort(()=>Math.random()-.5).slice(0,2);
-  if(!picks.length)return;
-  const ci=document.getElementById('cierre-img');
-  if(current.coverUrl){ci.src=current.coverUrl;ci.style.display='block';}
-  document.getElementById('related').innerHTML=picks.map(p=>`
-    <a class="related-card" href="proyecto.html?id=${p.id}">
-      <img class="related-card-img" src="${p.coverUrl||p.img||''}" alt="${esc(p.nombre||'')}"/>
-      <div class="related-card-info">
-        <div class="related-card-dir">proyecto relacionado</div>
-        <div class="related-card-name">${esc(p.nombre||'')}</div>
-        <div class="related-card-tipo">${esc(p.tipologia||'')} · ${esc(String(p.anio||''))}</div>
-      </div>
-    </a>`).join('');
+  let picks=same.length>=2
+    ? same.sort(()=>Math.random()-.5).slice(0,2)
+    : others.sort(()=>Math.random()-.5).slice(0,2);
+  // Si solo hay 1 proyecto en total, duplicar para siempre mostrar 2
+  if(picks.length===1) picks=[picks[0],picks[0]];
+  if(!picks.length) return;
+
+  document.getElementById('related').innerHTML=`
+    <a class="related-card prev" href="proyecto.html?id=${picks[0].id}">
+      <div class="related-card-dir">proyecto anterior</div>
+      <div class="related-card-name">${esc(picks[0].nombre||'')}</div>
+      <div class="related-card-tipo">${esc(picks[0].tipologia||'')}${picks[0].tipologia&&picks[0].anio?' · ':''}${esc(String(picks[0].anio||''))}</div>
+    </a>
+    <a class="related-card next" href="proyecto.html?id=${picks[1].id}">
+      <div class="related-card-dir">proyecto siguiente</div>
+      <div class="related-card-name">${esc(picks[1].nombre||'')}</div>
+      <div class="related-card-tipo">${esc(picks[1].tipologia||'')}${picks[1].tipologia&&picks[1].anio?' · ':''}${esc(String(picks[1].anio||''))}</div>
+    </a>`;
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────
@@ -376,8 +401,10 @@ async function init(){
       .catch(()=>({docs:[]}));
     const slots=slotsSnap.docs.map(d=>d.data()).filter(s=>s.src);
 
-    // Hero: primer slot o cover
-    const heroFotos=slots.length?[{src:slots[0].src}]:(p.coverUrl?[{src:p.coverUrl}]:[]);
+    // Hero: primeras 3 fotos de slots o cover
+    const heroFotos=slots.length
+      ? slots.slice(0,3).map(s=>({src:s.src}))
+      : (p.coverUrl?[{src:p.coverUrl}]:[]);
     buildSlider(heroFotos);
 
     buildEditorial(slots);
