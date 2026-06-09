@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<head> 
+<head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>espacio humo</title>
@@ -71,9 +71,10 @@ nav{
 }
 .nav-link:hover{opacity:.4}
 .nav-sep{
-  color:rgba(255,255,255,.35);
-  font-size:.4rem;
+  color:rgba(255,255,255,.5);
+  font-size:clamp(.65rem,1vw,.85rem);
   flex-shrink:0;
+  line-height:1;
 }
 
 /* INSTAGRAM — pie de pagina centrado */
@@ -87,7 +88,7 @@ nav{
 .ig-link{
   font-family:'Poppins',sans-serif;
   font-weight:300;
-  font-size:clamp(.42rem,.55vw,.52rem);
+  font-size:clamp(.504rem,.66vw,.624rem);
   letter-spacing:.2em;
   text-transform:uppercase;
   color:rgba(255,255,255,.45);
@@ -123,7 +124,9 @@ nav{
     <span class="brand-espacio">espacio</span><span class="brand-sep"> </span><span class="brand-humo">humo</span>
   </div>
   <nav>
-    <a class="nav-link" href="portfolio.html">proyectos</a>
+    <a class="nav-link" href="portfolio.html">proyecto</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-link" href="nosotros.html">nosotros</a>
     <span class="nav-sep">·</span>
     <a class="nav-link" href="mailto:espaciohumo@gmail.com">contacto</a>
     <span class="nav-sep">·</span>
@@ -133,7 +136,7 @@ nav{
 
 <div class="ig-footer">
   <a class="ig-link" href="https://www.instagram.com/espaciohumo/" target="_blank">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg>
     instagram
   </a>
 </div>
