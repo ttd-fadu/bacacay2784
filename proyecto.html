@@ -205,43 +205,31 @@ let slideIdx=0;
 // left en %, top en px (base 1400px de ancho de contenido)
 // w en %, ratio = ancho/alto
 const TEMPLATE = [
-  // BANDA 1 — dos pequeñas flotando en el espacio derecho, mucho aire arriba
-  {left:52, top:60,   w:20, ratio:4/3,  label:'Pequeña — derecha alta'},
-  {left:74, top:120,  w:18, ratio:3/4,  label:'Pequeña vertical — extremo derecha'},
+  // FILA 1: col1=Calle, col7=Refugio, col10=Camino rojo
+  {left:5,   top:60,   w:16, ratio:1/1.35, label:'Bloque A — Calle izq'},
+  {left:50,  top:40,   w:13, ratio:4/3,    label:'Bloque B — Refugio'},
+  {left:76,  top:30,   w:16, ratio:4/3,    label:'Bloque C — Camino rojo'},
+  // FILA 2: col5=Fotos apiladas, col8=Texto flotante
+  {left:35,  top:380,  w:18, ratio:4/3,    label:'Bloque D1 — Foto apilada 1'},
+  {left:35,  top:520,  w:18, ratio:4/3,    label:'Bloque D2 — Foto apilada 2'},
+  {left:60,  top:420,  w:20, ratio:0,      label:'Bloque E — Texto', isText:true},
+  // FILA 3: col8=Barcos+Manzanas apiladas, col11=Vertical
+  {left:60,  top:800,  w:18, ratio:4/3,    label:'Bloque F1 — Barcos'},
+  {left:60,  top:940,  w:18, ratio:4/3,    label:'Bloque F2 — Manzanas'},
+  {left:82,  top:780,  w:13, ratio:2/3,    label:'Bloque G — Estructura vertical'},
+  // FILA 4: col1=Paisaje grande (mitad izquierda, derecha vacía)
+  {left:5,   top:1180, w:48, ratio:4/3,    label:'Bloque H — Paisaje grande'},
+  // FILA 5: col3=Dos fotos juntas, col10=Flores+texto
+  {left:18,  top:1760, w:16, ratio:4/3,    label:'Bloque I1 — Foto pequeña izq'},
+  {left:35,  top:1760, w:16, ratio:4/3,    label:'Bloque I2 — Foto pequeña der'},
+  {left:76,  top:1700, w:16, ratio:1/1.2,  label:'Bloque J — Flores'},
+  {left:76,  top:1920, w:16, ratio:0,      label:'Bloque J texto', isText:true},
+  // EXTRAS para proyectos con más imágenes
+  {left:4,   top:2200, w:18, ratio:1,      label:'Extra 1 — cuadrada izq'},
 
-  // BANDA 2 — una sola pequeña izquierda, muy aislada
-  {left:4,  top:320,  w:18, ratio:1,    label:'Pequeña cuadrada — izquierda'},
-
-  // BANDA 3 — mediana centro con mucho aire alrededor
-  {left:28, top:520,  w:32, ratio:4/3,  label:'Mediana — centro'},
-
-  // BANDA 4 — grande izquierda dominante, pequeña derecha desalineada
-  {left:2,  top:880,  w:52, ratio:3/2,  label:'GRANDE — izquierda'},
-  {left:60, top:980,  w:22, ratio:4/3,  label:'Mediana — derecha'},
-
-  // BANDA 5 — vertical derecha sola, muy aireada
-  {left:68, top:1380, w:20, ratio:2/3,  label:'Vertical alta — derecha'},
-
-  // BANDA 6 — dos medianas escalonadas
-  {left:4,  top:1500, w:28, ratio:4/3,  label:'Mediana — izquierda baja'},
-  {left:38, top:1620, w:26, ratio:4/3,  label:'Mediana — centro baja'},
-
-  // BANDA 7 — grande final casi full width
-  {left:6,  top:1980, w:60, ratio:16/9, label:'Grande panorámica — final'},
-
-  // BANDA 8 — dos pequeñas finales muy separadas
-  {left:2,  top:2460, w:16, ratio:4/3,  label:'Pequeña — izquierda final'},
-  {left:52, top:2500, w:18, ratio:4/3,  label:'Pequeña — derecha final'},
-
-  // BANDA 9 — una mediana centrada de cierre
-  {left:28, top:2700, w:30, ratio:3/2,  label:'Mediana cierre — centro'},
-
-  // BANDA 10 — vertical izquierda suelta
-  {left:6,  top:3000, w:16, ratio:2/3,  label:'Vertical — izquierda suelta'},
 ];
 
 function buildEditorial(slots){
-  // slots: array de {slotIndex, src, caption} ordenados por slotIndex
   const container=document.getElementById('galeria');
   container.innerHTML='';
   if(!slots||!slots.length){container.style.height='0';return;}
@@ -249,28 +237,30 @@ function buildEditorial(slots){
   const isMobile=window.innerWidth<=900;
   if(isMobile){container.style.height='auto';renderMobile(slots,container);return;}
 
-  // Calcular altura total del contenedor
-  let maxBottom=0;
-  slots.forEach(s=>{
-    const t=TEMPLATE[s.slotIndex];
-    if(!t)return;
-    const wPx=(window.innerWidth - 260) * t.w/100; // ancho en px
-    const hPx=wPx/t.ratio;
-    const bottom=t.top+hPx;
-    if(bottom>maxBottom)maxBottom=bottom;
-  });
-  container.style.height=(maxBottom+120)+'px';
+  const cW=window.innerWidth-260; // ancho del contenedor en px
+  // Separar templates en imagen y texto
+  const imgTpls=TEMPLATE.filter(t=>!t.isText);
+  const imgSlots=slots.filter(s=>s.src);
 
-  slots.forEach((s,i)=>{
-    const t=TEMPLATE[s.slotIndex];
-    if(!t||!s.src)return;
+  // Calcular altura total
+  let maxBottom=0;
+  imgSlots.forEach((_,i)=>{
+    const t=imgTpls[i]; if(!t)return;
+    const hPx=(cW*t.w/100)/t.ratio;
+    const b=t.top+hPx; if(b>maxBottom)maxBottom=b;
+  });
+  TEMPLATE.filter(t=>t.isText).forEach(t=>{if(t.top+180>maxBottom)maxBottom=t.top+180;});
+  container.style.height=(maxBottom+200)+'px';
+
+  // Renderizar imágenes
+  imgSlots.forEach((s,i)=>{
+    const t=imgTpls[i]; if(!t||!s.src)return;
     const el=document.createElement('div');
     el.className='slot';
     el.style.left=t.left+'%';
     el.style.top=t.top+'px';
     el.style.width=t.w+'%';
-    const wPx=(window.innerWidth-260)*t.w/100;
-    const hPx=wPx/t.ratio;
+    const hPx=(cW*t.w/100)/t.ratio;
     el.style.height=hPx+'px';
     el.onclick=()=>openLightbox(s.src);
     const img=document.createElement('img');
@@ -282,6 +272,18 @@ function buildEditorial(slots){
       cap.textContent=s.caption;
       el.appendChild(cap);
     }
+    container.appendChild(el);
+  });
+
+  // Renderizar bloques de texto (usando caption de slots sin src, si existen)
+  const txtSlots=slots.filter(s=>!s.src&&s.caption);
+  TEMPLATE.filter(t=>t.isText).forEach((t,ti)=>{
+    const caption=txtSlots[ti]?.caption||'';
+    if(!caption)return;
+    const el=document.createElement('div');
+    el.className='slot visible';
+    el.style.cssText=`left:${t.left}%;top:${t.top}px;width:${t.w}%;height:auto;cursor:default;line-height:1.8;font-size:.62rem;font-weight:300;font-style:italic;color:#555;font-family:'Poppins',sans-serif`;
+    el.textContent=caption;
     container.appendChild(el);
   });
 
@@ -336,7 +338,7 @@ function buildSlider(fotos){
     d.onclick=()=>goSlide(i);
     de.appendChild(d);
   });
-  if(max.length>1)setInterval(()=>goSlide((slideIdx+1)%max.length),1000);
+  if(max.length>1)setInterval(()=>goSlide((slideIdx+1)%max.length),5000);
 }
 function goSlide(n){
   document.querySelectorAll('.hero-slide')[slideIdx]?.classList.remove('active');
